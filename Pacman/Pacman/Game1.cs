@@ -6,7 +6,7 @@ namespace Pacman
 {
     public class Game1 : Game
     {
-        enum GameStates
+        public enum GameStates
         {
             TitleScreen,
             MapEditor,
@@ -14,7 +14,7 @@ namespace Pacman
             Options
         }
 
-        GameStates gameStates = GameStates.TitleScreen;
+        public static GameStates gameStates = GameStates.TitleScreen;
 
         TitleScreen titleScreen = new TitleScreen();
         MapEditor mapEditor = new MapEditor();
@@ -39,8 +39,8 @@ namespace Pacman
         {
             // TODO: Add your initialization logic here
 
-            ChangeResolution(800, 1070);
-            //800, 1070
+            ChangeResolution(800, 800);
+            //800, 1070 for titleScreen & Options(allow options to scroll if you dont have enough room)
             base.Initialize();
         }
 
@@ -49,6 +49,8 @@ namespace Pacman
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+
+            titleScreen.LoadContent(Content);
         }
 
         protected override void Update(GameTime gameTime)
@@ -58,17 +60,21 @@ namespace Pacman
 
             // TODO: Add your update logic here
 
+            MouseState ms = Mouse.GetState();
+
             switch (gameStates)
             {
                 case GameStates.TitleScreen:
-                    titleScreen.Update();
+                    titleScreen.Update(ms);
                     break;
                 case GameStates.MapEditor:
                     mapEditor.Update();
                     break;
                 case GameStates.MainGame:
+                    ;
                     break;
                 case GameStates.Options:
+                    ;
                     break;
             }
 
@@ -81,19 +87,23 @@ namespace Pacman
 
             // TODO: Add your drawing code here
 
+            _spriteBatch.Begin();
+
             switch (gameStates)
             {
                 case GameStates.TitleScreen:
-                    titleScreen.Update();
+                    titleScreen.Draw(_spriteBatch);
                     break;
                 case GameStates.MapEditor:
-                    mapEditor.Update();
+                    mapEditor.Draw();
                     break;
                 case GameStates.MainGame:
                     break;
                 case GameStates.Options:
                     break;
             }
+
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }
