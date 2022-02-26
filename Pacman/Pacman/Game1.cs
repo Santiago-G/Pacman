@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace Pacman
 {
@@ -14,10 +15,9 @@ namespace Pacman
             Options
         }
 
-        public static GameStates gameStates = GameStates.TitleScreen;
+        public static GameStates currentScreen = GameStates.TitleScreen;
 
-        TitleScreen titleScreen = new TitleScreen();
-        MapEditor mapEditor = new MapEditor();
+        Dictionary<GameStates, Screen> screens = new Dictionary<GameStates, Screen>();
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -49,8 +49,15 @@ namespace Pacman
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            ;
+            screens.Add(GameStates.TitleScreen, new MapEditor((25, 25), new Vector2(0), _graphics));
 
-            titleScreen.LoadContent(Content);
+            screens.Add(GameStates.MapEditor, new MapEditor((25,25), new Vector2(0), _graphics));
+
+            foreach (var screen in screens)
+            {
+                screen.Value.LoadContent(Content);
+            }
         }
 
         protected override void Update(GameTime gameTime)
@@ -62,21 +69,9 @@ namespace Pacman
 
             MouseState ms = Mouse.GetState();
 
-            switch (gameStates)
-            {
-                case GameStates.TitleScreen:
-                    titleScreen.Update(ms);
-                    break;
-                case GameStates.MapEditor:
-                    mapEditor.Update();
-                    break;
-                case GameStates.MainGame:
-                    ;
-                    break;
-                case GameStates.Options:
-                    ;
-                    break;
-            }
+            // screens[currentScreen].Update();
+
+            screens[currentScreen].Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -89,19 +84,7 @@ namespace Pacman
 
             _spriteBatch.Begin();
 
-            switch (gameStates)
-            {
-                case GameStates.TitleScreen:
-                    titleScreen.Draw(_spriteBatch);
-                    break;
-                case GameStates.MapEditor:
-                    mapEditor.Draw();
-                    break;
-                case GameStates.MainGame:
-                    break;
-                case GameStates.Options:
-                    break;
-            }
+            screens[currentScreen].Draw(_spriteBatch);
 
             _spriteBatch.End();
 

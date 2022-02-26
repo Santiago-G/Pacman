@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Pacman
 {
-    public class Button
+    public class Button : Sprite
     {
         public Texture2D Image;
         public Vector2 Position;
@@ -17,7 +17,7 @@ namespace Pacman
 
         public Rectangle Hitbox { get => new Rectangle((int)Position.X, (int)Position.Y, Image.Width, Image.Height); set { } }
 
-        public Button(Texture2D image, Vector2 pos, Color tint)
+        public Button(Texture2D image, Vector2 pos, Color tint) : base(image, pos, tint)
         {
             Image = image;
             Position = pos;
@@ -39,14 +39,14 @@ namespace Pacman
             return false;
         }
 
-        public void Update()
+        public override void Update(GameTime gameTime)
         {
             MouseState ms = Mouse.GetState();
 
             IsClicked(ms);
         }
 
-        public void Draw(SpriteBatch batch)
+        public override void Draw(SpriteBatch batch)
         {
             batch.Draw(Image, Position, Tint);
         }
