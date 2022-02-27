@@ -10,11 +10,13 @@ namespace Pacman
     {
         GraphicsDeviceManager graphics;
 
-        protected Dictionary<string, Sprite> objects = new Dictionary<string, Sprite>();
+        public (int width, int height) size;
 
-        public Screen((int, int) Size, Vector2 Position, GraphicsDeviceManager Graphics)
+        protected List<Sprite> objects = new List<Sprite>();
+
+        public Screen((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics)
         {
-            graphics = Graphics;
+            size = Size;
         }
 
         public abstract void LoadContent(ContentManager Content);
@@ -23,7 +25,7 @@ namespace Pacman
         {
             foreach (var item in objects)
             {
-                item.Value.Update(gameTime);
+                item.Update(gameTime);
             }
         }
 
@@ -31,7 +33,7 @@ namespace Pacman
         {
             foreach (var item in objects)
             {
-                item.Value.Draw(spriteBatch);
+                item.Draw(spriteBatch);
             }
         }
     }

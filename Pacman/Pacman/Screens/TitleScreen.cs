@@ -12,10 +12,10 @@ namespace Pacman
 {
     public class TitleScreen : Screen
     {
-        (int, int) size;
         Vector2 position;
         GraphicsDeviceManager graphics;
 
+        Image titleImage;
         Texture2D titleSprite;
 
         Texture2D mapEditorSprite;
@@ -26,13 +26,8 @@ namespace Pacman
 
         Texture2D optionsSprite;
         Button optionsButton;
-
-        Texture2D arrow;
-        Vector2 arrowPos;
-
-        public TitleScreen((int, int) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
+        public TitleScreen((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
-            size = Size;
             position = Position;
             graphics = Graphics;
         }
@@ -40,20 +35,20 @@ namespace Pacman
         public override void LoadContent(ContentManager Content)
         {
             titleSprite = Content.Load<Texture2D>("PacManTitle");
+            titleImage = new Image(titleSprite, new Vector2(400 - (titleSprite.Width / 2), 100), Color.White);
+            objects.Add(titleImage);
 
             mapEditorSprite = Content.Load<Texture2D>("mapEditorText");
             mapEditorButton = new Button(mapEditorSprite, new Vector2(400 - (mapEditorSprite.Width / 2), 300), Color.White);
+            objects.Add(mapEditorButton);
 
             playSprite = Content.Load<Texture2D>("pressToPlayText");
             playButton = new Button(playSprite, new Vector2(400 - (playSprite.Width / 2), 400), Color.White);
+            objects.Add(playButton);
 
             optionsSprite = Content.Load<Texture2D>("optionsText");
             optionsButton = new Button(optionsSprite, new Vector2(400 - (optionsSprite.Width / 2), 500), Color.White);
-
-            arrow = Content.Load<Texture2D>("arrow");
-
-            //add all your objects to the list in Screen
-            
+            objects.Add(optionsButton);
         }
 
         public override void Update(GameTime gameTime)
@@ -63,6 +58,10 @@ namespace Pacman
             if (mapEditorButton.IsClicked(ms))
             {
                 Game1.currentScreen = Game1.GameStates.MapEditor;
+
+                graphics.PreferredBackBufferWidth = Game1.screens[Game1.GameStates.MapEditor].size.width;
+                graphics.PreferredBackBufferHeight = Game1.screens[Game1.GameStates.MapEditor].size.height;
+                graphics.ApplyChanges();
             }
 
             else if(playButton.IsClicked(ms))
@@ -77,17 +76,5 @@ namespace Pacman
 
             base.Update(gameTime);
         }
-
-        public o void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(titleSprite, new Vector2(400 - (titleSprite.Width/2), 100), Color.White);
-            mapEditorButton.Draw(spriteBatch);
-            playButton.Draw(spriteBatch);
-            optionsButton.Draw(spriteBatch);
-
-            //spriteBatch.Draw(arrow, arrowPos, Color.White);
-        }
-
-
     }
 }
