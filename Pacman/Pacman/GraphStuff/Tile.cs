@@ -15,23 +15,41 @@ namespace Pacman.GraphStuff
             Wall,
         }
 
-        public Texture2D Image;
+        public Texture2D CurrentImage;
+        private Texture2D ogImage;
+
+        public static Texture2D NormalImage;
+        public static Texture2D MapEditorTile;
+        public static Texture2D EnlargedBorder;
+        public static Texture2D PelletTile;
+        private Texture2D WallTile; //there will be a lot of these
+
         public Vector2 Position;
         public Color Tint;
 
-        public bool isVisible;
+        public bool isMapEditorTile;
+        public bool isWall;
 
-        public Rectangle Hitbox { get => new Rectangle((int)Position.X, (int)Position.Y, Image.Width, Image.Height); set { } }
+        public Rectangle Hitbox { get => new Rectangle((int)Position.X, (int)Position.Y, CurrentImage.Width, CurrentImage.Height); set { } }
 
         public States TileStates = States.Empty;
 
         public Vector2 Cord;
 
-        public Tile(Texture2D image, Vector2 position, Color tint, Vector2 numb) : base(image, position, tint)
+        public Tile(Texture2D image, Vector2 position, Color tint, bool ismapEditorTile) : base(image, position, tint)
         {
-            Image = image;
+            if (ismapEditorTile)
+            {
+                CurrentImage = MapEditorTile;
+                ogImage = MapEditorTile;
+            }
+            else 
+            {
+                CurrentImage = NormalImage;
+                ogImage = NormalImage;
+            }
             Position = position;
-            Cord = numb;
+            isMapEditorTile = ismapEditorTile;
             Tint = tint;
         }
 
@@ -45,23 +63,21 @@ namespace Pacman.GraphStuff
         {
             MouseState ms = Mouse.GetState();
 
-            if(isVisible && Hitbox.Intersects(new Rectangle(ms.Position, new Point(1))))
+            if (isMapEditorTile && Hitbox.Intersects(new Rectangle(ms.Position, new Point(1))))
             {
-                //enlarge the outline
-                //have 2 images, one for each outline
+                CurrentImage = EnlargedBorder;
+            }
+            else 
+            {
+                CurrentImage = ogImage;
             }
         }
 
         public override void Draw(SpriteBatch batch)
         {
-            if (isVisible)
-            {
-                //draw the outline
-            }
-            else
-            {
-                batch.Draw(Image, Position, Tint);
-            }
+
+            batch.Draw(CurrentImage, Position, Tint);
+
         }
     }
 }
