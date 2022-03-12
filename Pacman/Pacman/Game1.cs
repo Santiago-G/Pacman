@@ -17,8 +17,9 @@ namespace Pacman
         }
 
         public static GameStates currentScreen = GameStates.TitleScreen;
-
         public static Dictionary<GameStates, Screen> screens = new Dictionary<GameStates, Screen>();
+
+        public static float GameVolume = .5f;
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -49,11 +50,11 @@ namespace Pacman
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
-            ;
             screens.Add(GameStates.TitleScreen, new TitleScreen((800, 800), new Vector2(0), _graphics));
 
             screens.Add(GameStates.MapEditor, new MapEditor((1600, 1000), new Vector2(0), _graphics));
+
+            screens.Add(GameStates.Options, new Options((800, 800), new Vector2(0), _graphics));
 
             foreach (var screen in screens)
             {

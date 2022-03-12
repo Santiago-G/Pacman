@@ -49,6 +49,18 @@
 /processorParam:TextureFormat=Color
 /build:enlargedPelletTile.png
 
+#begin examplesong.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:examplesong.mp3
+
+#begin examplesound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:examplesound.wav
+
 #begin mapEditorText.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -144,4 +156,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:pressToPlayText.png
+
+#begin volumeText.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:volumeText.png
 
