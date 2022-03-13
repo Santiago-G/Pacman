@@ -12,7 +12,6 @@ namespace Pacman
         static public SelectedType selectedTileType = SelectedType.Default;
 
         Vector2 position;
-        GraphicsDeviceManager graphics;
 
         Graph<int> graph = new Graph<int>();
         MapEditorTile[,] tiles = new MapEditorTile[31, 28]; //y,x
@@ -26,8 +25,6 @@ namespace Pacman
         public MapEditor((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
             size = Size;
-            position = Position;
-            graphics = Graphics;
         }
 
         //enum that changes states when selecting walls, pelets, ect...

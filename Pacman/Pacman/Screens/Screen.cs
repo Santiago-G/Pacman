@@ -8,15 +8,19 @@ namespace Pacman
 {
     public abstract class Screen
     {
-        GraphicsDeviceManager graphics;
+        public GraphicsDeviceManager graphics;
 
         public (int width, int height) size;
+
+        public Vector2 position;
 
         protected List<Sprite> objects = new List<Sprite>();
 
         public Screen((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics)
         {
             size = Size;
+            position = Position;
+            graphics = Graphics;
         }
 
         public abstract void LoadContent(ContentManager Content);

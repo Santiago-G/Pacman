@@ -12,7 +12,6 @@ namespace Pacman
 {
     public class TitleScreen : Screen
     {
-        Vector2 position;
         GraphicsDeviceManager graphics;
 
         Image titleImage;
@@ -28,7 +27,6 @@ namespace Pacman
         Button optionsButton;
         public TitleScreen((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
-            position = Position;
             graphics = Graphics;
         }
 
@@ -62,6 +60,9 @@ namespace Pacman
                 graphics.PreferredBackBufferWidth = Game1.screens[Game1.GameStates.MapEditor].size.width;
                 graphics.PreferredBackBufferHeight = Game1.screens[Game1.GameStates.MapEditor].size.height;
                 graphics.ApplyChanges();
+
+                Game1.screens[Game1.GameStates.Options].size = Game1.screens[Game1.GameStates.MapEditor].size;
+                Options.screenOrigin = new Vector2(Game1.screens[Game1.GameStates.MapEditor].size.width - 400, Game1.screens[Game1.GameStates.MapEditor].size.height - 400);
             }
 
             else if(playButton.IsClicked(ms))

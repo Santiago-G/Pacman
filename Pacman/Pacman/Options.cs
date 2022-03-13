@@ -11,10 +11,13 @@ namespace Pacman
 {
     public class Options : Screen
     {
-        Vector2 position;
-        GraphicsDeviceManager graphics;
+        public static Vector2 screenOrigin;
 
-        Image volumeText;
+        Texture2D background;
+
+        Image audioText;
+
+        Slider volumeBar = new Slider(new Rectangle(350, 30, 300, 37), 5, Color.White);
 
         /* Volume Bar
          * Music Option (Switch between radios that each have their own songs)
@@ -25,19 +28,33 @@ namespace Pacman
         {
             size = Size;
             position = Position;
-            graphics = Graphics;
+        }
+
+        public void GetBackground()
+        {
+            var gd = graphics.GraphicsDevice;
+
+            Color[] colors = new Color[gd.Viewport.Width * gd.Viewport.Height];
+            gd.GetBackBufferData(colors);
+
+            background = new Texture2D(gd, gd.Viewport.Width, gd.Viewport.Height);
+            background.SetData(colors);
+
+            Draw background image
         }
 
         public override void LoadContent(ContentManager Content)
         {
-            volumeText = new Image(Content.Load<Texture2D>("volumeText"), new Vector2(30), Color.White);
-            objects.Add(volumeText);
+            audioText = new Image(Content.Load<Texture2D>("audioText"), new Vector2(), Color.White);
+            objects.Add(audioText);
 
             SoundEffect effect = Content.Load<SoundEffect>("examplesound");
             //effect.Play();
 
             Song song = Content.Load<Song>("examplesong");
             //MediaPlayer.Play(song);
+
+            objects.Add(volumeBar);
         }
     }
 }

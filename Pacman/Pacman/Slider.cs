@@ -5,19 +5,29 @@ using System.Collections.Generic;
 using System.Text;
 using MonoGame.Extended;
 
-namespace Pacman.Content
+namespace Pacman
 {
     public class Slider : Sprite
     {
         Rectangle hitbox;
         Color tint;
         float thickness;
+        int numOfBars;
 
-        public Slider(Rectangle rectangle, float Thickness, Color Tint) : base(null, new Vector2(rectangle.X, rectangle.Y), Tint)
+        public Slider(Rectangle rectangle, float BorderThickness, Color Tint, bool TenPercent=true) : base(null, new Vector2(rectangle.X, rectangle.Y), Tint)
         {
             hitbox = rectangle;
             tint = Tint;
-            thickness = Thickness;
+            thickness = BorderThickness;
+
+            if (TenPercent)
+            {
+                numOfBars = 10;
+            }
+            else
+            {
+                numOfBars = 5;
+            }
         }
 
         public override void Draw(SpriteBatch batch)
@@ -27,7 +37,7 @@ namespace Pacman.Content
 
         public override void Update(GameTime gameTime)
         {
-            throw new NotImplementedException();
+            
         }
     }
 }
