@@ -18,6 +18,7 @@ namespace Pacman
         }
 
         public static GameStates currentScreen = GameStates.TitleScreen;
+        GameStates prevScreen;
         public static Dictionary<GameStates, Screen> screens = new Dictionary<GameStates, Screen>();
 
         public static float MasterVolume = .7f;
@@ -26,6 +27,7 @@ namespace Pacman
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        KeyboardState prevKeyboardState = Keyboard.GetState();
         public void ChangeResolution(int width, int height)
         {
             _graphics.PreferredBackBufferWidth = width;
@@ -74,10 +76,9 @@ namespace Pacman
 
             MouseState ms = Mouse.GetState();
 
-            // screens[currentScreen].Update();
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape) && prevKeyboardState != Keyboard.GetState())
             {
+                #region debug stuff
                 //Color[] colors = new Color[GraphicsDevice.Viewport.Width * GraphicsDevice.Viewport.Height];
                 //GraphicsDevice.GetBackBufferData(colors);
 
@@ -89,14 +90,24 @@ namespace Pacman
                 //{
                 //    ss.SaveAsPng(memory, ss.Width, ss.Height);
                 //}
+                #endregion
 
-                currentScreen = GameStates.Options;
-                Options.GetBackground();
-
+                if (currentScreen != GameStates.Options)
+                {
+                    prevScreen = currentScreen;
+                    Options.SetUpScreen();
+                }
+                else
+                {
+                    currentScreen = prevScreen;
+                }
             }
 
-            screens[currentScreen].Update(gameTime);
+            
 
+
+            screens[currentScreen].Update(gameTime);
+            prevKeyboardState = Keyboard.GetState();
             base.Update(gameTime);
         }
 

@@ -8,8 +8,8 @@ namespace Pacman
 {
     public class Image : Sprite
     {
-        Texture2D image;
-        Vector2 position;
+        public Texture2D image;
+        public Vector2 position;
         Color tint;
 
         public Image(Texture2D texture2D, Vector2 Position, Color Tint) : base(texture2D, Position, Tint)
