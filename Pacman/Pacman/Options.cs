@@ -13,7 +13,7 @@ namespace Pacman
     {
         public static Vector2 screenOrigin;
 
-        Texture2D background;
+        static Texture2D background;
 
         Image audioText;
 
@@ -30,7 +30,7 @@ namespace Pacman
             position = Position;
         }
 
-        public void GetBackground()
+        public static void GetBackground()
         {
             var gd = graphics.GraphicsDevice;
 
@@ -40,7 +40,6 @@ namespace Pacman
             background = new Texture2D(gd, gd.Viewport.Width, gd.Viewport.Height);
             background.SetData(colors);
 
-            Draw background image
         }
 
         public override void LoadContent(ContentManager Content)
@@ -55,6 +54,13 @@ namespace Pacman
             //MediaPlayer.Play(song);
 
             objects.Add(volumeBar);
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(background, new Vector2(0), Color.White);
+
+            base.Draw(spriteBatch);
         }
     }
 }

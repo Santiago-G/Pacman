@@ -8,7 +8,7 @@ namespace Pacman
 {
     public abstract class Screen
     {
-        public GraphicsDeviceManager graphics;
+        public static GraphicsDeviceManager graphics;
 
         public (int width, int height) size;
 

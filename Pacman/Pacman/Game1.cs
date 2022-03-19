@@ -78,17 +78,20 @@ namespace Pacman
 
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
-                Color[] colors = new Color[GraphicsDevice.Viewport.Width * GraphicsDevice.Viewport.Height];
-                GraphicsDevice.GetBackBufferData(colors);
+                //Color[] colors = new Color[GraphicsDevice.Viewport.Width * GraphicsDevice.Viewport.Height];
+                //GraphicsDevice.GetBackBufferData(colors);
 
-                Texture2D ss = new Texture2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
-                ss.SetData(colors);
+                //Texture2D ss = new Texture2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+                //ss.SetData(colors);
 
                 //Debug for saving to file
-                using (FileStream memory = new FileStream("ss.png", FileMode.OpenOrCreate))
-                {
-                    ss.SaveAsPng(memory, ss.Width, ss.Height);
-                }
+                //using (FileStream memory = new FileStream("ss.png", FileMode.OpenOrCreate))
+                //{
+                //    ss.SaveAsPng(memory, ss.Width, ss.Height);
+                //}
+
+                currentScreen = GameStates.Options;
+                Options.GetBackground();
 
             }
 
