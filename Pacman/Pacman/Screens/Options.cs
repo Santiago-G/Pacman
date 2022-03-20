@@ -12,15 +12,15 @@ namespace Pacman
 {
     public class Options : Screen
     {
-        enum OptionScreens
+        public enum OptionScreens
         {
             MainMenu,
             Audio,
             Visual,
-            Keybinds
+            Controls
         }
 
-        OptionScreens currentScreen = OptionScreens.MainMenu;
+        public static OptionScreens currentScreen = OptionScreens.MainMenu;
         Dictionary<OptionScreens, Screen> screens = new Dictionary<OptionScreens, Screen>();
 
         public static Vector2 screenOrigin;
@@ -47,9 +47,11 @@ namespace Pacman
             Game1.currentScreen = Game1.GameStates.Options;
 
             screenOrigin = new Vector2((background.Width/2) - (menuBackground.image.Width/2), (background.Height / 2) - (menuBackground.image.Height / 2));
-
+            currentScreen = OptionScreens.MainMenu;
             menuBackground.position = screenOrigin;
-            audioText.Position = new Vector2(screenOrigin.X + (menuBackground.image.Width/2 - (audioText.Image.Width/2)), screenOrigin.Y + 50);
+
+            OptionsMainMenu.setUpPositions();
+            OptionsAudio.setUpPositions();
         }
 
         static void GetBackground()
@@ -61,20 +63,23 @@ namespace Pacman
 
             background = new Texture2D(gd, gd.Viewport.Width, gd.Viewport.Height);
             background.SetData(colors);
-
         }
 
         public override void LoadContent(ContentManager Content)
         {
-            screens.Add(OptionScreens.MainMenu, new OptionsMainMenu());
-            screens.Add(OptionScreens.Audio, new OptionsAudio((800, 800),  screenOrigin, graphics));
-            screens.Add(OptionScreens.MainMenu, new OptionsMainMenu());
-
             menuBackground = new Image(Content.Load<Texture2D>("optionsBackground"), new Vector2(), Color.White);
-            objects.Add(menuBackground);
 
-            audioText = new Button(Content.Load<Texture2D>("audioText"), new Vector2(), Color.White);
-            objects.Add(audioText);
+            screens.Add(OptionScreens.MainMenu, new OptionsMainMenu((800, 800), screenOrigin, graphics, menuBackground));
+            screens.Add(OptionScreens.Audio, new OptionsAudio((800, 800),  screenOrigin, graphics, menuBackground));
+            //screens.Add(OptionScreens.MainMenu, new OptionsMainMenu());
+
+            
+            //objects.Add(menuBackground);
+
+            foreach (var screen in screens)
+            {
+                screen.Value.LoadContent(Content);
+            }
 
             SoundEffect effect = Content.Load<SoundEffect>("examplesound");
             //effect.Play();
@@ -85,11 +90,19 @@ namespace Pacman
             //objects.Add(volumeBar);
         }
 
+        public override void Update(GameTime gameTime)
+        {
+            screens[currentScreen].Update(gameTime);
+
+            base.Update(gameTime);
+        }
+
         public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(background, new Vector2(0), Color.DarkGray);
+            menuBackground.Draw(spriteBatch);
 
-            base.Draw(spriteBatch);
+            screens[currentScreen].Draw(spriteBatch);
         }
     }
 }

@@ -14,11 +14,18 @@ namespace Pacman.Screens
     {
         static Image background;
         static Button audioText;
+        static Vector2 screenOrigin => Options.screenOrigin;
 
-        public OptionsAudio((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
+        public OptionsAudio((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics, Image BackgroundImage) : base(Size, Position, Graphics)
         {
             size = Size;
             position = Position;
+            background = BackgroundImage;
+        }
+
+        static public void setUpPositions()
+        {
+            audioText.Position = new Vector2(screenOrigin.X + (background.image.Width / 2 - (audioText.Image.Width / 2)), screenOrigin.Y + 50);
         }
 
         public override void LoadContent(ContentManager Content)
