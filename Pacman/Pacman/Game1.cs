@@ -47,7 +47,6 @@ namespace Pacman
             // TODO: Add your initialization logic here
 
             ChangeResolution(800, 800);
-            //800, 1070 for titleScreen & Options(allow options to scroll if you dont have enough room)
             base.Initialize();
         }
 

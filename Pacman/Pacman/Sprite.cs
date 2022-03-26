@@ -7,9 +7,15 @@ namespace Pacman
 {
     public abstract class Sprite
     {
+        public Texture2D Image;
+        public Vector2 Position;
+        public Color Tint;
+
         public Sprite(Texture2D Image, Vector2 Position, Color Tint)
         {
-            
+            this.Image = Image;
+            this.Position = Position;
+            this.Tint = Tint;
         }
 
         public abstract void Update(GameTime gameTime);

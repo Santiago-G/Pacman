@@ -77,5 +77,10 @@ namespace Pacman
 
             base.Update(gameTime);
         }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            base.Draw(spriteBatch);
+        }
     }
 }

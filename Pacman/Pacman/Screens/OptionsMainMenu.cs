@@ -28,9 +28,9 @@ namespace Pacman.Screens
 
         static public void setUpPositions()
         {
-            audioButton.Position = new Vector2(screenOrigin.X + (background.image.Width / 2 - (audioButton.Image.Width / 2)), screenOrigin.Y + 200);
-            visualsButton.Position = new Vector2(screenOrigin.X + (background.image.Width / 2 - (visualsButton.Image.Width / 2)), screenOrigin.Y + 350);
-            controlsButton.Position = new Vector2(screenOrigin.X + (background.image.Width / 2 - (controlsButton.Image.Width / 2)), screenOrigin.Y + 500);
+            audioButton.Position = new Vector2(screenOrigin.X + (background.Image.Width / 2 - (audioButton.Image.Width / 2)), screenOrigin.Y + 200);
+            visualsButton.Position = new Vector2(screenOrigin.X + (background.Image.Width / 2 - (visualsButton.Image.Width / 2)), screenOrigin.Y + 350);
+            controlsButton.Position = new Vector2(screenOrigin.X + (background.Image.Width / 2 - (controlsButton.Image.Width / 2)), screenOrigin.Y + 500);
         }
 
         public override void LoadContent(ContentManager Content)

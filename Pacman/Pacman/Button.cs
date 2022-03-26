@@ -9,19 +9,12 @@ namespace Pacman
 {
     public class Button : Sprite
     {
-        public Texture2D Image;
-        public Vector2 Position;
-        public Color Tint;
-
         bool isPressed = false;
 
         public Rectangle Hitbox { get => new Rectangle((int)Position.X, (int)Position.Y, Image.Width, Image.Height); set { } }
 
         public Button(Texture2D image, Vector2 pos, Color tint) : base(image, pos, tint)
         {
-            Image = image;
-            Position = pos;
-            Tint = tint;
         }
 
         public bool IsClicked(MouseState ms)

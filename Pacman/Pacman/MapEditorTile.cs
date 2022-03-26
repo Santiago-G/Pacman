@@ -48,8 +48,6 @@ namespace Pacman
         {
             CurrentImage = NormalSprite;
             prevImage = CurrentImage;
-            Position = position;
-            Tint = tint;
         }
 
         public bool IsClicked()

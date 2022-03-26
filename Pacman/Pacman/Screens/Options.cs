@@ -46,9 +46,9 @@ namespace Pacman
             GetBackground();
             Game1.currentScreen = Game1.GameStates.Options;
 
-            screenOrigin = new Vector2((background.Width/2) - (menuBackground.image.Width/2), (background.Height / 2) - (menuBackground.image.Height / 2));
+            screenOrigin = new Vector2((background.Width/2) - (menuBackground.Image.Width/2), (background.Height / 2) - (menuBackground.Image.Height / 2));
             currentScreen = OptionScreens.MainMenu;
-            menuBackground.position = screenOrigin;
+            menuBackground.Position = screenOrigin;
 
             OptionsMainMenu.setUpPositions();
             OptionsAudio.setUpPositions();
