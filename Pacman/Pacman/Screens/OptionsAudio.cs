@@ -30,7 +30,7 @@ namespace Pacman.Screens
             audioText = new Button(Content.Load<Texture2D>("audioText"), new Vector2(), Color.White);
             objects.Add(audioText);
 
-            volumeControl = new Slider(new Rectangle(new Point(200), new Point(200, 50)), 2f, Color.White, 10, .5f);
+            volumeControl = new Slider(new Rectangle(new Point(200), new Point(200, 50)), 2f, Color.White, 2, 3f);
             volumeControl.LoadContent(Content);
             objects.Add(volumeControl);
         }
