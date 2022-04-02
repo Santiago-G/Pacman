@@ -11,6 +11,7 @@ namespace Pacman
     public class SliderBar : Sprite
     {
         public Rectangle Hitbox;
+        public int BarNumber;
 
         public SliderBar(Texture2D Image, Vector2 Position, int Width, int Height, Color Tint) : base(Image, Position, Tint)
         {

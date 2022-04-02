@@ -21,9 +21,9 @@ namespace Pacman
         GameStates prevScreen;
         public static Dictionary<GameStates, Screen> screens = new Dictionary<GameStates, Screen>();
 
-        public static float MasterVolume = .7f;
-        public static float SFXVolume = .7f;
-        public static float MusicVolume = .7f;
+        public static float MasterVolume = .5f;
+        public static float SFXVolume = .5f;
+        public static float MusicVolume = .5f;
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;

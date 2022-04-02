@@ -5,62 +5,109 @@ using System.Collections.Generic;
 using System.Text;
 using MonoGame.Extended;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Input;
 
 namespace Pacman
 {
     public class Slider : Sprite
     {
-        Rectangle barHitbox;
+        SliderBar bar;
         Rectangle borderHitbox;
         Color tint;
-        float thickness;
-        int numOfBars;
+        int thickness;
+        public int numOfBars;
         List<SliderBar> bars = new List<SliderBar>();
-        float spacing;
+        int spacing;
+        public int numOfVisibleBars;
 
-        public Slider(Rectangle Bar, Vector2 Position, float BorderThickness, Color Tint, int NumberOfBars, float Spacing) : base(null, new Vector2(Bar.X, Bar.Y), Tint)
+        bool pressed = false;
+        bool pressedOutside = false;
+        bool outside = false;
+
+        public Slider(SliderBar Bar, Vector2 Position, int BorderThickness, Color Tint, int NumberOfBars, int Spacing) : base(null, Position, Tint)
         {
-            barHitbox = Bar;
+            bar = Bar;
             tint = Tint;
             thickness = BorderThickness;
             numOfBars = NumberOfBars;
             spacing = Spacing;
+
+            numOfBars = Math.Abs(numOfBars);
+
+            if (numOfBars == 0)
+            {
+                throw new Exception("Bars?");
+            }
         }
 
         public void LoadContent(ContentManager Content)
         {
-            borderHitbox = new Rectangle((int)(Position.X), (int)(Position.Y), barHitbox.Width * numOfBars + spacing * (numOfBars - 1) + ,);
+            borderHitbox = new Rectangle((int)Position.X, (int)Position.Y, thickness*2 + bar.Hitbox.Width*numOfBars + spacing * (numOfBars + 1), bar.Hitbox.Height + thickness*2 + spacing*2);
+            ;
+            bars.Add(new SliderBar(bar.Image, new Vector2(borderHitbox.X + thickness + spacing, borderHitbox.Y + thickness + spacing), bar.Hitbox.Width, bar.Hitbox.Height, bar.Tint));
+            bars[0].BarNumber = 0;
+
+            for (int i = 1; i < numOfBars; i++)
+            {
+                bars.Add(new SliderBar(bar.Image, new Vector2(bars[0].Hitbox.X + spacing*i + bar.Hitbox.Width*i, bars[0].Hitbox.Y), bar.Hitbox.Width, bar.Hitbox.Height, bar.Tint));
+                bars[i].BarNumber = i;
+            }
+        }
 
 
-        //    int barWidth = (int)(((hitbox.Width - thickness * 2) - (spacing * 2) - spacing * (numOfBars - 1)) / numOfBars);
-        //    int barHeight = (int)(hitbox.Height - thickness * 2 - spacing* 2);// - (thickness*2) - spacing);
+        MouseState prevMouseState;
+        public override void Update(GameTime gameTime)
+        {
+            MouseState ms = Mouse.GetState();
 
-        //    //if ((hitbox.Width - thickness * 2) % numOfBars >= .5)
-        //    //{
-        //    //    barWidth ++;
-        //    //    hitbox.Width = (int)(barWidth * numOfBars + thickness * 2 + (spacing * 2) - spacing * (numOfBars - 1));
-        //    //}
+            if (borderHitbox.Contains(ms.Position))
+            {
+                if (outside && ms.LeftButton == ButtonState.Pressed)
+                {
+                    pressedOutside = true;
+                    outside = false;
+                }
+                if (ms.LeftButton == ButtonState.Pressed && prevMouseState != ms && !pressedOutside)
+                {
+                    pressed = true;
+                }
+                else if (ms.LeftButton != ButtonState.Pressed)
+                {
+                    pressed = false;
+                    pressedOutside = false;
+                }
 
-        //    for (int i = 0; i < numOfBars; i++)
-        //    {
-        //        bars.Add(new SliderBar(Content.Load<Texture2D>("smallPixel"), new Vector2((hitbox.X + thickness + spacing) + barWidth * i + spacing * i, hitbox.Y + thickness + spacing), barWidth, barHeight, Color.Red)) ;
-        //        //(hitbox.X + thickness + spacing) + barWidth * i + spacing *i
-        //    }
+                if (pressed)
+                {
+                    foreach (var bar in bars)
+                    {
+                        if (bar.Hitbox.Contains(ms.Position))
+                        {
+                            numOfVisibleBars = bar.BarNumber;
+                            break;
+                        }
+                    }
+                }
+            }
+            else 
+            {
+                pressed = false;
+                outside = true;
+            }
+
+            prevMouseState = Mouse.GetState();
         }
 
         public override void Draw(SpriteBatch batch)
         {
-            batch.DrawRectangle(hitbox, tint, thickness);
+            batch.DrawRectangle(borderHitbox, tint, thickness);
 
-            foreach (var bar in bars)
+            for (int i = 0; i <= numOfVisibleBars; i++)
             {
-                bar.Draw(batch);
+                bars[i].Draw(batch);
             }
         }
 
-        public override void Update(GameTime gameTime)
-        {
-            
-        }
+
     }
 }
