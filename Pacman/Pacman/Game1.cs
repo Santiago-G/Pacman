@@ -28,6 +28,9 @@ namespace Pacman
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         KeyboardState prevKeyboardState = Keyboard.GetState();
+
+
+        public static string WindowText = "";
         public void ChangeResolution(int width, int height)
         {
             _graphics.PreferredBackBufferWidth = width;
@@ -103,10 +106,11 @@ namespace Pacman
             }
 
             
-
-
             screens[currentScreen].Update(gameTime);
             prevKeyboardState = Keyboard.GetState();
+
+            //Window.Title = Game1.WindowText; 
+            
             base.Update(gameTime);
         }
 

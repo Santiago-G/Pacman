@@ -30,9 +30,6 @@ namespace Pacman
 
         private Texture2D WallTile; //there will be a lot of these
 
-        public Vector2 Position;
-        public Color Tint;
-
         //shift click like in gimp to fill in wehatever is selected
         //also have a fill all.
 
