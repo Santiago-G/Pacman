@@ -20,7 +20,16 @@ namespace Pacman
         Texture2D mapEditorSprite;
 
         Texture2D pelletButtonSprite;
+        Texture2D selectedPelletSprite;
         Button pelletButton;
+
+        Texture2D eraserButtonSprite;
+        Texture2D selectedEraserSprite;
+        Button eraserButton;
+
+        Texture2D powerPelletButtonSprite;
+        Texture2D selectedPowerPelletSprite;
+        Button powerPelletButton;
 
         public MapEditor((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
@@ -32,18 +41,35 @@ namespace Pacman
         public override void LoadContent(ContentManager Content)
         {
             mapEditorSprite = Content.Load<Texture2D>("mapEditorText");
-            mapEditorImage = new Image(mapEditorSprite, new Vector2(800 - mapEditorSprite.Width/2 , 10), Color.White);
+            mapEditorImage = new Image(mapEditorSprite, new Vector2(800 - mapEditorSprite.Width / 2, 10), Color.White);
             objects.Add(mapEditorImage);
 
-            pelletButtonSprite = Content.Load<Texture2D>("PelletButton");
-            pelletButton = new Button(pelletButtonSprite, new Vector2(400, 400), Color.White);
+            pelletButtonSprite = Content.Load<Texture2D>("UnselectedPelletButton");
+            selectedPelletSprite = Content.Load<Texture2D>("PelletButton");
+            pelletButton = new Button(pelletButtonSprite, new Vector2(800, 200), Color.White);
+            objects.Add(pelletButton);
 
-            Vector2 globalOffset = new Vector2(20, 90);
+            eraserButtonSprite = Content.Load<Texture2D>("eraserButton");
+            selectedEraserSprite = Content.Load<Texture2D>("selectedEraserButton");
+            eraserButton = new Button(eraserButtonSprite, new Vector2(800, 300), Color.White);
+            objects.Add(eraserButton);
+
+            powerPelletButtonSprite = Content.Load<Texture2D>("powerPelletButton");
+            selectedPowerPelletSprite = Content.Load<Texture2D>("selectedPowerPellet");
+            powerPelletButton = new Button(powerPelletButtonSprite, new Vector2(800, 400), Color.White);
+            objects.Add(powerPelletButton);
+
+            //ADD THING THAT IS SELECTED ONLY DRAWS OVER BLANK TILES
+
+            Vector2 globalOffset = new Vector2(40, 90);
 
             MapEditorTile.NormalSprite = Content.Load<Texture2D>("mapEditorTile");
             MapEditorTile.NormalEnlargedBorder = Content.Load<Texture2D>("EnlargeBorderTile");
             MapEditorTile.PelletSprite = Content.Load<Texture2D>("mapEditorTile2");
             MapEditorTile.PelletEnlargedBorder = Content.Load<Texture2D>("enlargedPelletTile");
+            MapEditorTile.PowerPelletSprite = Content.Load<Texture2D>("powerPelletSprite");
+            MapEditorTile.PowerPelletEnlargedBorder = Content.Load<Texture2D>("enlargedPowerPelletSprite");
+
 
             for (int y = 0; y < tiles.GetLength(0); y++)
             {
@@ -69,15 +95,59 @@ namespace Pacman
             {
                 tile.Update(gameTime);
             }
-                
-            if (pelletButton.IsClicked(ms) && selectedTileType != SelectedType.Pellet)
+
+            if (pelletButton.IsClicked(ms))
             {
-                selectedTileType = SelectedType.Pellet;
+                if (selectedTileType != SelectedType.Pellet)
+                {
+                    selectedTileType = SelectedType.Pellet;
+                    pelletButton.Image = selectedPelletSprite;
+
+                    eraserButton.Image = eraserButtonSprite;
+                    powerPelletButton.Image = powerPelletButtonSprite;
+                }
+                else
+                {
+                    selectedTileType = SelectedType.Default;
+                    pelletButton.Image = pelletButtonSprite;
+
+                }
             }
-            else if(selectedTileType == SelectedType.Pellet)
+
+            else if (eraserButton.IsClicked(ms))
             {
-                selectedTileType = SelectedType.Default;
+                if (selectedTileType != SelectedType.Eraser)
+                {
+                    selectedTileType = SelectedType.Eraser;
+                    eraserButton.Image = selectedEraserSprite;
+
+                    pelletButton.Image = pelletButtonSprite;
+                    powerPelletButton.Image = powerPelletButtonSprite;
+                }
+                else
+                {
+                    selectedTileType = SelectedType.Default;
+                    eraserButton.Image = eraserButtonSprite;
+                }
             }
+
+            else if (powerPelletButton.IsClicked(ms))
+            {
+                if (selectedTileType != SelectedType.PowerPellet)
+                {
+                    selectedTileType = SelectedType.PowerPellet;
+                    powerPelletButton.Image = selectedPowerPelletSprite;
+
+                    pelletButton.Image = pelletButtonSprite;
+                    eraserButton.Image = eraserButtonSprite;
+                }
+                else
+                {
+                    selectedTileType = SelectedType.Default;
+                    powerPelletButton.Image = powerPelletButtonSprite;
+                }
+            }
+
 
             base.Update(gameTime);
         }

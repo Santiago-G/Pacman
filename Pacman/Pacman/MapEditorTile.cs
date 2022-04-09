@@ -28,6 +28,9 @@ namespace Pacman
         public static Texture2D PelletSprite;
         public static Texture2D PelletEnlargedBorder;
 
+        public static Texture2D PowerPelletSprite;
+        public static Texture2D PowerPelletEnlargedBorder;
+
         private Texture2D WallTile; //there will be a lot of these
 
         //shift click like in gimp to fill in wehatever is selected
@@ -67,13 +70,18 @@ namespace Pacman
                         case SelectedType.Default:
                             break;
                         case SelectedType.Pellet:
+                            TileStates = States.Pellet;
                             break;
                         case SelectedType.PowerPellet:
+                            TileStates = States.PowerPellet;
+                            break;
+                        case SelectedType.Eraser:
+                            TileStates = States.Empty;
                             break;
                         default:
                             break;
                     }
-                    TileStates = States.Pellet;
+                    
                 }
 
                 switch (TileStates)
@@ -85,6 +93,10 @@ namespace Pacman
                     case States.Pellet:
                         prevImage = PelletSprite;
                         CurrentImage = PelletEnlargedBorder;
+                        break;
+                    case States.PowerPellet:
+                        prevImage = PowerPelletSprite;
+                        CurrentImage = PowerPelletEnlargedBorder;
                         break;
                 }
             }
