@@ -16,7 +16,10 @@ namespace Pacman
             Pellet,
             PowerPellet,
             Fruit,
-            Wall
+            HorizontalWall,
+            VerticalWall,
+            CornerWall,
+            LoneWall,
         }
 
         public Texture2D CurrentImage;

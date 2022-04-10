@@ -31,6 +31,19 @@ namespace Pacman
         Texture2D selectedPowerPelletSprite;
         Button powerPelletButton;
 
+        Texture2D wallButtonSprite;
+        Texture2D selectedWallSprite;
+        Button wallButton;
+
+        /*  Wall Cases
+         * One wall (no neighbors, circle) O
+         * Horizontal wall (neighbors left/right ONLY, A line without the fillet)  **
+         * Vertical wall (neighbors up/down ONLY, A line without the fillet) |
+         * Semicircle wall (edge of horizontal/vertical wall, 180d edge) )
+         * Corner wall (neighbors 90 degrees )
+         * 
+         */
+
         public MapEditor((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
             size = Size;
@@ -46,20 +59,25 @@ namespace Pacman
 
             pelletButtonSprite = Content.Load<Texture2D>("UnselectedPelletButton");
             selectedPelletSprite = Content.Load<Texture2D>("PelletButton");
-            pelletButton = new Button(pelletButtonSprite, new Vector2(800, 200), Color.White);
+            pelletButton = new Button(pelletButtonSprite, new Vector2(1000, 200), Color.White);
             objects.Add(pelletButton);
 
             eraserButtonSprite = Content.Load<Texture2D>("eraserButton");
             selectedEraserSprite = Content.Load<Texture2D>("selectedEraserButton");
-            eraserButton = new Button(eraserButtonSprite, new Vector2(800, 300), Color.White);
+            eraserButton = new Button(eraserButtonSprite, new Vector2(1000, 300), Color.White);
             objects.Add(eraserButton);
 
             powerPelletButtonSprite = Content.Load<Texture2D>("powerPelletButton");
             selectedPowerPelletSprite = Content.Load<Texture2D>("selectedPowerPellet");
-            powerPelletButton = new Button(powerPelletButtonSprite, new Vector2(800, 400), Color.White);
+            powerPelletButton = new Button(powerPelletButtonSprite, new Vector2(1000, 400), Color.White);
             objects.Add(powerPelletButton);
 
-            //ADD THING THAT IS SELECTED ONLY DRAWS OVER BLANK TILES
+            wallButtonSprite = Content.Load<Texture2D>("wallButton");
+            selectedWallSprite = Content.Load<Texture2D>("selectedWallButton");
+            wallButton = new Button(wallButtonSprite, new Vector2(1000, 500), Color.White);
+            objects.Add(wallButton);
+
+            //ADD THING THAT IF SELECTED ONLY DRAWS OVER BLANK TILES
 
             Vector2 globalOffset = new Vector2(40, 90);
 
@@ -91,6 +109,9 @@ namespace Pacman
             //Call on tile that corresponds to that position
             //Aadianjhd function could take in the selectedTileType
 
+            //use the 2d array to find the tile's neighbors.
+            // like when you place a tile, check if it's neighbors are walls, if they are change the texture accordingly
+
             foreach (var tile in tiles)
             {
                 tile.Update(gameTime);
@@ -105,12 +126,12 @@ namespace Pacman
 
                     eraserButton.Image = eraserButtonSprite;
                     powerPelletButton.Image = powerPelletButtonSprite;
+                    wallButton.Image = wallButtonSprite;
                 }
                 else
                 {
                     selectedTileType = SelectedType.Default;
                     pelletButton.Image = pelletButtonSprite;
-
                 }
             }
 
@@ -123,6 +144,7 @@ namespace Pacman
 
                     pelletButton.Image = pelletButtonSprite;
                     powerPelletButton.Image = powerPelletButtonSprite;
+                    wallButton.Image = wallButtonSprite;
                 }
                 else
                 {
@@ -140,6 +162,7 @@ namespace Pacman
 
                     pelletButton.Image = pelletButtonSprite;
                     eraserButton.Image = eraserButtonSprite;
+                    wallButton.Image = wallButtonSprite;
                 }
                 else
                 {
@@ -148,6 +171,28 @@ namespace Pacman
                 }
             }
 
+            else if (wallButton.IsClicked(ms))
+            {
+                if (selectedTileType != SelectedType.Wall)
+                {
+                    selectedTileType = SelectedType.Wall;
+                    wallButton.Image = selectedWallSprite;
+
+                    pelletButton.Image = pelletButtonSprite;
+                    eraserButton.Image = eraserButtonSprite;
+                    powerPelletButton.Image = powerPelletButtonSprite;
+                }
+                else
+                {
+                    selectedTileType = SelectedType.Default;
+                    wallButton.Image = wallButtonSprite;
+                }
+            }
+
+            if (selectedTileType == SelectedType.Wall)
+            {
+                
+            }
 
             base.Update(gameTime);
         }

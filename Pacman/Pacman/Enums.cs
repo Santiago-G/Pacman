@@ -10,6 +10,7 @@ namespace Pacman
         Default,
         Pellet,
         PowerPellet,
+        Wall,
         Eraser,
     }
 }

@@ -289,6 +289,18 @@
 /processorParam:TextureFormat=Color
 /build:selectedPowerPellet.png
 
+#begin selectedWallButton.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:selectedWallButton.png
+
 #begin SFXVolumeText.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -348,4 +360,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:volumeText.png
+
+#begin wallButton.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:wallButton.png
 
