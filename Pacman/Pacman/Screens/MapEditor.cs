@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Pacman.GraphStuff;
+using System;
+using System.Collections.Generic;
 
 namespace Pacman
 {
@@ -13,7 +15,7 @@ namespace Pacman
 
         Vector2 position;
 
-        Graph<int> graph = new Graph<int>();
+        //Graph<int> graph = new Graph<int>();
         MapEditorTile[,] tiles = new MapEditorTile[31, 28]; //y,x
 
         Image mapEditorImage;
@@ -35,14 +37,61 @@ namespace Pacman
         Texture2D selectedWallSprite;
         Button wallButton;
 
+        Vector2 globalOffset = new Vector2(40, 90);
+
         /*  Wall Cases
          * One wall (no neighbors, circle) O
          * Horizontal wall (neighbors left/right ONLY, A line without the fillet)  **
          * Vertical wall (neighbors up/down ONLY, A line without the fillet) |
          * Semicircle wall (edge of horizontal/vertical wall, 180d edge) )
          * Corner wall (neighbors 90 degrees )
-         * 
          */
+
+        //returns string
+
+        Point PosToIndex(Vector2 Pos)
+        {
+            Pos.X -= globalOffset.X;
+            Pos.Y -= globalOffset.Y;
+
+            int gridX = (int)(Pos.X / tiles[0,0].Hitbox.Width);
+            int gridY = (int)(Pos.Y / tiles[0,0].Hitbox.Height);
+
+            if (gridX <= 0 || gridX >= tiles.GetLength(1) || gridY <= 0 || gridY >= tiles.GetLength(0))
+            {
+                return new Point(-1);
+            }
+
+            return new Point(gridX, gridY);
+        }
+
+        void UpdateWall(Vector2 TilePos)
+        {
+            if (PosToIndex(TilePos) == new Point(-1))
+            {
+                return;
+            }
+
+            List<MapEditorTile> Neighbors = new List<MapEditorTile>();
+            //y, x
+
+            if (IsValid(new Vector2(TilePos.X - 1, TilePos.Y)))
+            {
+                Neighbors.Add(tiles[0, 0]);
+            }
+
+            /*
+            Neighbors.Add(new Vector2(TilePos.X - 1, TilePos.Y)); //left
+            Neighbors.Add(new Vector2(TilePos.X, TilePos.Y + 1)); //down
+            Neighbors.Add(new Vector2(TilePos.X + 1, TilePos.Y)); //right
+            Neighbors.Add(new Vector2(TilePos.X, TilePos.Y - 1)); //up
+            */
+        }
+
+        private bool IsValid(Vector2 gridIndex)
+        {
+            return true;
+        }
 
         public MapEditor((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
@@ -79,7 +128,7 @@ namespace Pacman
 
             //ADD THING THAT IF SELECTED ONLY DRAWS OVER BLANK TILES
 
-            Vector2 globalOffset = new Vector2(40, 90);
+            
 
             MapEditorTile.NormalSprite = Content.Load<Texture2D>("mapEditorTile");
             MapEditorTile.NormalEnlargedBorder = Content.Load<Texture2D>("EnlargeBorderTile");
@@ -93,9 +142,11 @@ namespace Pacman
             {
                 for (int x = 0; x < tiles.GetLength(1); x++)
                 {
+
                     float realPositionX = x * MapEditorTile.NormalSprite.Width + globalOffset.X;
                     float realPositionY = y * MapEditorTile.NormalSprite.Height + globalOffset.Y;
                     tiles[y, x] = new MapEditorTile(MapEditorTile.NormalSprite, new Vector2(realPositionX, realPositionY), Color.White);
+                    tiles[y, x].Cord = new Point(y, x);
                 }
             }
         }

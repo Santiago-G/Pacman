@@ -45,7 +45,7 @@ namespace Pacman
 
         public States TileStates = States.Empty;
 
-        public Vector2 Cord;
+        public Point Cord;
 
         public MapEditorTile(Texture2D image, Vector2 position, Color tint) : base(image, position, tint)
         {
