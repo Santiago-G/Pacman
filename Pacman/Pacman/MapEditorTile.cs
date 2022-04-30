@@ -16,10 +16,24 @@ namespace Pacman
             Pellet,
             PowerPellet,
             Fruit,
-            HorizontalWall,
-            VerticalWall,
-            CornerWall,
+            Wall
+        }
+
+        public enum WallStates
+        {
             LoneWall,
+
+            Horiz,
+            HorizLeftEnd,
+            HorizRightEnd,
+
+            Verti,
+            VertiTopEnd,
+            VertiBottomEnd,
+
+            InteriorWall,
+            InteriorCorner,
+            notAWall
         }
 
         public Texture2D CurrentImage;
@@ -44,6 +58,7 @@ namespace Pacman
         public Rectangle Hitbox { get => new Rectangle((int)Position.X, (int)Position.Y, CurrentImage.Width, CurrentImage.Height); set { } }
 
         public States TileStates = States.Empty;
+        public WallStates wallStates = WallStates.notAWall; 
 
         public Point Cord;
 

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using Pacman.GraphStuff;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Pacman
 {
@@ -39,12 +40,14 @@ namespace Pacman
 
         Vector2 globalOffset = new Vector2(40, 90);
 
+        Point[] offsets = new Point[] { new Point(-1, -1), new Point(0, -1), new Point(1, -1), new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(-1, 1), new Point(-1, 0)};
+
         /*  Wall Cases
          * One wall (no neighbors, circle) O
          * Horizontal wall (neighbors left/right ONLY, A line without the fillet)  **
          * Vertical wall (neighbors up/down ONLY, A line without the fillet) |
          * Semicircle wall (edge of horizontal/vertical wall, 180d edge) )
-         * Corner wall (neighbors 90 degrees )
+         * Corner wall (neighbors 90 degrees)
          */
 
         //returns string
@@ -54,8 +57,8 @@ namespace Pacman
             Pos.X -= globalOffset.X;
             Pos.Y -= globalOffset.Y;
 
-            int gridX = (int)(Pos.X / tiles[0,0].Hitbox.Width);
-            int gridY = (int)(Pos.Y / tiles[0,0].Hitbox.Height);
+            int gridX = (int)(Pos.X / tiles[0, 0].Hitbox.Width);
+            int gridY = (int)(Pos.Y / tiles[0, 0].Hitbox.Height);
 
             if (gridX <= 0 || gridX >= tiles.GetLength(1) || gridY <= 0 || gridY >= tiles.GetLength(0))
             {
@@ -67,30 +70,58 @@ namespace Pacman
 
         void UpdateWall(Vector2 TilePos)
         {
-            if (PosToIndex(TilePos) == new Point(-1))
+            Point tileIndex = PosToIndex(TilePos);
+
+            if (tileIndex == new Point(-1))
             {
                 return;
             }
 
-            List<MapEditorTile> Neighbors = new List<MapEditorTile>();
+            bool[] neighboringWalls = new bool[offsets.Length];
             //y, x
 
-            if (IsValid(new Vector2(TilePos.X - 1, TilePos.Y)))
+            for (int i = 0; i < offsets.Length; i++)
             {
-                Neighbors.Add(tiles[0, 0]);
+                var newPosition = new Point(tileIndex.X + offsets[i].X, tileIndex.Y + offsets[i].Y);
+
+                neighboringWalls[i] = IsValid(newPosition) && tiles[newPosition.Y, newPosition.X].TileStates == MapEditorTile.States.Wall;
             }
 
-            /*
-            Neighbors.Add(new Vector2(TilePos.X - 1, TilePos.Y)); //left
-            Neighbors.Add(new Vector2(TilePos.X, TilePos.Y + 1)); //down
-            Neighbors.Add(new Vector2(TilePos.X + 1, TilePos.Y)); //right
-            Neighbors.Add(new Vector2(TilePos.X, TilePos.Y - 1)); //up
-            */
+            //0, 1, 2
+            //7,  , 3
+            //6, 5, 4
+
+
+            if (neighboringWalls.Count(x => x) == neighboringWalls.Length)
+            {
+                tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.InteriorWall;
+            }
+            else 
+            {
+
+
+
+                if (!(neighboringWalls[1] && neighboringWalls[3] && neighboringWalls[5] && neighboringWalls[7]))
+                {
+                    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.LoneWall;
+                }
+                else if (neighboringWalls[1] && neighboringWalls[3] && neighboringWalls[5] && neighboringWalls[7])
+                {
+                    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.InteriorCorner;
+                }
+            }
+
+            if(!(neighboringWalls[1] && neighboringWalls[3] && neighboringWalls[5] && neighboringWalls[7]))
+            {
+                
+            }
+
+          
         }
 
-        private bool IsValid(Vector2 gridIndex)
+        private bool IsValid(Point gridIndex)
         {
-            return true;
+            return !(gridIndex.X < 0 || gridIndex.X >= tiles.GetLength(1)) || (gridIndex.Y < 0 || gridIndex.Y >= tiles.GetLength(0));
         }
 
         public MapEditor((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
@@ -128,7 +159,7 @@ namespace Pacman
 
             //ADD THING THAT IF SELECTED ONLY DRAWS OVER BLANK TILES
 
-            
+
 
             MapEditorTile.NormalSprite = Content.Load<Texture2D>("mapEditorTile");
             MapEditorTile.NormalEnlargedBorder = Content.Load<Texture2D>("EnlargeBorderTile");
@@ -242,7 +273,7 @@ namespace Pacman
 
             if (selectedTileType == SelectedType.Wall)
             {
-                
+
             }
 
             base.Update(gameTime);
