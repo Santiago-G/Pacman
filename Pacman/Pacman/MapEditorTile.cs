@@ -48,7 +48,13 @@ namespace Pacman
         public static Texture2D PowerPelletSprite;
         public static Texture2D PowerPelletEnlargedBorder;
 
-        private Texture2D WallTile; //there will be a lot of these
+        public static Texture2D LoneWallTile;
+
+        public static Texture2D HorizWallTile;
+        public static Texture2D HorizLeftWallTile;
+        public static Texture2D HorizRightWallTile;
+
+        //there will be a lot of these
 
         //shift click like in gimp to fill in wehatever is selected
         //also have a fill all.
@@ -96,6 +102,9 @@ namespace Pacman
                         case SelectedType.Eraser:
                             TileStates = States.Empty;
                             break;
+                        case SelectedType.Wall:
+                            TileStates = States.Wall;
+                            break;
                         default:
                             break;
                     }
@@ -115,6 +124,41 @@ namespace Pacman
                     case States.PowerPellet:
                         prevImage = PowerPelletSprite;
                         CurrentImage = PowerPelletEnlargedBorder;
+                        break;
+                    case States.Wall:
+
+                        switch (wallStates)
+                        {
+                            case WallStates.LoneWall:
+
+                                CurrentImage = LoneWallTile;
+                                break;
+                            case WallStates.Horiz:
+
+                                CurrentImage = HorizWallTile;
+                                break;
+                            case WallStates.HorizLeftEnd:
+
+                                CurrentImage = HorizLeftWallTile;
+                                break;
+                            case WallStates.HorizRightEnd:
+
+                                CurrentImage = HorizRightWallTile;
+                                break;
+                            case WallStates.Verti:
+                                break;
+                            case WallStates.VertiTopEnd:
+                                break;
+                            case WallStates.VertiBottomEnd:
+                                break;
+                            case WallStates.InteriorWall:
+                                break;
+                            case WallStates.InteriorCorner:
+                                break;
+                            case WallStates.notAWall:
+                                break;
+                        }
+
                         break;
                 }
             }

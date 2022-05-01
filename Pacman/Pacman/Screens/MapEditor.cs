@@ -40,7 +40,7 @@ namespace Pacman
 
         Vector2 globalOffset = new Vector2(40, 90);
 
-        Point[] offsets = new Point[] { new Point(-1, -1), new Point(0, -1), new Point(1, -1), new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(-1, 1), new Point(-1, 0)};
+        Point[] offsets = new Point[] { new Point(-1, -1), new Point(0, -1), new Point(1, -1), new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(-1, 1), new Point(-1, 0) };
 
         /*  Wall Cases
          * One wall (no neighbors, circle) O
@@ -88,35 +88,80 @@ namespace Pacman
             }
 
             //0, 1, 2
-            //7,  , 3
+            //7, *, 3
             //6, 5, 4
-
 
             if (neighboringWalls.Count(x => x) == neighboringWalls.Length)
             {
                 tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.InteriorWall;
             }
-            else 
+            else
             {
-
-
-
                 if (!(neighboringWalls[1] && neighboringWalls[3] && neighboringWalls[5] && neighboringWalls[7]))
                 {
                     tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.LoneWall;
                 }
-                else if (neighboringWalls[1] && neighboringWalls[3] && neighboringWalls[5] && neighboringWalls[7])
+                else
                 {
-                    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.InteriorCorner;
+                    //Horizontal
+                    if (!neighboringWalls[1] && !neighboringWalls[5])
+                    {
+                        if (neighboringWalls[7] && neighboringWalls[3])
+                        {
+                            //middle horiz
+                            tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.Horiz;
+                            return;
+                        }
+                        else if (neighboringWalls[7])
+                        {
+                            //right horiz
+                            tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.HorizRightEnd;
+                            return;
+                        }
+                        else
+                        {
+                            //left horiz
+                            tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.HorizLeftEnd;
+                            return;
+                        }
+                    }
+
+                    //Vertical
+                    else if (!neighboringWalls[7] && !neighboringWalls[3])
+                    {
+                        if (neighboringWalls[1] && neighboringWalls[5])
+                        {
+                            //middle verti
+                            tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.Verti;
+                        }
+                        else if (neighboringWalls[1])
+                        {
+                            //bottom horiz
+                            tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.VertiBottomEnd;
+                        }
+                        else 
+                        {
+                            //top horiz
+                            tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.VertiTopEnd;
+                        }
+                    }
+
+                    //cross
+                    if (neighboringWalls[1] && neighboringWalls[3] && neighboringWalls[5] && neighboringWalls[7])
+                    {
+                        //interior center
+                        tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.InteriorCorner;
+                    }
+
+                    
                 }
-            }
 
-            if(!(neighboringWalls[1] && neighboringWalls[3] && neighboringWalls[5] && neighboringWalls[7]))
-            {
-                
-            }
 
-          
+                //else if (neighboringWalls[1] && neighboringWalls[3] && neighboringWalls[5] && neighboringWalls[7])
+                //{
+                //    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.InteriorCorner;
+                //}
+            }
         }
 
         private bool IsValid(Point gridIndex)
@@ -167,6 +212,13 @@ namespace Pacman
             MapEditorTile.PelletEnlargedBorder = Content.Load<Texture2D>("enlargedPelletTile");
             MapEditorTile.PowerPelletSprite = Content.Load<Texture2D>("powerPelletSprite");
             MapEditorTile.PowerPelletEnlargedBorder = Content.Load<Texture2D>("enlargedPowerPelletSprite");
+
+            MapEditorTile.LoneWallTile = Content.Load<Texture2D>("loneWall");
+
+            MapEditorTile.HorizWallTile = Content.Load<Texture2D>("horizWall");
+            MapEditorTile.HorizLeftWallTile = Content.Load<Texture2D>("horizLeftWall");
+
+
 
 
             for (int y = 0; y < tiles.GetLength(0); y++)
@@ -273,7 +325,13 @@ namespace Pacman
 
             if (selectedTileType == SelectedType.Wall)
             {
+                if (ms.LeftButton == ButtonState.Pressed)
+                {
+                    UpdateWall(new Vector2(ms.Position.X, ms.Position.Y));
 
+                     //call update wall on it's neighbors too
+                     a
+                }
             }
 
             base.Update(gameTime);
