@@ -52,6 +52,26 @@ namespace Pacman
 
         //returns string
 
+        //Recursive function that takes in a tile
+        //Update that tile with the update wall function
+        //If nothing changed return
+        //Loop through its neighbors
+        //Call that recursive function on each neighbor
+
+        void placeholderName()
+        {
+            
+        }
+
+        void recursivePlaceholderName(MapEditorTile currentTile)
+        {
+            UpdateWall(currentTile.Position);
+
+
+                
+        }
+
+
         Point PosToIndex(Vector2 Pos)
         {
             Pos.X -= globalOffset.X;
@@ -65,54 +85,58 @@ namespace Pacman
                 return new Point(-1);
             }
 
-            return new Point(gridX, gridY);
+            return new Point(gridY, gridX);
         }
 
-        void UpdateWall(Vector2 TilePos)
+        void UpdateWall(Vector2 Position)
         {
-            Point tileIndex = PosToIndex(TilePos);
+            UpdateWall(PosToIndex(Position));
+        }
 
-            if (tileIndex == new Point(-1))
+        void UpdateWall(Point tileIndex)
+        {
+            if (tileIndex.X <= 0 || tileIndex.X >= tiles.GetLength(1) || tileIndex.Y <= 0 || tileIndex.Y >= tiles.GetLength(0))
             {
                 return;
             }
-
-            bool[] neighboringWalls = new bool[offsets.Length];
             //y, x
+
+            MapEditorTile currentTile = tiles[tileIndex.Y, tileIndex.X];
 
             for (int i = 0; i < offsets.Length; i++)
             {
                 var newPosition = new Point(tileIndex.X + offsets[i].X, tileIndex.Y + offsets[i].Y);
 
-                neighboringWalls[i] = IsValid(newPosition) && tiles[newPosition.Y, newPosition.X].TileStates == MapEditorTile.States.Wall;
+                currentTile.Neighbors[i].isWall = IsValid(newPosition) && tiles[newPosition.Y, newPosition.X].TileStates == MapEditorTile.States.Wall;
+                currentTile.Neighbors[i].Index = newPosition;
             }
 
             //0, 1, 2
             //7, *, 3
             //6, 5, 4
 
-            if (neighboringWalls.Count(x => x) == neighboringWalls.Length)
+            if (!currentTile.Neighbors[1].isWall && !currentTile.Neighbors[3].isWall && !currentTile.Neighbors[5].isWall && !currentTile.Neighbors[7].isWall && !currentTile.Neighbors[0].isWall && !currentTile.Neighbors[2].isWall && !currentTile.Neighbors[4].isWall && !currentTile.Neighbors[6].isWall)
             {
                 tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.InteriorWall;
             }
             else
             {
-                if (!(neighboringWalls[1] && neighboringWalls[3] && neighboringWalls[5] && neighboringWalls[7]))
+                if (!currentTile.Neighbors[1].isWall && !currentTile.Neighbors[3].isWall && !currentTile.Neighbors[5].isWall && !currentTile.Neighbors[7].isWall)
                 {
                     tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.LoneWall;
                 }
                 else
                 {
                     //Horizontal
-                    if (!neighboringWalls[1] && !neighboringWalls[5])
+                    if (!currentTile.Neighbors[1].isWall && !currentTile.Neighbors[5].isWall)
                     {
-                        if (neighboringWalls[7] && neighboringWalls[3])
+                        if (currentTile.Neighbors[7].isWall && currentTile.Neighbors[3].isWall)
                         {
                             //middle horiz
                             tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.Horiz;
                             return;
                         }
-                        else if (neighboringWalls[7])
+                        else if (currentTile.Neighbors[7].isWall)
                         {
                             //right horiz
                             tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.HorizRightEnd;
@@ -127,19 +151,19 @@ namespace Pacman
                     }
 
                     //Vertical
-                    else if (!neighboringWalls[7] && !neighboringWalls[3])
+                    else if (!currentTile.Neighbors[7].isWall && !currentTile.Neighbors[3].isWall)
                     {
-                        if (neighboringWalls[1] && neighboringWalls[5])
+                        if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[5].isWall)
                         {
                             //middle verti
                             tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.Verti;
                         }
-                        else if (neighboringWalls[1])
+                        else if (currentTile.Neighbors[1].isWall)
                         {
                             //bottom horiz
                             tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.VertiBottomEnd;
                         }
-                        else 
+                        else
                         {
                             //top horiz
                             tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.VertiTopEnd;
@@ -147,16 +171,12 @@ namespace Pacman
                     }
 
                     //cross
-                    if (neighboringWalls[1] && neighboringWalls[3] && neighboringWalls[5] && neighboringWalls[7])
+                    if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[3].isWall && currentTile.Neighbors[5].isWall && currentTile.Neighbors[7].isWall)
                     {
                         //interior center
                         tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.InteriorCorner;
                     }
-
-                    
                 }
-
-
                 //else if (neighboringWalls[1] && neighboringWalls[3] && neighboringWalls[5] && neighboringWalls[7])
                 //{
                 //    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.InteriorCorner;
@@ -217,8 +237,7 @@ namespace Pacman
 
             MapEditorTile.HorizWallTile = Content.Load<Texture2D>("horizWall");
             MapEditorTile.HorizLeftWallTile = Content.Load<Texture2D>("horizLeftWall");
-
-
+            MapEditorTile.HorizRightWallTile = Content.Load<Texture2D>("horizRightWall");
 
 
             for (int y = 0; y < tiles.GetLength(0); y++)
@@ -230,6 +249,11 @@ namespace Pacman
                     float realPositionY = y * MapEditorTile.NormalSprite.Height + globalOffset.Y;
                     tiles[y, x] = new MapEditorTile(MapEditorTile.NormalSprite, new Vector2(realPositionX, realPositionY), Color.White);
                     tiles[y, x].Cord = new Point(y, x);
+
+                    for (int i = 0; i < offsets.Length; i++)
+                    {
+                        tiles[y, x].Neighbors[i] = new Point(y + offsets[i].Y, x + offsets[i].X);
+                    }
                 }
             }
         }
@@ -327,10 +351,24 @@ namespace Pacman
             {
                 if (ms.LeftButton == ButtonState.Pressed)
                 {
+                    //Recursive function that takes in a tile
+                    //Update that tile with the update wall function
+                    //If nothing changed return
+                    //Loop through its neighbors
+                    //Call that recursive function on each neighbor
+
+                    
                     UpdateWall(new Vector2(ms.Position.X, ms.Position.Y));
 
-                     //call update wall on it's neighbors too
-                     a
+                    foreach (var neighbor in wallNeighbors)
+                    {
+                        if (neighbor.isWall)
+                        {
+                            UpdateWall(neighbor.index);
+                        }
+                    }
+                    //call update wall on it's neighbors too
+
                 }
             }
 

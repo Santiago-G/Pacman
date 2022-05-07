@@ -68,6 +68,8 @@ namespace Pacman
 
         public Point Cord;
 
+        public (Point Index, bool isWall)[] Neighbors = new (Point, bool)[8];
+
         public MapEditorTile(Texture2D image, Vector2 position, Color tint) : base(image, position, tint)
         {
             CurrentImage = NormalSprite;
@@ -131,19 +133,19 @@ namespace Pacman
                         {
                             case WallStates.LoneWall:
 
-                                CurrentImage = LoneWallTile;
+                                prevImage = LoneWallTile;
                                 break;
                             case WallStates.Horiz:
 
-                                CurrentImage = HorizWallTile;
+                                prevImage = HorizWallTile;
                                 break;
                             case WallStates.HorizLeftEnd:
 
-                                CurrentImage = HorizLeftWallTile;
+                                prevImage = HorizLeftWallTile;
                                 break;
                             case WallStates.HorizRightEnd:
 
-                                CurrentImage = HorizRightWallTile;
+                                prevImage = HorizRightWallTile;
                                 break;
                             case WallStates.Verti:
                                 break;
