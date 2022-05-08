@@ -58,19 +58,33 @@ namespace Pacman
         //Loop through its neighbors
         //Call that recursive function on each neighbor
 
-        void placeholderName()
+        void addWall(Vector2 MousePosition)
         {
-            
+            //check if it's out of bounds
+
+            Point index = PosToIndex(MousePosition);
+
+            if (index == new Point(-1)) return;
+
+            recursivePlaceholderName(tiles[index.Y, index.X]);
         }
 
         void recursivePlaceholderName(MapEditorTile currentTile)
         {
-            UpdateWall(currentTile.Position);
+            bool updated = UpdateWall(currentTile.Position);
 
+            if (!updated) return;
 
-                
+            currentTile.UpdateWalls();
+
+            foreach (var neighbor in currentTile.Neighbors)
+            {
+                if (neighbor.isWall)
+                {
+                    recursivePlaceholderName(tiles[neighbor.Index.Y, neighbor.Index.X]);
+                }
+            }
         }
-
 
         Point PosToIndex(Vector2 Pos)
         {
@@ -80,28 +94,27 @@ namespace Pacman
             int gridX = (int)(Pos.X / tiles[0, 0].Hitbox.Width);
             int gridY = (int)(Pos.Y / tiles[0, 0].Hitbox.Height);
 
-            if (gridX <= 0 || gridX >= tiles.GetLength(1) || gridY <= 0 || gridY >= tiles.GetLength(0))
-            {
-                return new Point(-1);
-            }
-
-            return new Point(gridY, gridX);
+            Point retPoint = new Point(gridX, gridY);
+            if (!IsValid(retPoint)) return new Point(-1);
+            return retPoint;
         }
 
-        void UpdateWall(Vector2 Position)
+        bool UpdateWall(Vector2 Position)
         {
-            UpdateWall(PosToIndex(Position));
+            return UpdateWall(PosToIndex(Position));
         }
 
-        void UpdateWall(Point tileIndex)
+        bool UpdateWall(Point tileIndex)
         {
-            if (tileIndex.X <= 0 || tileIndex.X >= tiles.GetLength(1) || tileIndex.Y <= 0 || tileIndex.Y >= tiles.GetLength(0))
+            if (tileIndex == new Point(-1))
             {
-                return;
+                return false;
             }
             //y, x
 
             MapEditorTile currentTile = tiles[tileIndex.Y, tileIndex.X];
+
+            MapEditorTile.WallStates oldState = currentTile.wallStates;
 
             for (int i = 0; i < offsets.Length; i++)
             {
@@ -115,78 +128,126 @@ namespace Pacman
             //7, *, 3
             //6, 5, 4
 
-            if (!currentTile.Neighbors[1].isWall && !currentTile.Neighbors[3].isWall && !currentTile.Neighbors[5].isWall && !currentTile.Neighbors[7].isWall && !currentTile.Neighbors[0].isWall && !currentTile.Neighbors[2].isWall && !currentTile.Neighbors[4].isWall && !currentTile.Neighbors[6].isWall)
+            if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[3].isWall && currentTile.Neighbors[5].isWall && currentTile.Neighbors[7].isWall && currentTile.Neighbors[0].isWall && currentTile.Neighbors[2].isWall && currentTile.Neighbors[4].isWall && currentTile.Neighbors[6].isWall)
             {
                 tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.InteriorWall;
+                return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
             }
-            else
+
+            if ((!currentTile.Neighbors[1].isWall && !currentTile.Neighbors[3].isWall && !currentTile.Neighbors[5].isWall && !currentTile.Neighbors[7].isWall))
             {
-                if (!currentTile.Neighbors[1].isWall && !currentTile.Neighbors[3].isWall && !currentTile.Neighbors[5].isWall && !currentTile.Neighbors[7].isWall)
-                {
-                    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.LoneWall;
-                }
-                else
-                {
-                    //Horizontal
-                    if (!currentTile.Neighbors[1].isWall && !currentTile.Neighbors[5].isWall)
-                    {
-                        if (currentTile.Neighbors[7].isWall && currentTile.Neighbors[3].isWall)
-                        {
-                            //middle horiz
-                            tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.Horiz;
-                            return;
-                        }
-                        else if (currentTile.Neighbors[7].isWall)
-                        {
-                            //right horiz
-                            tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.HorizRightEnd;
-                            return;
-                        }
-                        else
-                        {
-                            //left horiz
-                            tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.HorizLeftEnd;
-                            return;
-                        }
-                    }
-
-                    //Vertical
-                    else if (!currentTile.Neighbors[7].isWall && !currentTile.Neighbors[3].isWall)
-                    {
-                        if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[5].isWall)
-                        {
-                            //middle verti
-                            tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.Verti;
-                        }
-                        else if (currentTile.Neighbors[1].isWall)
-                        {
-                            //bottom horiz
-                            tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.VertiBottomEnd;
-                        }
-                        else
-                        {
-                            //top horiz
-                            tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.VertiTopEnd;
-                        }
-                    }
-
-                    //cross
-                    if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[3].isWall && currentTile.Neighbors[5].isWall && currentTile.Neighbors[7].isWall)
-                    {
-                        //interior center
-                        tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.InteriorCorner;
-                    }
-                }
-                //else if (neighboringWalls[1] && neighboringWalls[3] && neighboringWalls[5] && neighboringWalls[7])
-                //{
-                //    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.InteriorCorner;
-                //}
+                tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.LoneWall;
+                return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
             }
+            //Horizontal
+            if (!currentTile.Neighbors[1].isWall && !currentTile.Neighbors[5].isWall)
+            {
+                if (currentTile.Neighbors[7].isWall && currentTile.Neighbors[3].isWall)
+                {
+                    //middle horiz
+                    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.Horiz;
+                    return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
+                }
+                if (currentTile.Neighbors[7].isWall)
+                {
+                    //right horiz
+                    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.HorizRightEnd;
+                    return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
+                }
+                //left horiz
+                tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.HorizLeftEnd;
+                return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
+            }
+
+            //Vertical
+            if (!currentTile.Neighbors[7].isWall && !currentTile.Neighbors[3].isWall)
+            {
+                if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[5].isWall)
+                {
+                    //middle verti
+                    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.Verti;
+                    return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
+                }
+                if (currentTile.Neighbors[1].isWall)
+                {
+                    //bottom horiz
+                    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.VertiBottomEnd;
+                    return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
+                }
+                //top horiz
+                tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.VertiTopEnd;
+                return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
+            }
+
+            //Bottom Left Corner
+            if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[3].isWall)
+            {
+                if (currentTile.Neighbors[2].isWall)
+                {
+                    //corner without 2nd wall
+                    return false;
+                }
+
+                tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.BottomLeftCorner;
+                return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
+            }
+
+            //Bottom Right Corner
+            if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[7].isWall)
+            {
+                if (currentTile.Neighbors[0].isWall)
+                {
+                    //corner without 2nd wall
+                    return false;
+                }
+
+                tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.BottomRightCorner;
+                return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
+            }
+
+            //Top Right Corner
+            if (currentTile.Neighbors[7].isWall && currentTile.Neighbors[5].isWall)
+            {
+                if (currentTile.Neighbors[6].isWall)
+                {
+                    //corner without 2nd wall
+                    return false;
+                }
+
+                tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.TopRightCorner;
+                return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
+            }
+
+            //Top Left Corner
+            if (currentTile.Neighbors[3].isWall && currentTile.Neighbors[5].isWall)
+            {
+                if (currentTile.Neighbors[4].isWall)
+                {
+                    //corner without 2nd wall
+                    return false;
+                }
+
+                tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.TopLeftCorner;
+                return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
+            }
+
+            //cross
+            if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[3].isWall && currentTile.Neighbors[5].isWall && currentTile.Neighbors[7].isWall)
+            {
+                //interior center
+                tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.InteriorCorner;
+                return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
+            }
+            return false;
+            //else if (neighboringWalls[1] && neighboringWalls[3] && neighboringWalls[5] && neighboringWalls[7])
+            //{
+            //    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.InteriorCorner;
+            //}
         }
 
         private bool IsValid(Point gridIndex)
         {
-            return !(gridIndex.X < 0 || gridIndex.X >= tiles.GetLength(1)) || (gridIndex.Y < 0 || gridIndex.Y >= tiles.GetLength(0));
+            return gridIndex.X >= 0 && gridIndex.X < tiles.GetLength(1) && gridIndex.Y >= 0 && gridIndex.Y < tiles.GetLength(1);
         }
 
         public MapEditor((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
@@ -239,6 +300,16 @@ namespace Pacman
             MapEditorTile.HorizLeftWallTile = Content.Load<Texture2D>("horizLeftWall");
             MapEditorTile.HorizRightWallTile = Content.Load<Texture2D>("horizRightWall");
 
+            MapEditorTile.VertiWallTile = Content.Load<Texture2D>("VertiWall");
+            MapEditorTile.VertiTopWallTile = Content.Load<Texture2D>("VertiTopWall");
+            MapEditorTile.VertiBottomWallTile = Content.Load<Texture2D>("VertiBottomWall");
+
+            MapEditorTile.TopLeftWallTile = Content.Load<Texture2D>("TopLeftCorner");
+            MapEditorTile.TopRightWallTile = Content.Load<Texture2D>("TopRightCorner");
+            MapEditorTile.BottomLeftWallTile = Content.Load<Texture2D>("BottomLeftCorner");
+            MapEditorTile.BottomRightWallTile = Content.Load<Texture2D>("BottomRightCorner");
+
+
 
             for (int y = 0; y < tiles.GetLength(0); y++)
             {
@@ -252,12 +323,13 @@ namespace Pacman
 
                     for (int i = 0; i < offsets.Length; i++)
                     {
-                        tiles[y, x].Neighbors[i] = new Point(y + offsets[i].Y, x + offsets[i].X);
+                        tiles[y, x].Neighbors[i].Index = new Point(y + offsets[i].Y, x + offsets[i].X);
                     }
                 }
             }
         }
 
+        MouseState prevms;
         public override void Update(GameTime gameTime)
         {
             MouseState ms = Mouse.GetState();
@@ -357,20 +429,12 @@ namespace Pacman
                     //Loop through its neighbors
                     //Call that recursive function on each neighbor
 
-                    
-                    UpdateWall(new Vector2(ms.Position.X, ms.Position.Y));
-
-                    foreach (var neighbor in wallNeighbors)
-                    {
-                        if (neighbor.isWall)
-                        {
-                            UpdateWall(neighbor.index);
-                        }
-                    }
-                    //call update wall on it's neighbors too
-
+                    addWall(new Vector2(ms.Position.X, ms.Position.Y));
+                    ;
                 }
             }
+
+            prevms = ms;
 
             base.Update(gameTime);
         }

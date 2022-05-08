@@ -109,7 +109,7 @@ namespace Pacman
             screens[currentScreen].Update(gameTime);
             prevKeyboardState = Keyboard.GetState();
 
-            //Window.Title = Game1.WindowText; 
+            Window.Title = Game1.WindowText; 
             
             base.Update(gameTime);
         }

@@ -31,6 +31,11 @@ namespace Pacman
             VertiTopEnd,
             VertiBottomEnd,
 
+            TopLeftCorner,
+            TopRightCorner,
+            BottomRightCorner,
+            BottomLeftCorner,
+
             InteriorWall,
             InteriorCorner,
             notAWall
@@ -54,6 +59,15 @@ namespace Pacman
         public static Texture2D HorizLeftWallTile;
         public static Texture2D HorizRightWallTile;
 
+        public static Texture2D VertiWallTile;
+        public static Texture2D VertiTopWallTile;
+        public static Texture2D VertiBottomWallTile;
+
+        public static Texture2D TopLeftWallTile;
+        public static Texture2D TopRightWallTile;
+        public static Texture2D BottomRightWallTile;
+        public static Texture2D BottomLeftWallTile;
+
         //there will be a lot of these
 
         //shift click like in gimp to fill in wehatever is selected
@@ -76,10 +90,74 @@ namespace Pacman
             prevImage = CurrentImage;
         }
 
+        //fix both images when i hover over them
+
         public bool IsClicked()
         {
             return false;
         }
+
+        public void UpdateWalls()
+        {
+            switch (wallStates)
+            {
+                case WallStates.LoneWall:
+                    CurrentImage = LoneWallTile;
+                    prevImage = LoneWallTile;
+                    break;
+
+                case WallStates.Horiz:
+                    CurrentImage = HorizWallTile;
+                    prevImage = HorizWallTile;
+                    break;
+                case WallStates.HorizLeftEnd:
+                    CurrentImage = HorizLeftWallTile;
+                    prevImage = HorizLeftWallTile;
+                    break;
+                case WallStates.HorizRightEnd:
+                    CurrentImage = HorizRightWallTile;
+                    prevImage = HorizRightWallTile;
+                    break;
+
+                case WallStates.Verti:
+                    CurrentImage = VertiWallTile;
+                    prevImage = VertiWallTile;
+                    break;
+                case WallStates.VertiTopEnd:
+                    CurrentImage = VertiTopWallTile;
+                    prevImage = VertiTopWallTile;
+                    break;
+                case WallStates.VertiBottomEnd:
+                    CurrentImage = VertiBottomWallTile;
+                    prevImage = VertiBottomWallTile;
+                    break;
+
+                case WallStates.TopLeftCorner:
+                    CurrentImage = TopLeftWallTile;
+                    prevImage = TopLeftWallTile;
+                    break;
+                case WallStates.TopRightCorner:
+                    CurrentImage = TopRightWallTile;
+                    prevImage = TopRightWallTile;
+                    break;
+                case WallStates.BottomRightCorner:
+                    CurrentImage = BottomRightWallTile;
+                    prevImage = BottomRightWallTile;
+                    break;
+                case WallStates.BottomLeftCorner:
+                    CurrentImage = BottomLeftWallTile;
+                    prevImage = BottomLeftWallTile;
+                    break;
+
+                case WallStates.InteriorWall:
+                    break;
+                case WallStates.InteriorCorner:
+                    break;
+                case WallStates.notAWall:
+                    break;
+            }
+        }
+
 
         public override void Update(GameTime gameTime)
         {
@@ -129,37 +207,7 @@ namespace Pacman
                         break;
                     case States.Wall:
 
-                        switch (wallStates)
-                        {
-                            case WallStates.LoneWall:
-
-                                prevImage = LoneWallTile;
-                                break;
-                            case WallStates.Horiz:
-
-                                prevImage = HorizWallTile;
-                                break;
-                            case WallStates.HorizLeftEnd:
-
-                                prevImage = HorizLeftWallTile;
-                                break;
-                            case WallStates.HorizRightEnd:
-
-                                prevImage = HorizRightWallTile;
-                                break;
-                            case WallStates.Verti:
-                                break;
-                            case WallStates.VertiTopEnd:
-                                break;
-                            case WallStates.VertiBottomEnd:
-                                break;
-                            case WallStates.InteriorWall:
-                                break;
-                            case WallStates.InteriorCorner:
-                                break;
-                            case WallStates.notAWall:
-                                break;
-                        }
+                        UpdateWalls();
 
                         break;
                 }
