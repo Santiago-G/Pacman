@@ -36,6 +36,21 @@ namespace Pacman
             BottomRightCorner,
             BottomLeftCorner,
 
+            TopLeftCornerFilled,
+            TopRightCornerFilled,
+            BottomRightCornerFilled,
+            BottomLeftCornerFilled,
+
+            TopEdge,
+            RightEdge,
+            BottomEdge,
+            LeftEdge,
+
+            TopCross,
+            RightCross,
+            BottomCross,
+            LeftCross,
+
             InteriorWall,
             InteriorCorner,
             notAWall
@@ -55,6 +70,8 @@ namespace Pacman
 
         public static Texture2D LoneWallTile;
 
+        public static Texture2D InteriorWall;
+
         public static Texture2D HorizWallTile;
         public static Texture2D HorizLeftWallTile;
         public static Texture2D HorizRightWallTile;
@@ -68,6 +85,23 @@ namespace Pacman
         public static Texture2D BottomRightWallTile;
         public static Texture2D BottomLeftWallTile;
 
+        public static Texture2D TopLeftFilledWallTile;
+        public static Texture2D TopRightFilledWallTile;
+        public static Texture2D BottomRightFilledWallTile;
+        public static Texture2D BottomLeftFilledWallTile;
+
+        public static Texture2D TopEdge;
+        public static Texture2D RightEdge;
+        public static Texture2D BottomEdge;
+        public static Texture2D LeftEdge;
+
+        public static Texture2D InteriorCross;
+
+        public static Texture2D TopCross;
+        public static Texture2D RightCross;
+        public static Texture2D BottomCross;
+        public static Texture2D LeftCross;
+
         //there will be a lot of these
 
         //shift click like in gimp to fill in wehatever is selected
@@ -78,7 +112,7 @@ namespace Pacman
         public Rectangle Hitbox { get => new Rectangle((int)Position.X, (int)Position.Y, CurrentImage.Width, CurrentImage.Height); set { } }
 
         public States TileStates = States.Empty;
-        public WallStates wallStates = WallStates.notAWall; 
+        public WallStates wallStates = WallStates.notAWall;
 
         public Point Cord;
 
@@ -149,9 +183,65 @@ namespace Pacman
                     prevImage = BottomLeftWallTile;
                     break;
 
+                case WallStates.TopLeftCornerFilled:
+                    CurrentImage = TopLeftFilledWallTile;
+                    prevImage = TopLeftFilledWallTile;
+                    break;
+                case WallStates.TopRightCornerFilled:
+                    CurrentImage = TopRightFilledWallTile;
+                    prevImage = TopRightFilledWallTile;
+                    break;
+                case WallStates.BottomRightCornerFilled:
+                    CurrentImage = BottomRightFilledWallTile;
+                    prevImage = BottomRightFilledWallTile;
+                    break;
+                case WallStates.BottomLeftCornerFilled:
+                    CurrentImage = BottomLeftFilledWallTile;
+                    prevImage = BottomLeftFilledWallTile;
+                    break;
+
+                case WallStates.TopEdge:
+                    CurrentImage = TopEdge;
+                    prevImage = TopEdge;
+                    break;
+                case WallStates.RightEdge:
+                    CurrentImage = RightEdge;
+                    prevImage = RightEdge;
+                    break;
+                case WallStates.BottomEdge:
+                    CurrentImage = BottomEdge;
+                    prevImage = BottomEdge;
+                    break;
+                case WallStates.LeftEdge:
+                    CurrentImage = LeftEdge;
+                    prevImage = LeftEdge;
+                    break;
+
+                case WallStates.TopCross:
+                    CurrentImage = TopCross;
+                    prevImage = TopCross;
+                    break;
+                case WallStates.RightCross:
+                    CurrentImage = RightCross;
+                    prevImage = RightCross;
+                    break;
+                case WallStates.BottomCross:
+                    CurrentImage = BottomCross;
+                    prevImage = BottomCross;
+                    break;
+                case WallStates.LeftCross:
+                    CurrentImage = LeftCross;
+                    prevImage = LeftCross;
+                    break;
+
+
                 case WallStates.InteriorWall:
+                    CurrentImage = InteriorWall;
+                    prevImage = InteriorWall;
                     break;
                 case WallStates.InteriorCorner:
+                    CurrentImage = InteriorCross;
+                    prevImage = InteriorCross;
                     break;
                 case WallStates.notAWall:
                     break;
@@ -188,7 +278,7 @@ namespace Pacman
                         default:
                             break;
                     }
-                    
+
                 }
 
                 switch (TileStates)
