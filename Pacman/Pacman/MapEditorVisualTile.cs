@@ -8,56 +8,12 @@ using Newtonsoft.Json;
 
 namespace Pacman
 {
-    public class MapEditorTile : Sprite
+    public class MapEditorVisualTile : Sprite
     {
+        
 
-        public enum States
-        {
-            Empty,
-            Pellet,
-            PowerPellet,
-            Fruit,
-            Wall
-        }
 
-        public enum WallStates
-        {
-            LoneWall,
-
-            Horiz,
-            HorizLeftEnd,
-            HorizRightEnd,
-
-            Verti,
-            VertiTopEnd,
-            VertiBottomEnd,
-
-            TopLeftCorner,
-            TopRightCorner,
-            BottomRightCorner,
-            BottomLeftCorner,
-
-            TopLeftCornerFilled,
-            TopRightCornerFilled,
-            BottomRightCornerFilled,
-            BottomLeftCornerFilled,
-
-            TopEdge,
-            RightEdge,
-            BottomEdge,
-            LeftEdge,
-
-            TopCross,
-            RightCross,
-            BottomCross,
-            LeftCross,
-
-            InteriorWall,
-            InteriorCorner,
-            notAWall
-        }
-
-        [JsonIgnore]
+        
         public Texture2D CurrentImage;
 
         [JsonIgnore]
@@ -122,7 +78,7 @@ namespace Pacman
 
         public (Point Index, bool isWall)[] Neighbors = new (Point, bool)[8];
 
-        public MapEditorTile(Texture2D image, Vector2 position, Color tint) : base(image, position, tint)
+        public MapEditorVisualTile(Texture2D image, Vector2 position, Color tint) : base(image, position, tint)
         {
             CurrentImage = NormalSprite;
             prevImage = CurrentImage;

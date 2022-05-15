@@ -19,7 +19,7 @@ namespace Pacman
         Vector2 position;
 
         //Graph<int> graph = new Graph<int>();
-        MapEditorTile[,] tiles = new MapEditorTile[31, 28]; //y,x
+        MapEditorVisualTile[,] tiles = new MapEditorVisualTile[31, 28]; //y,x
 
         Image mapEditorImage;
         Texture2D mapEditorSprite;
@@ -56,7 +56,7 @@ namespace Pacman
             recursivePlaceholderName(tiles[index.Y, index.X]);
         }
 
-        void recursivePlaceholderName(MapEditorTile currentTile)
+        void recursivePlaceholderName(MapEditorVisualTile currentTile)
         {
             bool updated = UpdateWall(currentTile.Position);
 
@@ -98,15 +98,15 @@ namespace Pacman
             }
             //y, x
 
-            MapEditorTile currentTile = tiles[tileIndex.Y, tileIndex.X];
+            MapEditorVisualTile currentTile = tiles[tileIndex.Y, tileIndex.X];
 
-            MapEditorTile.WallStates oldState = currentTile.wallStates;
+            WallStates oldState = currentTile.wallStates;
 
             for (int i = 0; i < offsets.Length; i++)
             {
                 var newPosition = new Point(tileIndex.X + offsets[i].X, tileIndex.Y + offsets[i].Y);
 
-                currentTile.Neighbors[i].isWall = IsValid(newPosition) && tiles[newPosition.Y, newPosition.X].TileStates == MapEditorTile.States.Wall;
+                currentTile.Neighbors[i].isWall = IsValid(newPosition) && tiles[newPosition.Y, newPosition.X].TileStates == States.Wall;
                 currentTile.Neighbors[i].Index = newPosition;
             }
 
@@ -116,20 +116,20 @@ namespace Pacman
 
             if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[3].isWall && currentTile.Neighbors[5].isWall && currentTile.Neighbors[7].isWall && currentTile.Neighbors[0].isWall && currentTile.Neighbors[2].isWall && currentTile.Neighbors[4].isWall && currentTile.Neighbors[6].isWall)
             {
-                tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.InteriorWall;
+                tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.InteriorWall;
                 return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
             }
 
             if ((!currentTile.Neighbors[1].isWall && !currentTile.Neighbors[3].isWall && !currentTile.Neighbors[5].isWall && !currentTile.Neighbors[7].isWall))
             {
-                tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.LoneWall;
+                tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.LoneWall;
                 return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
             }
 
             if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[3].isWall && currentTile.Neighbors[5].isWall && currentTile.Neighbors[7].isWall)
             {
                 //interior center
-                tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.InteriorCorner;
+                tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.InteriorCorner;
                 return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
             }
 
@@ -141,7 +141,7 @@ namespace Pacman
                 if (!currentTile.Neighbors[1].isWall && !currentTile.Neighbors[5].isWall)
                 {
                     //middle horiz
-                    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.Horiz;
+                    tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.Horiz;
                     return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
                 }
                 else
@@ -152,25 +152,25 @@ namespace Pacman
                         if (currentTile.Neighbors[1].isWall)
                         {
                             //Top T
-                            tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.TopCross;
+                            tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.TopCross;
                             return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
                         }
 
-                        tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.BottomCross;
+                        tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.BottomCross;
                         return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
                     }
 
                     //Top Edge
                     if (currentTile.Neighbors[6].isWall && currentTile.Neighbors[5].isWall && currentTile.Neighbors[4].isWall)
                     {
-                        tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.TopEdge;
+                        tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.TopEdge;
                         return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
                     }
 
                     //Bottom Edge
                     if (currentTile.Neighbors[0].isWall && currentTile.Neighbors[1].isWall && currentTile.Neighbors[2].isWall)
                     {
-                        tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.BottomEdge;
+                        tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.BottomEdge;
                         return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
                     }
                 }
@@ -180,11 +180,11 @@ namespace Pacman
                 if (currentTile.Neighbors[7].isWall)
                 {
                     //right horiz
-                    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.HorizRightEnd;
+                    tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.HorizRightEnd;
                     return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
                 }
                 //left horiz
-                tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.HorizLeftEnd;
+                tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.HorizLeftEnd;
                 return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
             }
 
@@ -193,7 +193,7 @@ namespace Pacman
                 if (!currentTile.Neighbors[7].isWall && !currentTile.Neighbors[3].isWall)
                 {
                     //middle verti
-                    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.Verti;
+                    tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.Verti;
                     return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
                 }
                 else 
@@ -204,24 +204,24 @@ namespace Pacman
                         if (currentTile.Neighbors[7].isWall)
                         {
                             //Left T
-                            tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.LeftCross;
+                            tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.LeftCross;
                             return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
                         }
 
-                        tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.RightCross;
+                        tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.RightCross;
                         return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
                     }
 
                     //Left Edge
                     if (currentTile.Neighbors[2].isWall && currentTile.Neighbors[3].isWall && currentTile.Neighbors[4].isWall)
                     {
-                        tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.LeftEdge;
+                        tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.LeftEdge;
                         return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
                     }
                     //Right Edge
                     if (currentTile.Neighbors[0].isWall && currentTile.Neighbors[7].isWall && currentTile.Neighbors[6].isWall)
                     {
-                        tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.RightEdge;
+                        tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.RightEdge;
                         return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
                     }
                 }
@@ -232,11 +232,11 @@ namespace Pacman
                 if (currentTile.Neighbors[1].isWall)
                 {
                     //bottom horiz
-                    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.VertiBottomEnd;
+                    tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.VertiBottomEnd;
                     return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
                 }
                 //top horiz
-                tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.VertiTopEnd;
+                tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.VertiTopEnd;
                 return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
             }
 
@@ -247,11 +247,11 @@ namespace Pacman
                 if (currentTile.Neighbors[2].isWall)
                 {
                     //corner without 2nd wall
-                    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.BottomLeftCornerFilled;
+                    tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.BottomLeftCornerFilled;
                     return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
                 }
 
-                tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.BottomLeftCorner;
+                tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.BottomLeftCorner;
                 return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
             }
 
@@ -261,11 +261,11 @@ namespace Pacman
                 if (currentTile.Neighbors[0].isWall)
                 {
                     //corner without 2nd wall
-                    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.BottomRightCornerFilled;
+                    tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.BottomRightCornerFilled;
                     return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
                 }
 
-                tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.BottomRightCorner;
+                tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.BottomRightCorner;
                 return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
             }
 
@@ -275,11 +275,11 @@ namespace Pacman
                 if (currentTile.Neighbors[6].isWall)
                 {
                     //corner without 2nd wall
-                    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.TopRightCornerFilled;
+                    tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.TopRightCornerFilled;
                     return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
                 }
 
-                tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.TopRightCorner;
+                tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.TopRightCorner;
                 return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
             }
 
@@ -288,11 +288,11 @@ namespace Pacman
             {
                 if (currentTile.Neighbors[4].isWall)
                 {
-                    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.TopLeftCornerFilled;
+                    tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.TopLeftCornerFilled;
                     return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
                 }
 
-                tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.TopLeftCorner;
+                tiles[tileIndex.Y, tileIndex.X].wallStates = WallStates.TopLeftCorner;
                 return oldState != tiles[tileIndex.Y, tileIndex.X].wallStates;
             }
 
@@ -347,45 +347,45 @@ namespace Pacman
 
 
 
-            MapEditorTile.NormalSprite = Content.Load<Texture2D>("mapEditorTile");
-            MapEditorTile.NormalEnlargedBorder = Content.Load<Texture2D>("EnlargeBorderTile");
-            MapEditorTile.PelletSprite = Content.Load<Texture2D>("mapEditorTile2");
-            MapEditorTile.PelletEnlargedBorder = Content.Load<Texture2D>("enlargedPelletTile");
-            MapEditorTile.PowerPelletSprite = Content.Load<Texture2D>("powerPelletSprite");
-            MapEditorTile.PowerPelletEnlargedBorder = Content.Load<Texture2D>("enlargedPowerPelletSprite");
+            MapEditorVisualTile.NormalSprite = Content.Load<Texture2D>("mapEditorTile");
+            MapEditorVisualTile.NormalEnlargedBorder = Content.Load<Texture2D>("EnlargeBorderTile");
+            MapEditorVisualTile.PelletSprite = Content.Load<Texture2D>("mapEditorTile2");
+            MapEditorVisualTile.PelletEnlargedBorder = Content.Load<Texture2D>("enlargedPelletTile");
+            MapEditorVisualTile.PowerPelletSprite = Content.Load<Texture2D>("powerPelletSprite");
+            MapEditorVisualTile.PowerPelletEnlargedBorder = Content.Load<Texture2D>("enlargedPowerPelletSprite");
 
-            MapEditorTile.LoneWallTile = Content.Load<Texture2D>("loneWall");
-            MapEditorTile.InteriorWall = Content.Load<Texture2D>("InteriorWall");
+            MapEditorVisualTile.LoneWallTile = Content.Load<Texture2D>("loneWall");
+            MapEditorVisualTile.InteriorWall = Content.Load<Texture2D>("InteriorWall");
 
-            MapEditorTile.HorizWallTile = Content.Load<Texture2D>("horizWall");
-            MapEditorTile.HorizLeftWallTile = Content.Load<Texture2D>("horizLeftWall");
-            MapEditorTile.HorizRightWallTile = Content.Load<Texture2D>("horizRightWall");
+            MapEditorVisualTile.HorizWallTile = Content.Load<Texture2D>("horizWall");
+            MapEditorVisualTile.HorizLeftWallTile = Content.Load<Texture2D>("horizLeftWall");
+            MapEditorVisualTile.HorizRightWallTile = Content.Load<Texture2D>("horizRightWall");
 
-            MapEditorTile.VertiWallTile = Content.Load<Texture2D>("VertiWall");
-            MapEditorTile.VertiTopWallTile = Content.Load<Texture2D>("VertiTopWall");
-            MapEditorTile.VertiBottomWallTile = Content.Load<Texture2D>("VertiBottomWall");
+            MapEditorVisualTile.VertiWallTile = Content.Load<Texture2D>("VertiWall");
+            MapEditorVisualTile.VertiTopWallTile = Content.Load<Texture2D>("VertiTopWall");
+            MapEditorVisualTile.VertiBottomWallTile = Content.Load<Texture2D>("VertiBottomWall");
 
-            MapEditorTile.TopLeftWallTile = Content.Load<Texture2D>("TopLeftCorner");
-            MapEditorTile.TopRightWallTile = Content.Load<Texture2D>("TopRightCorner");
-            MapEditorTile.BottomLeftWallTile = Content.Load<Texture2D>("BottomLeftCorner");
-            MapEditorTile.BottomRightWallTile = Content.Load<Texture2D>("BottomRightCorner");
+            MapEditorVisualTile.TopLeftWallTile = Content.Load<Texture2D>("TopLeftCorner");
+            MapEditorVisualTile.TopRightWallTile = Content.Load<Texture2D>("TopRightCorner");
+            MapEditorVisualTile.BottomLeftWallTile = Content.Load<Texture2D>("BottomLeftCorner");
+            MapEditorVisualTile.BottomRightWallTile = Content.Load<Texture2D>("BottomRightCorner");
 
-            MapEditorTile.TopLeftFilledWallTile = Content.Load<Texture2D>("TopLeftCornerFilled");
-            MapEditorTile.TopRightFilledWallTile = Content.Load<Texture2D>("TopRightCornerFilled");
-            MapEditorTile.BottomRightFilledWallTile = Content.Load<Texture2D>("BottomRightCornerFilled");
-            MapEditorTile.BottomLeftFilledWallTile = Content.Load<Texture2D>("BottomLeftCornerFilled");
+            MapEditorVisualTile.TopLeftFilledWallTile = Content.Load<Texture2D>("TopLeftCornerFilled");
+            MapEditorVisualTile.TopRightFilledWallTile = Content.Load<Texture2D>("TopRightCornerFilled");
+            MapEditorVisualTile.BottomRightFilledWallTile = Content.Load<Texture2D>("BottomRightCornerFilled");
+            MapEditorVisualTile.BottomLeftFilledWallTile = Content.Load<Texture2D>("BottomLeftCornerFilled");
 
-            MapEditorTile.TopEdge = Content.Load<Texture2D>("TopEdge");
-            MapEditorTile.RightEdge = Content.Load<Texture2D>("RightEdge");
-            MapEditorTile.BottomEdge = Content.Load<Texture2D>("BottomEdge");
-            MapEditorTile.LeftEdge = Content.Load<Texture2D>("LeftEdge");
+            MapEditorVisualTile.TopEdge = Content.Load<Texture2D>("TopEdge");
+            MapEditorVisualTile.RightEdge = Content.Load<Texture2D>("RightEdge");
+            MapEditorVisualTile.BottomEdge = Content.Load<Texture2D>("BottomEdge");
+            MapEditorVisualTile.LeftEdge = Content.Load<Texture2D>("LeftEdge");
 
-            MapEditorTile.InteriorCross = Content.Load<Texture2D>("Cross");
+            MapEditorVisualTile.InteriorCross = Content.Load<Texture2D>("Cross");
 
-            MapEditorTile.TopCross = Content.Load<Texture2D>("topCross");
-            MapEditorTile.RightCross = Content.Load<Texture2D>("rightCross");
-            MapEditorTile.BottomCross = Content.Load<Texture2D>("bottomCross");
-            MapEditorTile.LeftCross = Content.Load<Texture2D>("leftCross");
+            MapEditorVisualTile.TopCross = Content.Load<Texture2D>("topCross");
+            MapEditorVisualTile.RightCross = Content.Load<Texture2D>("rightCross");
+            MapEditorVisualTile.BottomCross = Content.Load<Texture2D>("bottomCross");
+            MapEditorVisualTile.LeftCross = Content.Load<Texture2D>("leftCross");
 
 
             for (int y = 0; y < tiles.GetLength(0); y++)
@@ -393,9 +393,9 @@ namespace Pacman
                 for (int x = 0; x < tiles.GetLength(1); x++)
                 {
 
-                    float realPositionX = x * MapEditorTile.NormalSprite.Width + globalOffset.X;
-                    float realPositionY = y * MapEditorTile.NormalSprite.Height + globalOffset.Y;
-                    tiles[y, x] = new MapEditorTile(MapEditorTile.NormalSprite, new Vector2(realPositionX, realPositionY), Color.White);
+                    float realPositionX = x * MapEditorVisualTile.NormalSprite.Width + globalOffset.X;
+                    float realPositionY = y * MapEditorVisualTile.NormalSprite.Height + globalOffset.Y;
+                    tiles[y, x] = new MapEditorVisualTile(MapEditorVisualTile.NormalSprite, new Vector2(realPositionX, realPositionY), Color.White);
                     tiles[y, x].Cord = new Point(y, x);
 
                     for (int i = 0; i < offsets.Length; i++)
