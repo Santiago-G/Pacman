@@ -5,6 +5,7 @@ using Pacman.GraphStuff;
 using System.Collections.Generic;
 using System.IO;
 
+
 namespace Pacman
 {
     public class Game1 : Game
@@ -77,6 +78,8 @@ namespace Pacman
             // TODO: Add your update logic here
 
             MouseState ms = Mouse.GetState();
+
+
 
             if (Keyboard.GetState().IsKeyDown(Keys.Escape) && prevKeyboardState != Keyboard.GetState())
             {

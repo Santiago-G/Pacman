@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace Pacman
 {
@@ -56,7 +57,10 @@ namespace Pacman
             notAWall
         }
 
+        [JsonIgnore]
         public Texture2D CurrentImage;
+
+        [JsonIgnore]
         private Texture2D prevImage;
 
         public static Texture2D NormalSprite;
@@ -109,7 +113,7 @@ namespace Pacman
 
         //powerpellet
 
-        public Rectangle Hitbox { get => new Rectangle((int)Position.X, (int)Position.Y, CurrentImage.Width, CurrentImage.Height); set { } }
+        public Rectangle Hitbox { get => new Rectangle((int)Position.X, (int)Position.Y, CurrentImage.Width, CurrentImage.Height); }
 
         public States TileStates = States.Empty;
         public WallStates wallStates = WallStates.notAWall;
