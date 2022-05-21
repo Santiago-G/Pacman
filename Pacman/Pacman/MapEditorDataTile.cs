@@ -9,10 +9,12 @@ namespace Pacman
     {
 
         public States TileStates = States.Empty;
-        public WallStates wallStates = WallStates.notAWall;
+        public WallStates WallStates = WallStates.notAWall;
 
         public Point Cord;
 
         public (Point Index, bool isWall)[] Neighbors = new (Point, bool)[8];
+
+        public Color Tint;
     }
 }

@@ -10,10 +10,8 @@ namespace Pacman
     {
         [JsonIgnore]
         public Texture2D Image { get; set; }
-
-        public Vector2 Position;
-        
-        public Color Tint;
+        public virtual Vector2 Position { get; set; }
+        public virtual Color Tint { get; set; }
 
         public Sprite(Texture2D Image, Vector2 Position, Color Tint)
         {

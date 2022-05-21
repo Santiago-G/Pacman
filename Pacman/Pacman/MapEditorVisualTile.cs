@@ -9,13 +9,10 @@ using Newtonsoft.Json;
 namespace Pacman
 {
     public class MapEditorVisualTile : Sprite
-    {
-        
-
-
-        
+    {           
         public Texture2D CurrentImage;
 
+        #region Textures
         [JsonIgnore]
         private Texture2D prevImage;
 
@@ -62,26 +59,82 @@ namespace Pacman
         public static Texture2D BottomCross;
         public static Texture2D LeftCross;
 
-        //there will be a lot of these
+        #endregion
 
-        //shift click like in gimp to fill in wehatever is selected
-        //also have a fill all.
-
-        //powerpellet
+        //shift click like in gimp to fill in whatever is selected
+        //also have a fill all
 
         public Rectangle Hitbox { get => new Rectangle((int)Position.X, (int)Position.Y, CurrentImage.Width, CurrentImage.Height); }
 
-        public States TileStates = States.Empty;
-        public WallStates wallStates = WallStates.notAWall;
+        public MapEditorDataTile Data { get; } = new MapEditorDataTile();
 
-        public Point Cord;
+        public States TileStates
+        {
+            get
+            {
+                return Data.TileStates;
+            }
+            set
+            {
+                Data.TileStates = value;
+            }
+        }
+        public WallStates WallStates
+        {
+            get
+            {
+                return Data.WallStates;
+            }
+            set
+            {
+                Data.WallStates = value;
+            }
+        }
 
-        public (Point Index, bool isWall)[] Neighbors = new (Point, bool)[8];
+        public Point Cord
+        {
+            get
+            {
+                return Data.Cord;
+            }
+            set
+            {
+                Data.Cord = value;
+            }
+        }
 
-        public MapEditorVisualTile(Texture2D image, Vector2 position, Color tint) : base(image, position, tint)
+        public (Point Index, bool isWall)[] Neighbors => Data.Neighbors;
+
+        public override Vector2 Position
+        {
+            get
+            {
+                return new Vector2(Cord.Y * CurrentImage.Width, Cord.X * CurrentImage.Height);
+            }
+        }
+        public override Color Tint
+        {
+            get
+            {
+                return Data.Tint;
+            }
+            set
+            {
+                Data.Tint = value;
+            }
+        }
+
+        public MapEditorVisualTile(Texture2D image, Point cord, Color tint) : base(image, Vector2.Zero, tint)
         {
             CurrentImage = NormalSprite;
             prevImage = CurrentImage;
+            Cord = cord;
+        }
+
+        public MapEditorVisualTile(MapEditorDataTile dataTile) : base(null, new Vector2(0), dataTile.Tint)
+        {
+            Data = dataTile;
+            UpdateStates();
         }
 
         //fix both images when i hover over them
@@ -91,9 +144,33 @@ namespace Pacman
             return false;
         }
 
+        private void UpdateStates()
+        {
+            switch (TileStates)
+            {
+                case States.Empty:
+                    prevImage = NormalSprite;
+                    CurrentImage = NormalEnlargedBorder;
+                    break;
+                case States.Pellet:
+                    prevImage = PelletSprite;
+                    CurrentImage = PelletEnlargedBorder;
+                    break;
+                case States.PowerPellet:
+                    prevImage = PowerPelletSprite;
+                    CurrentImage = PowerPelletEnlargedBorder;
+                    break;
+                case States.Wall:
+
+                    UpdateWalls();
+
+                    break;
+            }
+        }
+
         public void UpdateWalls()
         {
-            switch (wallStates)
+            switch (WallStates)
             {
                 case WallStates.LoneWall:
                     CurrentImage = LoneWallTile;
@@ -209,6 +286,7 @@ namespace Pacman
         }
 
 
+
         public override void Update(GameTime gameTime)
         {
             MouseState ms = Mouse.GetState();
@@ -241,26 +319,7 @@ namespace Pacman
 
                 }
 
-                switch (TileStates)
-                {
-                    case States.Empty:
-                        prevImage = NormalSprite;
-                        CurrentImage = NormalEnlargedBorder;
-                        break;
-                    case States.Pellet:
-                        prevImage = PelletSprite;
-                        CurrentImage = PelletEnlargedBorder;
-                        break;
-                    case States.PowerPellet:
-                        prevImage = PowerPelletSprite;
-                        CurrentImage = PowerPelletEnlargedBorder;
-                        break;
-                    case States.Wall:
-
-                        UpdateWalls();
-
-                        break;
-                }
+                UpdateStates();
             }
             else
             {
