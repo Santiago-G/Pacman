@@ -16,10 +16,7 @@ namespace Pacman
 
         static public SelectedType selectedTileType = SelectedType.Default;
 
-        Vector2 position;
-
-        //Graph<int> graph = new Graph<int>();
-        MapEditorVisualTile[,] tiles = new MapEditorVisualTile[31, 28]; //y,x
+        MapEditorGrid Grid;
 
         Image mapEditorImage;
         Texture2D mapEditorSprite;
@@ -39,276 +36,6 @@ namespace Pacman
         Texture2D wallButtonSprite;
         Texture2D selectedWallSprite;
         Button wallButton;
-
-        Vector2 globalOffset = Vector2.Zero;// new Vector2(40, 90);
-
-        Point[] offsets = new Point[] { new Point(-1, -1), new Point(0, -1), new Point(1, -1), new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(-1, 1), new Point(-1, 0) };
-
-
-        void addWall(Vector2 MousePosition)
-        {
-            //check if it's out of bounds
-
-            Point index = PosToIndex(MousePosition);
-
-            if (index == new Point(-1)) return;
-
-            recursivePlaceholderName(tiles[index.Y, index.X]);
-        }
-
-        void recursivePlaceholderName(MapEditorVisualTile currentTile)
-        {
-            bool updated = UpdateWall(currentTile.Position);
-
-            if (!updated) return;
-
-            currentTile.UpdateWalls();
-
-            foreach (var neighbor in currentTile.Neighbors)
-            {
-                if (neighbor.isWall)
-                {
-                    recursivePlaceholderName(tiles[neighbor.Index.Y, neighbor.Index.X]);
-                }
-            }
-        }
-
-        Point PosToIndex(Vector2 Pos)
-        {
-            Pos.X -= globalOffset.X;
-            Pos.Y -= globalOffset.Y;
-
-            int gridX = (int)(Pos.X / tiles[0, 0].Hitbox.Width);
-            int gridY = (int)(Pos.Y / tiles[0, 0].Hitbox.Height);
-
-            Point retPoint = new Point(gridX, gridY);
-            if (!IsValid(retPoint)) return new Point(-1);
-            return retPoint;
-        }
-
-        bool UpdateWall(Vector2 Position)
-        {
-            return UpdateWall(PosToIndex(Position));
-        }
-        bool UpdateWall(Point tileIndex)
-        {
-            if (tileIndex == new Point(-1))
-            {
-                return false;
-            }
-            //y, x
-
-            MapEditorVisualTile currentTile = tiles[tileIndex.Y, tileIndex.X];
-
-            WallStates oldState = currentTile.WallStates;
-
-            for (int i = 0; i < offsets.Length; i++)
-            {
-                var newPosition = new Point(tileIndex.X + offsets[i].X, tileIndex.Y + offsets[i].Y);
-
-                currentTile.Neighbors[i].isWall = IsValid(newPosition) && tiles[newPosition.Y, newPosition.X].TileStates == States.Wall;
-                currentTile.Neighbors[i].Index = newPosition;
-            }
-
-            //0, 1, 2
-            //7, *, 3
-            //6, 5, 4
-
-            if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[3].isWall && currentTile.Neighbors[5].isWall && currentTile.Neighbors[7].isWall && currentTile.Neighbors[0].isWall && currentTile.Neighbors[2].isWall && currentTile.Neighbors[4].isWall && currentTile.Neighbors[6].isWall)
-            {
-                tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.InteriorWall;
-                return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-            }
-
-            if ((!currentTile.Neighbors[1].isWall && !currentTile.Neighbors[3].isWall && !currentTile.Neighbors[5].isWall && !currentTile.Neighbors[7].isWall))
-            {
-                tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.LoneWall;
-                return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-            }
-
-            if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[3].isWall && currentTile.Neighbors[5].isWall && currentTile.Neighbors[7].isWall)
-            {
-                //interior center
-                tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.InteriorCorner;
-                return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-            }
-
-
-
-            if (currentTile.Neighbors[3].isWall && currentTile.Neighbors[7].isWall)
-            {
-                //horizontal
-                if (!currentTile.Neighbors[1].isWall && !currentTile.Neighbors[5].isWall)
-                {
-                    //middle horiz
-                    tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.Horiz;
-                    return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-                }
-                else
-                {
-                    //Crosses (T)
-                    if (!currentTile.Neighbors[0].isWall && !currentTile.Neighbors[2].isWall && !currentTile.Neighbors[4].isWall && !currentTile.Neighbors[6].isWall)
-                    {
-                        if (currentTile.Neighbors[1].isWall)
-                        {
-                            //Top T
-                            tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.TopCross;
-                            return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-                        }
-
-                        tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.BottomCross;
-                        return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-                    }
-
-                    //Top Edge
-                    if (currentTile.Neighbors[6].isWall && currentTile.Neighbors[5].isWall && currentTile.Neighbors[4].isWall)
-                    {
-                        tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.TopEdge;
-                        return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-                    }
-
-                    //Bottom Edge
-                    if (currentTile.Neighbors[0].isWall && currentTile.Neighbors[1].isWall && currentTile.Neighbors[2].isWall)
-                    {
-                        tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.BottomEdge;
-                        return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-                    }
-                }
-            }
-            if (!currentTile.Neighbors[1].isWall && !currentTile.Neighbors[5].isWall)
-            {
-                if (currentTile.Neighbors[7].isWall)
-                {
-                    //right horiz
-                    tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.HorizRightEnd;
-                    return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-                }
-                //left horiz
-                tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.HorizLeftEnd;
-                return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-            }
-
-            if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[5].isWall)
-            {
-                if (!currentTile.Neighbors[7].isWall && !currentTile.Neighbors[3].isWall)
-                {
-                    //middle verti
-                    tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.Verti;
-                    return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-                }
-                else 
-                {
-                    //Crosses (T)
-                    if (!currentTile.Neighbors[0].isWall && !currentTile.Neighbors[2].isWall && !currentTile.Neighbors[4].isWall && !currentTile.Neighbors[6].isWall)
-                    {
-                        if (currentTile.Neighbors[7].isWall)
-                        {
-                            //Left T
-                            tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.LeftCross;
-                            return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-                        }
-
-                        tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.RightCross;
-                        return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-                    }
-
-                    //Left Edge
-                    if (currentTile.Neighbors[2].isWall && currentTile.Neighbors[3].isWall && currentTile.Neighbors[4].isWall)
-                    {
-                        tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.LeftEdge;
-                        return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-                    }
-                    //Right Edge
-                    if (currentTile.Neighbors[0].isWall && currentTile.Neighbors[7].isWall && currentTile.Neighbors[6].isWall)
-                    {
-                        tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.RightEdge;
-                        return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-                    }
-                }
-
-            }
-            if (!currentTile.Neighbors[7].isWall && !currentTile.Neighbors[3].isWall)
-            {
-                if (currentTile.Neighbors[1].isWall)
-                {
-                    //bottom horiz
-                    tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.VertiBottomEnd;
-                    return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-                }
-                //top horiz
-                tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.VertiTopEnd;
-                return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-            }
-
-
-            //Bottom Left Corner
-            if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[3].isWall)
-            {
-                if (currentTile.Neighbors[2].isWall)
-                {
-                    //corner without 2nd wall
-                    tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.BottomLeftCornerFilled;
-                    return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-                }
-
-                tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.BottomLeftCorner;
-                return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-            }
-
-            //Bottom Right Corner
-            if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[7].isWall)
-            {
-                if (currentTile.Neighbors[0].isWall)
-                {
-                    //corner without 2nd wall
-                    tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.BottomRightCornerFilled;
-                    return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-                }
-
-                tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.BottomRightCorner;
-                return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-            }
-
-            //Top Right Corner
-            if (currentTile.Neighbors[7].isWall && currentTile.Neighbors[5].isWall)
-            {
-                if (currentTile.Neighbors[6].isWall)
-                {
-                    //corner without 2nd wall
-                    tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.TopRightCornerFilled;
-                    return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-                }
-
-                tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.TopRightCorner;
-                return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-            }
-
-            //Top Left Corner
-            if (currentTile.Neighbors[3].isWall && currentTile.Neighbors[5].isWall)
-            {
-                if (currentTile.Neighbors[4].isWall)
-                {
-                    tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.TopLeftCornerFilled;
-                    return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-                }
-
-                tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.TopLeftCorner;
-                return oldState != tiles[tileIndex.Y, tileIndex.X].WallStates;
-            }
-
-            //cross
-
-            return false;
-            //else if (neighboringWalls[1] && neighboringWalls[3] && neighboringWalls[5] && neighboringWalls[7])
-            //{
-            //    tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.InteriorCorner;
-            //}
-        }
-
-        private bool IsValid(Point gridIndex)
-        {
-            return gridIndex.X >= 0 && gridIndex.X < tiles.GetLength(1) && gridIndex.Y >= 0 && gridIndex.Y < tiles.GetLength(0);
-        }
 
         public MapEditor((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
@@ -344,8 +71,6 @@ namespace Pacman
             objects.Add(wallButton);
 
             //ADD THING THAT IF SELECTED ONLY DRAWS OVER BLANK TILES
-
-
 
             MapEditorVisualTile.NormalSprite = Content.Load<Texture2D>("mapEditorTile");
             MapEditorVisualTile.NormalEnlargedBorder = Content.Load<Texture2D>("EnlargeBorderTile");
@@ -387,22 +112,7 @@ namespace Pacman
             MapEditorVisualTile.BottomCross = Content.Load<Texture2D>("bottomCross");
             MapEditorVisualTile.LeftCross = Content.Load<Texture2D>("leftCross");
 
-
-            for (int y = 0; y < tiles.GetLength(0); y++)
-            {
-                for (int x = 0; x < tiles.GetLength(1); x++)
-                {
-
-                    float realPositionX = x * MapEditorVisualTile.NormalSprite.Width + globalOffset.X;
-                    float realPositionY = y * MapEditorVisualTile.NormalSprite.Height + globalOffset.Y;
-                    tiles[y, x] = new MapEditorVisualTile(MapEditorVisualTile.NormalSprite, new Point(y, x), Color.White);
-                  
-                    for (int i = 0; i < offsets.Length; i++)
-                    {
-                        tiles[y, x].Neighbors[i].Index = new Point(y + offsets[i].Y, x + offsets[i].X);
-                    }
-                }
-            }
+            Grid = new MapEditorGrid(new Point(28, 31), new Point(MapEditorVisualTile.NormalSprite.Width, MapEditorVisualTile.NormalSprite.Height), new Vector2(40, 90));
         }
 
         MouseState prevms;
@@ -412,9 +122,9 @@ namespace Pacman
 
             KeyboardState kb = Keyboard.GetState();
 
-            if (kb.IsKeyDown(Keys.Space)) 
+            if (kb.IsKeyDown(Keys.Space))
             {
-                string stringified = JsonConvert.SerializeObject(tiles.Flatten().Select(tile => tile.Data));
+                string stringified = JsonConvert.SerializeObject(Grid.Tiles.Flatten().Select(tile => tile.Data));
                 System.IO.File.WriteAllText("SavedMap.json", stringified);
             }
 
@@ -422,21 +132,18 @@ namespace Pacman
             {
                 string content = System.IO.File.ReadAllText("SavedMap.json");
                 List<MapEditorDataTile> flattenedTiles = JsonConvert.DeserializeObject<List<MapEditorDataTile>>(content);
-           //     tiles = flattenedTiles.Select(x => new MapEditorVisualTile(.To2DArray(/*maybe needs parameters*/);
+                //     tiles = flattenedTiles.Select(x => new MapEditorVisualTile(.To2DArray(/*maybe needs parameters*/);
             }
 
             //If mouse is clicked
-            //Calculate position in terms of x and y
             //Call on tile that corresponds to that position
+            //Calculate position in terms of x and y
             //Aadianjhd function could take in the selectedTileType
 
             //use the 2d array to find the tile's neighbors.
             // like when you place a tile, check if it's neighbors are walls, if they are change the texture accordingly
 
-            foreach (var tile in tiles)
-            {
-                tile.Update(gameTime);
-            }
+            Grid.Update(gameTime);
 
             if (pelletButton.IsClicked(ms))
             {
@@ -514,14 +221,7 @@ namespace Pacman
             {
                 if (ms.LeftButton == ButtonState.Pressed)
                 {
-                    //Recursive function that takes in a tile
-                    //Update that tile with the update wall function
-                    //If nothing changed return
-                    //Loop through its neighbors
-                    //Call that recursive function on each neighbor
-
-                    addWall(new Vector2(ms.Position.X, ms.Position.Y));
-                    ;
+                    Grid.addWall(new Vector2(ms.Position.X, ms.Position.Y));
                 }
             }
 
@@ -532,10 +232,7 @@ namespace Pacman
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            foreach (var tile in tiles)
-            {
-                tile.Draw(spriteBatch);
-            }
+            Grid.Draw(spriteBatch);
 
             base.Draw(spriteBatch);
         }

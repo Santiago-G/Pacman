@@ -105,11 +105,12 @@ namespace Pacman
 
         public (Point Index, bool isWall)[] Neighbors => Data.Neighbors;
 
+        private Vector2 offset;
         public override Vector2 Position
         {
             get
             {
-                return new Vector2(Cord.Y * CurrentImage.Width, Cord.X * CurrentImage.Height);
+                return new Vector2(Cord.Y * CurrentImage.Width, Cord.X * CurrentImage.Height) + offset;
             }
         }
         public override Color Tint
@@ -124,16 +125,18 @@ namespace Pacman
             }
         }
 
-        public MapEditorVisualTile(Texture2D image, Point cord, Color tint) : base(image, Vector2.Zero, tint)
+        public MapEditorVisualTile(Texture2D image, Point cord, Color tint, Vector2 offset) : base(image, Vector2.Zero, tint)
         {
             CurrentImage = NormalSprite;
             prevImage = CurrentImage;
             Cord = cord;
+            this.offset = offset;
         }
 
-        public MapEditorVisualTile(MapEditorDataTile dataTile) : base(null, new Vector2(0), dataTile.Tint)
+        public MapEditorVisualTile(MapEditorDataTile dataTile, Vector2 offset) : base(null, new Vector2(0), dataTile.Tint)
         {
             Data = dataTile;
+            this.offset = offset;
             UpdateStates();
         }
 
