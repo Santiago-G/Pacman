@@ -137,7 +137,7 @@ namespace Pacman
         {
             Data = dataTile;
             this.offset = offset;
-            UpdateStates();
+            UpdateStates(true);
         }
 
         //fix both images when i hover over them
@@ -147,28 +147,53 @@ namespace Pacman
             return false;
         }
 
-        private void UpdateStates()
+        public void UpdateStates(bool setDefault=false)
         {
-            switch (TileStates)
+            if (setDefault)
             {
-                case States.Empty:
-                    prevImage = NormalSprite;
-                    CurrentImage = NormalEnlargedBorder;
-                    break;
-                case States.Pellet:
-                    prevImage = PelletSprite;
-                    CurrentImage = PelletEnlargedBorder;
-                    break;
-                case States.PowerPellet:
-                    prevImage = PowerPelletSprite;
-                    CurrentImage = PowerPelletEnlargedBorder;
-                    break;
-                case States.Wall:
+                switch (TileStates)
+                {
+                    case States.Empty:
+                        CurrentImage = NormalSprite;
+                        prevImage = NormalEnlargedBorder;
+                        break;
+                    case States.Pellet:
+                        CurrentImage = PelletSprite;
+                        prevImage = PelletEnlargedBorder;
+                        break;
+                    case States.PowerPellet:
+                        CurrentImage = PowerPelletSprite;
+                        prevImage = PowerPelletEnlargedBorder;
+                        break;
+                    case States.Wall:
 
-                    UpdateWalls();
+                        UpdateWalls();
 
-                    break;
+                        break;
+                }
             }
+            else 
+            {
+                switch (TileStates)
+                {
+                    case States.Empty:
+                        prevImage = NormalSprite;
+                        CurrentImage = NormalEnlargedBorder;
+                        break;
+                    case States.Pellet:
+                        prevImage = PelletSprite;
+                        CurrentImage = PelletEnlargedBorder;
+                        break;
+                    case States.PowerPellet:
+                        prevImage = PowerPelletSprite;
+                        CurrentImage = PowerPelletEnlargedBorder;
+                        break;
+                    case States.Wall:
+                        UpdateWalls();
+
+                        break;
+                }
+            }      
         }
 
         public void UpdateWalls()
@@ -287,8 +312,6 @@ namespace Pacman
                     break;
             }
         }
-
-
 
         public override void Update(GameTime gameTime)
         {

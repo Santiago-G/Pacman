@@ -23,14 +23,19 @@ namespace Pacman
         {
             T[,] expandedItems = new T[size.Y, size.X];
 
-            int index = 0;
+            int x = 0;
+            int y = 0;
+
             foreach (var item in items)
             {
-                index++;
-
-                if ()
-                { 
+                if (x >= size.X)
+                {
+                    x = 0;
+                    y++;
                 }
+
+                expandedItems[y, x] = item;
+                x++;
             }
 
             return expandedItems;

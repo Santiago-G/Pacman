@@ -3,13 +3,13 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace Pacman
 {
     public class MapEditorGrid
     {
         Vector2 Position;
-
 
         public MapEditorVisualTile[,] Tiles;
         Point[] offsets = new Point[] { new Point(-1, -1), new Point(0, -1), new Point(1, -1), new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(-1, 1), new Point(-1, 0) };
@@ -305,9 +305,14 @@ namespace Pacman
             
         }
 
-        public void LoadGrid()
+        public void LoadGrid(List<MapEditorDataTile> TileList)
         {
-            
+            Tiles = TileList.Select(x => new MapEditorVisualTile(x, Position)).Expand(new Point(Tiles.GetLength(1), Tiles.GetLength(0)));
+
+            foreach (var tile in Tiles)
+            {
+                tile.UpdateStates();
+            }
         }
 
         public void Update(GameTime gameTime)

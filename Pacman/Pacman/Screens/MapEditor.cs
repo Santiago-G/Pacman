@@ -17,6 +17,9 @@ namespace Pacman
         static public SelectedType selectedTileType = SelectedType.Default;
 
         MapEditorGrid Grid;
+        Vector2 GridOffest = new Vector2(40, 90);
+        Point GridSize = new Point(28, 31);
+
 
         Image mapEditorImage;
         Texture2D mapEditorSprite;
@@ -112,7 +115,7 @@ namespace Pacman
             MapEditorVisualTile.BottomCross = Content.Load<Texture2D>("bottomCross");
             MapEditorVisualTile.LeftCross = Content.Load<Texture2D>("leftCross");
 
-            Grid = new MapEditorGrid(new Point(28, 31), new Point(MapEditorVisualTile.NormalSprite.Width, MapEditorVisualTile.NormalSprite.Height), new Vector2(40, 90));
+            Grid = new MapEditorGrid(GridSize, new Point(MapEditorVisualTile.NormalSprite.Width, MapEditorVisualTile.NormalSprite.Height), GridOffest);
         }
 
         MouseState prevms;
@@ -132,7 +135,10 @@ namespace Pacman
             {
                 string content = System.IO.File.ReadAllText("SavedMap.json");
                 List<MapEditorDataTile> flattenedTiles = JsonConvert.DeserializeObject<List<MapEditorDataTile>>(content);
-                //     tiles = flattenedTiles.Select(x => new MapEditorVisualTile(.To2DArray(/*maybe needs parameters*/);
+                //tiles = flattenedTiles.Select(x => new MapEditorVisualTile(.To2DArray(/*maybe needs parameters*/);
+                //Create grid based on this two d array
+                Grid.LoadGrid(flattenedTiles);
+                ;
             }
 
             //If mouse is clicked
