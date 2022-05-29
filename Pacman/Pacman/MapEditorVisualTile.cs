@@ -334,7 +334,10 @@ namespace Pacman
                             TileStates = States.PowerPellet;
                             break;
                         case SelectedType.Eraser:
-                            TileStates = States.Empty;
+                            if (TileStates != States.Wall)
+                            {
+                                TileStates = States.Empty;
+                            }
                             break;
                         case SelectedType.Wall:
                             TileStates = States.Wall;

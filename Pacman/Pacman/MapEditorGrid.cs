@@ -24,14 +24,29 @@ namespace Pacman
 
             if (index == new Point(-1)) return;
 
-            recursivePlaceholderName(Tiles[index.Y, index.X]);
+            recursiveAddWall(Tiles[index.Y, index.X]);
         }
 
-        private void recursivePlaceholderName(MapEditorVisualTile currentTile)
+        public void removeWall(Vector2 MousePosition)
         {
-            bool updated = UpdateWall(currentTile.Position);
+            Point index = PosToIndex(MousePosition);
 
-            if (!updated) return;
+            if (index == new Point(-1) || Tiles[index.Y, index.X].TileStates != States.Wall) return;
+
+            Tiles[index.Y, index.X].TileStates = States.Empty;
+            Tiles[index.Y, index.X].WallStates = WallStates.notAWall;
+
+            recursiveAddWall(Tiles[index.Y, index.X], true);
+        }
+
+        private void recursiveAddWall(MapEditorVisualTile currentTile, bool remove = false)
+        {
+            if (!remove)
+            {
+                bool updated = UpdateWall(currentTile.Position);
+
+                if (!updated) return;
+            }
 
             currentTile.UpdateWalls();
 
@@ -39,7 +54,7 @@ namespace Pacman
             {
                 if (neighbor.isWall)
                 {
-                    recursivePlaceholderName(Tiles[neighbor.Index.Y, neighbor.Index.X]);
+                    recursiveAddWall(Tiles[neighbor.Index.Y, neighbor.Index.X]);
                 }
             }
         }

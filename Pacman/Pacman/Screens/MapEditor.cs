@@ -13,13 +13,11 @@ namespace Pacman
 {
     public class MapEditor : Screen
     {
-
         static public SelectedType selectedTileType = SelectedType.Default;
 
-        MapEditorGrid Grid;
+        public MapEditorGrid Grid;
         Vector2 GridOffest = new Vector2(40, 90);
         Point GridSize = new Point(28, 31);
-
 
         Image mapEditorImage;
         Texture2D mapEditorSprite;
@@ -88,6 +86,8 @@ namespace Pacman
             MapEditorVisualTile.HorizWallTile = Content.Load<Texture2D>("horizWall");
             MapEditorVisualTile.HorizLeftWallTile = Content.Load<Texture2D>("horizLeftWall");
             MapEditorVisualTile.HorizRightWallTile = Content.Load<Texture2D>("horizRightWall");
+
+            MapEditorVisualTile.HorizLeftWallTile = MapEditorVisualTile.HorizWallTile.Flip(X);
 
             MapEditorVisualTile.VertiWallTile = Content.Load<Texture2D>("VertiWall");
             MapEditorVisualTile.VertiTopWallTile = Content.Load<Texture2D>("VertiTopWall");
@@ -231,6 +231,14 @@ namespace Pacman
                 }
             }
 
+            if (selectedTileType == SelectedType.Eraser)
+            {
+                if (ms.LeftButton == ButtonState.Pressed)
+                {
+                    Grid.removeWall(new Vector2(ms.Position.X, ms.Position.Y));
+                }
+            }
+
             prevms = ms;
 
             base.Update(gameTime);
@@ -242,7 +250,5 @@ namespace Pacman
 
             base.Draw(spriteBatch);
         }
-
-
     }
 }

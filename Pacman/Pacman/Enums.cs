@@ -59,4 +59,12 @@ namespace Pacman
         InteriorCorner,
         notAWall
     }
+
+    public enum temp
+    {
+        d90,
+        d180,
+        d270,
+        d360
+    }
 }

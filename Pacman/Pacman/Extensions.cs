@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,11 @@ namespace Pacman
             }
 
             return expandedItems;
+        }
+
+        public static Texture2D Flip()
+        {
+            
         }
 
         //This was not endorsed by Michael!
