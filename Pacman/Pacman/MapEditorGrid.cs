@@ -59,13 +59,17 @@ namespace Pacman
             }
         }
 
-        private Point PosToIndex(Vector2 Pos)
+        public Point PosToIndex(Vector2 Pos)
         {
-            Pos.X -= Position.X;
-            Pos.Y -= Position.Y;
+            Pos.X -= Position.X; //+ Tiles[0, 0].Origin.X * Tiles[0, 0].Scale.X;
+            Pos.Y -= Position.Y; //- Tiles[0, 0].Origin.Y * Tiles[0, 0].Scale.Y;
+
+            //check if the float is valid, set it to floats
 
             int gridX = (int)(Pos.X / Tiles[0, 0].Hitbox.Width);
             int gridY = (int)(Pos.Y / Tiles[0, 0].Hitbox.Height);
+
+            Game1.WindowText = $"GridX: {gridX}, GridY: {gridY}, Offset: {Pos}";
 
             Point retPoint = new Point(gridX, gridY);
             if (!IsValid(retPoint)) return new Point(-1);
@@ -300,13 +304,16 @@ namespace Pacman
         {
             Position = position;
 
+            Position = Vector2.Zero + new Vector2(MapEditorVisualTile.NormalSprite.Width / 2, MapEditorVisualTile.NormalSprite.Height / 2);
+
             Tiles = new MapEditorVisualTile[gridSize.Y, gridSize.X];
 
             for (int y = 0; y < gridSize.Y; y++)
             {
                 for (int x = 0; x < gridSize.X; x++)
                 {
-                    Tiles[y, x] = new MapEditorVisualTile(MapEditorVisualTile.NormalSprite, new Point(y, x), Color.White, Position);
+                    //new Vector2(MapEditorVisualTile.NormalSprite.Width /2, MapEditorVisualTile.NormalSprite.Height/2)
+                    Tiles[y, x] = new MapEditorVisualTile(MapEditorVisualTile.NormalSprite, new Point(y, x), Color.White, Position, Vector2.One, new Vector2(MapEditorVisualTile.NormalSprite.Width / 2, MapEditorVisualTile.NormalSprite.Height / 2), 0f, SpriteEffects.None);
 
                     for (int i = 0; i < offsets.Length; i++)
                     {

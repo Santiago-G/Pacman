@@ -64,8 +64,6 @@ namespace Pacman
         //shift click like in gimp to fill in whatever is selected
         //also have a fill all
 
-        public Rectangle Hitbox { get => new Rectangle((int)Position.X, (int)Position.Y, CurrentImage.Width, CurrentImage.Height); }
-
         public MapEditorDataTile Data { get; } = new MapEditorDataTile();
 
         public States TileStates
@@ -125,7 +123,7 @@ namespace Pacman
             }
         }
 
-        public MapEditorVisualTile(Texture2D image, Point cord, Color tint, Vector2 offset) : base(image, Vector2.Zero, tint)
+        public MapEditorVisualTile(Texture2D image, Point cord, Color tint, Vector2 offset, Vector2 scale, Vector2 origin, float rotation, SpriteEffects spriteEffects) : base(image, Vector2.Zero, tint, scale, origin, rotation, spriteEffects)
         {
             CurrentImage = NormalSprite;
             prevImage = CurrentImage;
@@ -359,7 +357,8 @@ namespace Pacman
 
         public override void Draw(SpriteBatch batch)
         {
-            batch.Draw(CurrentImage, Position, Tint);
+            batch.Draw(CurrentImage, Position, null, Tint, Rotation, Origin, Scale, SpriteEffects, 0);
+            batch.Draw(Game1.Pixel, Hitbox, Color.Red * 0.3f);
         }
     }
 }

@@ -27,15 +27,19 @@ namespace Pacman
             this.Tint = Tint;
         }
 
-        public Sprite(
-            //making another constructor)
+        public Sprite(Texture2D Image, Vector2 Position, Color Tint, Vector2 Scale, Vector2 Origin, float Rotation, SpriteEffects spriteEffects)
+        {
+            this.Image = Image;
+            this.Position = Position;
+            this.Tint = Tint;
+            this.Scale = Scale;
+            this.Origin = Origin;
+            this.Rotation = Rotation;
+            SpriteEffects = spriteEffects;
+        }
 
         public abstract void Update(GameTime gameTime);
 
         public abstract void Draw(SpriteBatch batch);
     }
-
-    //Add scale, origin, rotation, spriteeffects, hitbox
-    //Scale is default 1, origin is default top left, rotation is default 0, spriteffects is default None
-    //hitbox is auto calculated
 }

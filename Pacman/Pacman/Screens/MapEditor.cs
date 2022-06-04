@@ -87,7 +87,7 @@ namespace Pacman
             MapEditorVisualTile.HorizLeftWallTile = Content.Load<Texture2D>("horizLeftWall");
             MapEditorVisualTile.HorizRightWallTile = Content.Load<Texture2D>("horizRightWall");
 
-            MapEditorVisualTile.HorizLeftWallTile = MapEditorVisualTile.HorizWallTile.Flip(X);
+            //MapEditorVisualTile.HorizLeftWallTile = MapEditorVisualTile.HorizWallTile.Flip(X);
 
             MapEditorVisualTile.VertiWallTile = Content.Load<Texture2D>("VertiWall");
             MapEditorVisualTile.VertiTopWallTile = Content.Load<Texture2D>("VertiTopWall");
@@ -140,14 +140,6 @@ namespace Pacman
                 Grid.LoadGrid(flattenedTiles);
                 ;
             }
-
-            //If mouse is clicked
-            //Call on tile that corresponds to that position
-            //Calculate position in terms of x and y
-            //Aadianjhd function could take in the selectedTileType
-
-            //use the 2d array to find the tile's neighbors.
-            // like when you place a tile, check if it's neighbors are walls, if they are change the texture accordingly
 
             Grid.Update(gameTime);
 
@@ -240,6 +232,8 @@ namespace Pacman
             }
 
             prevms = ms;
+
+            Game1.WindowText = $"{Grid.PosToIndex(new Vector2(ms.Position.X, ms.Position.Y))}, Raw MS {ms.Position}";
 
             base.Update(gameTime);
         }

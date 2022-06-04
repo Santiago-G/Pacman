@@ -32,6 +32,9 @@ namespace Pacman
 
 
         public static string WindowText = "";
+
+        public static Texture2D Pixel;
+        
         public void ChangeResolution(int width, int height)
         {
             _graphics.PreferredBackBufferWidth = width;
@@ -68,6 +71,9 @@ namespace Pacman
             {
                 screen.Value.LoadContent(Content);
             }
+
+            Pixel = new Texture2D(GraphicsDevice, 1, 1);
+            Pixel.SetData(new Color[] { Color.White });
         }
 
         protected override void Update(GameTime gameTime)
