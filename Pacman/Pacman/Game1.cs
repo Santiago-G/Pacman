@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Pacman.GraphStuff;
+using Pacman.Screens;
 using System.Collections.Generic;
 using System.IO;
 
@@ -15,10 +16,11 @@ namespace Pacman
             TitleScreen,
             MapEditor,
             MainGame,
-            Options
+            Options,
+            Test
         }
 
-        public static GameStates currentScreen = GameStates.TitleScreen;
+        public static GameStates currentScreen = GameStates.Test;
         GameStates prevScreen;
         public static Dictionary<GameStates, Screen> screens = new Dictionary<GameStates, Screen>();
 
@@ -66,6 +68,8 @@ namespace Pacman
             screens.Add(GameStates.MapEditor, new MapEditor((1600, 1000), new Vector2(0), _graphics));
 
             screens.Add(GameStates.Options, new Options((800, 800), new Vector2(0), _graphics));
+
+            screens.Add(GameStates.Test, new TestScreen((800, 800), new Vector2(0), _graphics));
 
             foreach (var screen in screens)
             {

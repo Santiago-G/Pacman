@@ -14,7 +14,7 @@ namespace Pacman
 
         #region Textures
         [JsonIgnore]
-        private Texture2D prevImage;
+        public Texture2D prevImage;
 
         public static Texture2D NormalSprite;
         public static Texture2D NormalEnlargedBorder;
@@ -30,8 +30,10 @@ namespace Pacman
         public static Texture2D InteriorWall;
 
         public static Texture2D HorizWallTile;
-        public static Texture2D HorizLeftWallTile;
+        //public static Texture2D HorizLeftWallTile;
         public static Texture2D HorizRightWallTile;
+
+        public static Texture2D SingleWallEnd;
 
         public static Texture2D VertiWallTile;
         public static Texture2D VertiTopWallTile;
@@ -208,8 +210,11 @@ namespace Pacman
                     prevImage = HorizWallTile;
                     break;
                 case WallStates.HorizLeftEnd:
-                    CurrentImage = HorizLeftWallTile;
-                    prevImage = HorizLeftWallTile;
+                    CurrentImage = SingleWallEnd;
+                    prevImage = SingleWallEnd;
+
+                    Rotation = (float)Math.PI;
+
                     break;
                 case WallStates.HorizRightEnd:
                     CurrentImage = HorizRightWallTile;
@@ -358,7 +363,7 @@ namespace Pacman
         public override void Draw(SpriteBatch batch)
         {
             batch.Draw(CurrentImage, Position, null, Tint, Rotation, Origin, Scale, SpriteEffects, 0);
-            batch.Draw(Game1.Pixel, Hitbox, Color.Red * 0.3f);
+            //batch.Draw(Game1.Pixel, Hitbox, Color.Red * 0.3f);
         }
     }
 }

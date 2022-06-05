@@ -61,13 +61,25 @@ namespace Pacman
 
         public Point PosToIndex(Vector2 Pos)
         {
-            Pos.X -= Position.X; //+ Tiles[0, 0].Origin.X * Tiles[0, 0].Scale.X;
-            Pos.Y -= Position.Y; //- Tiles[0, 0].Origin.Y * Tiles[0, 0].Scale.Y;
+            Pos.X -= Position.X - Tiles[0, 0].Origin.X * Tiles[0, 0].Scale.X;
+            Pos.Y -= Position.Y - Tiles[0, 0].Origin.Y * Tiles[0, 0].Scale.Y;
 
             //check if the float is valid, set it to floats
 
-            int gridX = (int)(Pos.X / Tiles[0, 0].Hitbox.Width);
-            int gridY = (int)(Pos.Y / Tiles[0, 0].Hitbox.Height);
+            float gridXf = (Pos.X / Tiles[0, 0].Hitbox.Width);
+            float gridYf = (Pos.Y / Tiles[0, 0].Hitbox.Height);
+
+            if (gridXf < 0)
+            {
+                gridXf = -1;
+            }
+            if (gridYf < 0)
+            {
+                gridYf = -1;
+            }
+
+            int gridX = (int)(gridXf);
+            int gridY = (int)(gridYf);
 
             Game1.WindowText = $"GridX: {gridX}, GridY: {gridY}, Offset: {Pos}";
 
@@ -302,9 +314,7 @@ namespace Pacman
 
         public MapEditorGrid(Point gridSize, Point tileSize, Vector2 position)
         {
-            Position = position;
-
-            Position = Vector2.Zero + new Vector2(MapEditorVisualTile.NormalSprite.Width / 2, MapEditorVisualTile.NormalSprite.Height / 2);
+            Position = position + new Vector2(MapEditorVisualTile.NormalSprite.Width / 2, MapEditorVisualTile.NormalSprite.Height / 2);
 
             Tiles = new MapEditorVisualTile[gridSize.Y, gridSize.X];
 
@@ -313,7 +323,7 @@ namespace Pacman
                 for (int x = 0; x < gridSize.X; x++)
                 {
                     //new Vector2(MapEditorVisualTile.NormalSprite.Width /2, MapEditorVisualTile.NormalSprite.Height/2)
-                    Tiles[y, x] = new MapEditorVisualTile(MapEditorVisualTile.NormalSprite, new Point(y, x), Color.White, Position, Vector2.One, new Vector2(MapEditorVisualTile.NormalSprite.Width / 2, MapEditorVisualTile.NormalSprite.Height / 2), 0f, SpriteEffects.None);
+                    Tiles[y, x] = new MapEditorVisualTile(MapEditorVisualTile.NormalSprite, new Point(y, x), Color.White, Position, Vector2.One, new Vector2(MapEditorVisualTile.NormalSprite.Width / 2f, MapEditorVisualTile.NormalSprite.Height / 2f), 0f, SpriteEffects.None);
 
                     for (int i = 0; i < offsets.Length; i++)
                     {
