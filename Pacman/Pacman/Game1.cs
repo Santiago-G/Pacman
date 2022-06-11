@@ -17,10 +17,10 @@ namespace Pacman
             MapEditor,
             MainGame,
             Options,
-            Test
+            //Test
         }
 
-        public static GameStates currentScreen = GameStates.Test;
+        public static GameStates currentScreen = GameStates.TitleScreen;
         GameStates prevScreen;
         public static Dictionary<GameStates, Screen> screens = new Dictionary<GameStates, Screen>();
 
@@ -69,7 +69,7 @@ namespace Pacman
 
             screens.Add(GameStates.Options, new Options((800, 800), new Vector2(0), _graphics));
 
-            screens.Add(GameStates.Test, new TestScreen((800, 800), new Vector2(0), _graphics));
+            //screens.Add(GameStates.Test, new TestScreen((800, 800), new Vector2(0), _graphics));
 
             foreach (var screen in screens)
             {
