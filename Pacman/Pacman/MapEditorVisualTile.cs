@@ -29,15 +29,9 @@ namespace Pacman
 
         public static Texture2D InteriorWall;
 
-        public static Texture2D HorizWallTile;
-        //public static Texture2D HorizLeftWallTile;
-        public static Texture2D HorizRightWallTile;
+        public static Texture2D MiddleWallPiece;
 
         public static Texture2D SingleWallEnd;
-
-        public static Texture2D VertiWallTile;
-        public static Texture2D VertiTopWallTile;
-        public static Texture2D VertiBottomWallTile;
 
         public static Texture2D TopLeftWallTile;
         public static Texture2D TopRightWallTile;
@@ -205,34 +199,46 @@ namespace Pacman
                     prevImage = LoneWallTile;
                     break;
 
+
                 case WallStates.Horiz:
-                    CurrentImage = HorizWallTile;
-                    prevImage = HorizWallTile;
+                    CurrentImage = MiddleWallPiece;
+                    prevImage = MiddleWallPiece;
+
+                    Rotation = (float)(Math.PI * .5);
                     break;
                 case WallStates.HorizLeftEnd:
                     CurrentImage = SingleWallEnd;
                     prevImage = SingleWallEnd;
 
-                    Rotation = (float)Math.PI;
-
+                    Rotation = (float)(Math.PI * 1.5);
                     break;
                 case WallStates.HorizRightEnd:
-                    CurrentImage = HorizRightWallTile;
-                    prevImage = HorizRightWallTile;
+                    CurrentImage = SingleWallEnd;
+                    prevImage = SingleWallEnd;
+
+                    Rotation = (float)(Math.PI * .5);
                     break;
 
+
                 case WallStates.Verti:
-                    CurrentImage = VertiWallTile;
-                    prevImage = VertiWallTile;
+                    CurrentImage = MiddleWallPiece;
+                    prevImage = MiddleWallPiece;
+
+                    Rotation = 0;
                     break;
                 case WallStates.VertiTopEnd:
-                    CurrentImage = VertiTopWallTile;
-                    prevImage = VertiTopWallTile;
+                    CurrentImage = SingleWallEnd;
+                    prevImage = SingleWallEnd;
+
+                    Rotation = 0;
                     break;
                 case WallStates.VertiBottomEnd:
-                    CurrentImage = VertiBottomWallTile;
-                    prevImage = VertiBottomWallTile;
+                    CurrentImage = SingleWallEnd;
+                    prevImage = SingleWallEnd;
+
+                    Rotation = (float)(Math.PI * 2);
                     break;
+
 
                 case WallStates.TopLeftCorner:
                     CurrentImage = TopLeftWallTile;

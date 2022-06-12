@@ -80,19 +80,14 @@ namespace Pacman
             MapEditorVisualTile.PowerPelletSprite = Content.Load<Texture2D>("powerPelletSprite");
             MapEditorVisualTile.PowerPelletEnlargedBorder = Content.Load<Texture2D>("enlargedPowerPelletSprite");
 
-            MapEditorVisualTile.LoneWallTile = Content.Load<Texture2D>("loneWall");
+            MapEditorVisualTile.LoneWallTile = Content.Load<Texture2D>("loneWall"); 
             MapEditorVisualTile.InteriorWall = Content.Load<Texture2D>("InteriorWall");
 
-            MapEditorVisualTile.HorizWallTile = Content.Load<Texture2D>("horizWall");
-
+            //MapEditorVisualTile.MiddleWallPiece = Content.Load<Texture2D>("singleMiddleWall");
             MapEditorVisualTile.SingleWallEnd = Content.Load<Texture2D>("singleWallEnd");
-
-            //MapEditorVisualTile.HorizLeftWallTile = Content.Load<Texture2D>("horizLeftWall");
-            //MapEditorVisualTile.HorizRightWallTile = Content.Load<Texture2D>("horizRightWall");
 
             //MapEditorVisualTile.HorizLeftWallTile = MapEditorVisualTile.HorizWallTile.Flip(X);
 
-            MapEditorVisualTile.VertiWallTile = Content.Load<Texture2D>("VertiWall");
             //MapEditorVisualTile.VertiTopWallTile = Content.Load<Texture2D>("VertiTopWall");
             //MapEditorVisualTile.VertiBottomWallTile = Content.Load<Texture2D>("VertiBottomWall");
 

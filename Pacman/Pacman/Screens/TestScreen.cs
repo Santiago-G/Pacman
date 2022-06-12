@@ -27,23 +27,23 @@ namespace Pacman.Screens
             pixel.SetData(colorScheme);
         }
 
-        public override void LoadContent(ContentManager Content)
-        {
-            MapEditorVisualTile.VertiWallTile = Content.Load<Texture2D>("test2");
+        //public override void LoadContent(ContentManager Content)
+        //{
+        //    MapEditorVisualTile.VertiWallTile = Content.Load<Texture2D>("test2");
 
-            originFloat = new MapEditorVisualTile(MapEditorVisualTile.VertiWallTile, new Point(1, 1), Color.White, Vector2.Zero, Vector2.One, new Vector2(MapEditorVisualTile.VertiWallTile.Width / 2f, MapEditorVisualTile.VertiWallTile.Height / 2f), 0f, SpriteEffects.None);
-            originFloat.TileStates = States.Wall;
-            originFloat.WallStates = WallStates.Verti;
-            originFloat.CurrentImage = MapEditorVisualTile.VertiWallTile;
-            originFloat.prevImage = MapEditorVisualTile.VertiWallTile;
+        //    originFloat = new MapEditorVisualTile(MapEditorVisualTile.VertiWallTile, new Point(1, 1), Color.White, Vector2.Zero, Vector2.One, new Vector2(MapEditorVisualTile.VertiWallTile.Width / 2f, MapEditorVisualTile.VertiWallTile.Height / 2f), 0f, SpriteEffects.None);
+        //    originFloat.TileStates = States.Wall;
+        //    originFloat.WallStates = WallStates.Verti;
+        //    originFloat.CurrentImage = MapEditorVisualTile.VertiWallTile;
+        //    originFloat.prevImage = MapEditorVisualTile.VertiWallTile;
 
 
-            originInt = new MapEditorVisualTile(MapEditorVisualTile.VertiWallTile, new Point(3, 1), Color.White, Vector2.Zero, Vector2.One, new Vector2(MapEditorVisualTile.VertiWallTile.Width / 2, MapEditorVisualTile.VertiWallTile.Height / 2), 0f, SpriteEffects.None);
-            originInt.TileStates = States.Wall;
-            originInt.WallStates = WallStates.Verti;
-            originInt.CurrentImage = MapEditorVisualTile.VertiWallTile;
-            originInt.prevImage = MapEditorVisualTile.VertiWallTile;
-        }
+        //    originInt = new MapEditorVisualTile(MapEditorVisualTile.VertiWallTile, new Point(3, 1), Color.White, Vector2.Zero, Vector2.One, new Vector2(MapEditorVisualTile.VertiWallTile.Width / 2, MapEditorVisualTile.VertiWallTile.Height / 2), 0f, SpriteEffects.None);
+        //    originInt.TileStates = States.Wall;
+        //    originInt.WallStates = WallStates.Verti;
+        //    originInt.CurrentImage = MapEditorVisualTile.VertiWallTile;
+        //    originInt.prevImage = MapEditorVisualTile.VertiWallTile;
+        //}
 
         public override void Update(GameTime gameTime)
         {
@@ -55,6 +55,11 @@ namespace Pacman.Screens
         {
             originInt.Draw(spriteBatch);
             originFloat.Draw(spriteBatch);
+        }
+
+        public override void LoadContent(ContentManager Content)
+        {
+            throw new NotImplementedException();
         }
     }
 }
