@@ -33,15 +33,10 @@ namespace Pacman
 
         public static Texture2D SingleWallEnd;
 
-        public static Texture2D TopLeftWallTile;
-        public static Texture2D TopRightWallTile;
-        public static Texture2D BottomRightWallTile;
-        public static Texture2D BottomLeftWallTile;
+        public static Texture2D CornerWallTile;
 
-        public static Texture2D TopLeftFilledWallTile;
-        public static Texture2D TopRightFilledWallTile;
-        public static Texture2D BottomRightFilledWallTile;
-        public static Texture2D BottomLeftFilledWallTile;
+        public static Texture2D CornerWallFilledTile;
+
 
         public static Texture2D TopEdge;
         public static Texture2D RightEdge;
@@ -236,43 +231,61 @@ namespace Pacman
                     CurrentImage = SingleWallEnd;
                     prevImage = SingleWallEnd;
 
-                    Rotation = (float)(Math.PI * 2);
+                    Rotation = (float)(Math.PI * 1);
                     break;
 
 
                 case WallStates.TopLeftCorner:
-                    CurrentImage = TopLeftWallTile;
-                    prevImage = TopLeftWallTile;
+                    CurrentImage = CornerWallTile;
+                    prevImage = CornerWallTile;
+
+                    Rotation = 0;
                     break;
                 case WallStates.TopRightCorner:
-                    CurrentImage = TopRightWallTile;
-                    prevImage = TopRightWallTile;
+                    CurrentImage = CornerWallTile;
+                    prevImage = CornerWallTile;
+
+                    Rotation = (float)(Math.PI * .5);
                     break;
                 case WallStates.BottomRightCorner:
-                    CurrentImage = BottomRightWallTile;
-                    prevImage = BottomRightWallTile;
+                    CurrentImage = CornerWallTile;
+                    prevImage = CornerWallTile;
+
+                    Rotation = (float)(Math.PI * 1);
                     break;
                 case WallStates.BottomLeftCorner:
-                    CurrentImage = BottomLeftWallTile;
-                    prevImage = BottomLeftWallTile;
+                    CurrentImage = CornerWallTile;
+                    prevImage = CornerWallTile;
+
+                    Rotation = (float)(Math.PI * 1.5);
                     break;
 
+
                 case WallStates.TopLeftCornerFilled:
-                    CurrentImage = TopLeftFilledWallTile;
-                    prevImage = TopLeftFilledWallTile;
+                    CurrentImage = CornerWallFilledTile;
+                    prevImage = CornerWallFilledTile;
+
+                    Rotation = 0;
                     break;
                 case WallStates.TopRightCornerFilled:
-                    CurrentImage = TopRightFilledWallTile;
-                    prevImage = TopRightFilledWallTile;
+                    CurrentImage = CornerWallFilledTile;
+                    prevImage = CornerWallFilledTile;
+
+                    Rotation = (float)(Math.PI * .5);
                     break;
                 case WallStates.BottomRightCornerFilled:
-                    CurrentImage = BottomRightFilledWallTile;
-                    prevImage = BottomRightFilledWallTile;
+                    CurrentImage = CornerWallFilledTile;
+                    prevImage = CornerWallFilledTile;
+
+                    Rotation = (float)(Math.PI * 1);
                     break;
                 case WallStates.BottomLeftCornerFilled:
-                    CurrentImage = BottomLeftFilledWallTile;
-                    prevImage = BottomLeftFilledWallTile;
+                    CurrentImage = CornerWallFilledTile;
+                    prevImage = CornerWallFilledTile;
+
+                    Rotation = (float)(Math.PI * 1.5);
                     break;
+
 
                 case WallStates.TopEdge:
                     CurrentImage = TopEdge;

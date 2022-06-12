@@ -83,23 +83,13 @@ namespace Pacman
             MapEditorVisualTile.LoneWallTile = Content.Load<Texture2D>("loneWall"); 
             MapEditorVisualTile.InteriorWall = Content.Load<Texture2D>("InteriorWall");
 
-            //MapEditorVisualTile.MiddleWallPiece = Content.Load<Texture2D>("singleMiddleWall");
+            MapEditorVisualTile.MiddleWallPiece = Content.Load<Texture2D>("singleMiddleWall");
             MapEditorVisualTile.SingleWallEnd = Content.Load<Texture2D>("singleWallEnd");
 
-            //MapEditorVisualTile.HorizLeftWallTile = MapEditorVisualTile.HorizWallTile.Flip(X);
+            MapEditorVisualTile.CornerWallTile = Content.Load<Texture2D>("CornerWalls");
+            
+            MapEditorVisualTile.CornerWallFilledTile = Content.Load<Texture2D>("CornerWallsFilled");
 
-            //MapEditorVisualTile.VertiTopWallTile = Content.Load<Texture2D>("VertiTopWall");
-            //MapEditorVisualTile.VertiBottomWallTile = Content.Load<Texture2D>("VertiBottomWall");
-
-            MapEditorVisualTile.TopLeftWallTile = Content.Load<Texture2D>("TopLeftCorner");
-            MapEditorVisualTile.TopRightWallTile = Content.Load<Texture2D>("TopRightCorner");
-            MapEditorVisualTile.BottomLeftWallTile = Content.Load<Texture2D>("BottomLeftCorner");
-            MapEditorVisualTile.BottomRightWallTile = Content.Load<Texture2D>("BottomRightCorner");
-
-            MapEditorVisualTile.TopLeftFilledWallTile = Content.Load<Texture2D>("TopLeftCornerFilled");
-            MapEditorVisualTile.TopRightFilledWallTile = Content.Load<Texture2D>("TopRightCornerFilled");
-            MapEditorVisualTile.BottomRightFilledWallTile = Content.Load<Texture2D>("BottomRightCornerFilled");
-            MapEditorVisualTile.BottomLeftFilledWallTile = Content.Load<Texture2D>("BottomLeftCornerFilled");
 
             MapEditorVisualTile.TopEdge = Content.Load<Texture2D>("TopEdge");
             MapEditorVisualTile.RightEdge = Content.Load<Texture2D>("RightEdge");
