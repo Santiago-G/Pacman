@@ -37,18 +37,14 @@ namespace Pacman
 
         public static Texture2D CornerWallFilledTile;
 
-
-        public static Texture2D TopEdge;
-        public static Texture2D RightEdge;
-        public static Texture2D BottomEdge;
-        public static Texture2D LeftEdge;
+        public static Texture2D EdgeTile;
 
         public static Texture2D InteriorCross;
 
-        public static Texture2D TopCross;
-        public static Texture2D RightCross;
-        public static Texture2D BottomCross;
-        public static Texture2D LeftCross;
+        public static Texture2D SingleCross;
+
+        public static Texture2D InteriorFilledCorner;
+
 
         #endregion
 
@@ -288,37 +284,53 @@ namespace Pacman
 
 
                 case WallStates.TopEdge:
-                    CurrentImage = TopEdge;
-                    prevImage = TopEdge;
+                    CurrentImage = EdgeTile;
+                    prevImage = EdgeTile;
+
+                    Rotation = 0;
                     break;
                 case WallStates.RightEdge:
-                    CurrentImage = RightEdge;
-                    prevImage = RightEdge;
+                    CurrentImage = EdgeTile;
+                    prevImage = EdgeTile;
+
+                    Rotation = (float)(Math.PI * .5);
                     break;
                 case WallStates.BottomEdge:
-                    CurrentImage = BottomEdge;
-                    prevImage = BottomEdge;
+                    CurrentImage = EdgeTile;
+                    prevImage = EdgeTile;
+
+                    Rotation = (float)(Math.PI * 1);
                     break;
                 case WallStates.LeftEdge:
-                    CurrentImage = LeftEdge;
-                    prevImage = LeftEdge;
+                    CurrentImage = EdgeTile;
+                    prevImage = EdgeTile;
+
+                    Rotation = (float)(Math.PI * 1.5);
                     break;
 
                 case WallStates.TopCross:
-                    CurrentImage = TopCross;
-                    prevImage = TopCross;
+                    CurrentImage = SingleCross;
+                    prevImage = SingleCross;
+
+                    Rotation = 0;
                     break;
                 case WallStates.RightCross:
-                    CurrentImage = RightCross;
-                    prevImage = RightCross;
+                    CurrentImage = SingleCross;
+                    prevImage = SingleCross;
+
+                    Rotation = (float)(Math.PI * .5);
                     break;
                 case WallStates.BottomCross:
-                    CurrentImage = BottomCross;
-                    prevImage = BottomCross;
+                    CurrentImage = SingleCross;
+                    prevImage = SingleCross;
+
+                    Rotation = (float)(Math.PI * 1);
                     break;
                 case WallStates.LeftCross:
-                    CurrentImage = LeftCross;
-                    prevImage = LeftCross;
+                    CurrentImage = SingleCross;
+                    prevImage = SingleCross;
+
+                    Rotation = (float)(Math.PI * 1.5);
                     break;
 
 
@@ -330,6 +342,34 @@ namespace Pacman
                     CurrentImage = InteriorCross;
                     prevImage = InteriorCross;
                     break;
+
+                case WallStates.TopLeftInteriorFilledCorner:
+                    CurrentImage = InteriorFilledCorner;
+                    prevImage = InteriorFilledCorner;
+
+                    Rotation = 0;
+                    break;
+                case WallStates.TopRightInteriorFilledCorner:
+                    CurrentImage = InteriorFilledCorner;
+                    prevImage = InteriorFilledCorner;
+
+                    Rotation = (float)(Math.PI * .5);
+                    break;
+                case WallStates.BottomRightInteriorFilledCorner:
+                    CurrentImage = InteriorFilledCorner;
+                    prevImage = InteriorFilledCorner;
+
+                    Rotation = (float)(Math.PI * 1);
+                    break;
+                case WallStates.BottomLeftInteriorFilledCorner:
+                    CurrentImage = InteriorFilledCorner;
+                    prevImage = InteriorFilledCorner;
+
+                    Rotation = (float)(Math.PI * 1.5);
+                    break;
+
+
+
                 case WallStates.notAWall:
                     break;
             }

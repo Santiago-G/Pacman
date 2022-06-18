@@ -128,7 +128,7 @@ namespace Pacman
                 return oldState != Tiles[tileIndex.Y, tileIndex.X].WallStates;
             }
 
-            if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[3].isWall && currentTile.Neighbors[5].isWall && currentTile.Neighbors[7].isWall)
+            if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[3].isWall && currentTile.Neighbors[5].isWall && currentTile.Neighbors[7].isWall && !currentTile.Neighbors[0].isWall && !currentTile.Neighbors[2].isWall && !currentTile.Neighbors[4].isWall && !currentTile.Neighbors[6].isWall)
             {
                 //interior center
                 Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.InteriorCorner;
@@ -151,18 +151,29 @@ namespace Pacman
                     {
                         if (currentTile.Neighbors[1].isWall)
                         {
-                            //Top T
-                            Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.TopCross;
+                            //Bottom T
+                            Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.BottomCross;
                             return oldState != Tiles[tileIndex.Y, tileIndex.X].WallStates;
                         }
-
-                        Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.BottomCross;
+                        //Top T
+                        Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.TopCross;
                         return oldState != Tiles[tileIndex.Y, tileIndex.X].WallStates;
                     }
 
                     //Top Edge
                     if (currentTile.Neighbors[6].isWall && currentTile.Neighbors[5].isWall && currentTile.Neighbors[4].isWall)
                     {
+                        if (currentTile.Neighbors[1].isWall && currentTile.Neighbors[2].isWall)
+                        {
+                            Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.TopLeftInteriorFilledCorner;
+                            return oldState != Tiles[tileIndex.Y, tileIndex.X].WallStates;
+                        }
+                        if (currentTile.Neighbors[0].isWall && currentTile.Neighbors[1].isWall)
+                        {
+                            Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.TopRightInteriorFilledCorner;
+                            return oldState != Tiles[tileIndex.Y, tileIndex.X].WallStates;
+                        }
+
                         Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.TopEdge;
                         return oldState != Tiles[tileIndex.Y, tileIndex.X].WallStates;
                     }
@@ -203,13 +214,27 @@ namespace Pacman
                     {
                         if (currentTile.Neighbors[7].isWall)
                         {
-                            //Left T
-                            Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.LeftCross;
+                            //Right T
+                            Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.RightCross;
                             return oldState != Tiles[tileIndex.Y, tileIndex.X].WallStates;
                         }
 
-                        Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.RightCross;
+                        Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.LeftCross;
                         return oldState != Tiles[tileIndex.Y, tileIndex.X].WallStates;
+                    }
+
+                    if (!currentTile.Neighbors[0].isWall && !currentTile.Neighbors[1].isWall && !currentTile.Neighbors[2].isWall)
+                    {
+                        if (currentTile.Neighbors[5].isWall && currentTile.Neighbors[6].isWall)
+                        {
+                            Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.BottomRightInteriorFilledCorner;
+                            return oldState != Tiles[tileIndex.Y, tileIndex.X].WallStates;
+                        }
+                        if (currentTile.Neighbors[5].isWall && currentTile.Neighbors[4].isWall)
+                        {
+                            Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.BottomLeftInteriorFilledCorner;
+                            return oldState != Tiles[tileIndex.Y, tileIndex.X].WallStates;
+                        }
                     }
 
                     //Left Edge

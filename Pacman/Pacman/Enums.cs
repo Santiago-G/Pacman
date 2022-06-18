@@ -57,6 +57,12 @@ namespace Pacman
 
         InteriorWall,
         InteriorCorner,
+
+        TopLeftInteriorFilledCorner,
+        TopRightInteriorFilledCorner,
+        BottomRightInteriorFilledCorner,
+        BottomLeftInteriorFilledCorner,
+
         notAWall
     }
 

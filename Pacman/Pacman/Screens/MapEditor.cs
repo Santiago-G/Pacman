@@ -90,18 +90,13 @@ namespace Pacman
             
             MapEditorVisualTile.CornerWallFilledTile = Content.Load<Texture2D>("CornerWallsFilled");
 
-
-            MapEditorVisualTile.TopEdge = Content.Load<Texture2D>("TopEdge");
-            MapEditorVisualTile.RightEdge = Content.Load<Texture2D>("RightEdge");
-            MapEditorVisualTile.BottomEdge = Content.Load<Texture2D>("BottomEdge");
-            MapEditorVisualTile.LeftEdge = Content.Load<Texture2D>("LeftEdge");
+            MapEditorVisualTile.EdgeTile = Content.Load<Texture2D>("EdgeTile");
 
             MapEditorVisualTile.InteriorCross = Content.Load<Texture2D>("Cross");
 
-            MapEditorVisualTile.TopCross = Content.Load<Texture2D>("topCross");
-            MapEditorVisualTile.RightCross = Content.Load<Texture2D>("rightCross");
-            MapEditorVisualTile.BottomCross = Content.Load<Texture2D>("bottomCross");
-            MapEditorVisualTile.LeftCross = Content.Load<Texture2D>("leftCross");
+            MapEditorVisualTile.SingleCross = Content.Load<Texture2D>("SingleCross");
+
+            MapEditorVisualTile.InteriorFilledCorner = Content.Load<Texture2D>("InteriorFilledCorner");
 
             Grid = new MapEditorGrid(GridSize, new Point(MapEditorVisualTile.NormalSprite.Width, MapEditorVisualTile.NormalSprite.Height), GridOffest);
         }
