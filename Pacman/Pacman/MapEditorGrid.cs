@@ -181,6 +181,17 @@ namespace Pacman
                     //Bottom Edge
                     if (currentTile.Neighbors[0].isWall && currentTile.Neighbors[1].isWall && currentTile.Neighbors[2].isWall)
                     {
+                        if (currentTile.Neighbors[5].isWall && currentTile.Neighbors[6].isWall)
+                        {
+                            Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.BottomRightInteriorFilledCorner;
+                            return oldState != Tiles[tileIndex.Y, tileIndex.X].WallStates;
+                        }
+                        if (currentTile.Neighbors[5].isWall && currentTile.Neighbors[4].isWall)
+                        {
+                            Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.BottomLeftInteriorFilledCorner;
+                            return oldState != Tiles[tileIndex.Y, tileIndex.X].WallStates;
+                        }
+
                         Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.BottomEdge;
                         return oldState != Tiles[tileIndex.Y, tileIndex.X].WallStates;
                     }
@@ -221,20 +232,6 @@ namespace Pacman
 
                         Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.LeftCross;
                         return oldState != Tiles[tileIndex.Y, tileIndex.X].WallStates;
-                    }
-
-                    if (!currentTile.Neighbors[0].isWall && !currentTile.Neighbors[1].isWall && !currentTile.Neighbors[2].isWall)
-                    {
-                        if (currentTile.Neighbors[5].isWall && currentTile.Neighbors[6].isWall)
-                        {
-                            Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.BottomRightInteriorFilledCorner;
-                            return oldState != Tiles[tileIndex.Y, tileIndex.X].WallStates;
-                        }
-                        if (currentTile.Neighbors[5].isWall && currentTile.Neighbors[4].isWall)
-                        {
-                            Tiles[tileIndex.Y, tileIndex.X].WallStates = WallStates.BottomLeftInteriorFilledCorner;
-                            return oldState != Tiles[tileIndex.Y, tileIndex.X].WallStates;
-                        }
                     }
 
                     //Left Edge
@@ -333,8 +330,6 @@ namespace Pacman
         {
             return gridIndex.X >= 0 && gridIndex.X < Tiles.GetLength(1) && gridIndex.Y >= 0 && gridIndex.Y < Tiles.GetLength(0);
         }
-
-
         #endregion
 
         public MapEditorGrid(Point gridSize, Point tileSize, Vector2 position)

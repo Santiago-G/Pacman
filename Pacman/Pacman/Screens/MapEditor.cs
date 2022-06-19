@@ -17,7 +17,7 @@ namespace Pacman
 
         public MapEditorGrid Grid;
         Vector2 GridOffest = new Vector2(40, 90);
-        Point GridSize = new Point(28, 31);
+        Point GridSize = new Point(29, 31);
 
         Image mapEditorImage;
         Texture2D mapEditorSprite;
@@ -224,6 +224,8 @@ namespace Pacman
         public override void Draw(SpriteBatch spriteBatch)
         {
             Grid.Draw(spriteBatch);
+
+            spriteBatch.Draw(MapEditorVisualTile.NormalSprite, new Vector2(40, 80),Color.White);
 
             base.Draw(spriteBatch);
         }
