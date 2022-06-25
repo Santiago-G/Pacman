@@ -15,9 +15,10 @@ namespace Pacman
     {
         static public SelectedType selectedTileType = SelectedType.Default;
 
-        public MapEditorGrid Grid;
+        public MapEditorGrid TileGrid;
+        public MapEditorGrid PixelGrid;
         Vector2 GridOffest = new Vector2(40, 90);
-        Point GridSize = new Point(29, 31);
+        Point GridSize = new Point(29, 32);
 
         Image mapEditorImage;
         Texture2D mapEditorSprite;
@@ -98,7 +99,8 @@ namespace Pacman
 
             MapEditorVisualTile.InteriorFilledCorner = Content.Load<Texture2D>("InteriorFilledCorner");
 
-            Grid = new MapEditorGrid(GridSize, new Point(MapEditorVisualTile.NormalSprite.Width, MapEditorVisualTile.NormalSprite.Height), GridOffest);
+            TileGrid = new MapEditorGrid(GridSize, new Point(MapEditorVisualTile.NormalSprite.Width, MapEditorVisualTile.NormalSprite.Height), GridOffest);
+           // PixelGrid = new MapEditorGrid(GridSize, new Point(MapEditorVisualTile.));
         }
 
         MouseState prevms;
@@ -110,7 +112,7 @@ namespace Pacman
 
             if (kb.IsKeyDown(Keys.Space))
             {
-                string stringified = JsonConvert.SerializeObject(Grid.Tiles.Flatten().Select(tile => tile.Data));
+                string stringified = JsonConvert.SerializeObject(TileGrid.Tiles.Flatten().Select(tile => tile.Data));
                 System.IO.File.WriteAllText("SavedMap.json", stringified);
             }
 
@@ -118,13 +120,11 @@ namespace Pacman
             {
                 string content = System.IO.File.ReadAllText("SavedMap.json");
                 List<MapEditorDataTile> flattenedTiles = JsonConvert.DeserializeObject<List<MapEditorDataTile>>(content);
-                //tiles = flattenedTiles.Select(x => new MapEditorVisualTile(.To2DArray(/*maybe needs parameters*/);
-                //Create grid based on this two d array
-                Grid.LoadGrid(flattenedTiles);
+                TileGrid.LoadGrid(flattenedTiles);
                 ;
             }
 
-            Grid.Update(gameTime);
+            TileGrid.Update(gameTime);
 
             if (pelletButton.IsClicked(ms))
             {
@@ -202,7 +202,7 @@ namespace Pacman
             {
                 if (ms.LeftButton == ButtonState.Pressed)
                 {
-                    Grid.addWall(new Vector2(ms.Position.X, ms.Position.Y));
+                    TileGrid.addWall(new Vector2(ms.Position.X, ms.Position.Y));
                 }
             }
 
@@ -210,20 +210,20 @@ namespace Pacman
             {
                 if (ms.LeftButton == ButtonState.Pressed)
                 {
-                    Grid.removeWall(new Vector2(ms.Position.X, ms.Position.Y));
+                    TileGrid.removeWall(new Vector2(ms.Position.X, ms.Position.Y));
                 }
             }
 
             prevms = ms;
 
-            Game1.WindowText = $"{Grid.PosToIndex(new Vector2(ms.Position.X, ms.Position.Y))}, Raw MS {ms.Position}";
+            Game1.WindowText = $"{TileGrid.PosToIndex(new Vector2(ms.Position.X, ms.Position.Y))}, Raw MS {ms.Position}";
 
             base.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            Grid.Draw(spriteBatch);
+            TileGrid.Draw(spriteBatch);
 
             spriteBatch.Draw(MapEditorVisualTile.NormalSprite, new Vector2(40, 80),Color.White);
 

@@ -11,6 +11,9 @@ namespace Pacman
     public class MapEditorVisualTile : Sprite
     {           
         public Texture2D CurrentImage;
+        // private Texture2D _curentImage;
+        // public Texture2D CurrentImage { get => _currentImage; set { _currentImage = value; Image = value; }}
+        public override Texture2D Image => CurrentImage;
 
         #region Textures
         [JsonIgnore]
