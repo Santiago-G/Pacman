@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Pacman.GraphStuff;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,33 +73,33 @@ namespace Pacman
 
             //ADD THING THAT IF SELECTED ONLY DRAWS OVER BLANK TILES
 
-            MapEditorVisualTile.NormalSprite = Content.Load<Texture2D>("mapEditorTile");
-            MapEditorVisualTile.NormalEnlargedBorder = Content.Load<Texture2D>("EnlargeBorderTile");
-            MapEditorVisualTile.PelletSprite = Content.Load<Texture2D>("mapEditorTile2");
-            MapEditorVisualTile.PelletEnlargedBorder = Content.Load<Texture2D>("enlargedPelletTile");
-            MapEditorVisualTile.PowerPelletSprite = Content.Load<Texture2D>("powerPelletSprite");
-            MapEditorVisualTile.PowerPelletEnlargedBorder = Content.Load<Texture2D>("enlargedPowerPelletSprite");
+            MapEditorVisualWallTile.NormalSprite = Content.Load<Texture2D>("mapEditorTile");
+            MapEditorVisualWallTile.NormalEnlargedBorder = Content.Load<Texture2D>("EnlargeBorderTile");
+            MapEditorVisualWallTile.PelletSprite = Content.Load<Texture2D>("mapEditorTile2");
+            MapEditorVisualWallTile.PelletEnlargedBorder = Content.Load<Texture2D>("enlargedPelletTile");
+            MapEditorVisualWallTile.PowerPelletSprite = Content.Load<Texture2D>("powerPelletSprite");
+            MapEditorVisualWallTile.PowerPelletEnlargedBorder = Content.Load<Texture2D>("enlargedPowerPelletSprite");
 
-            MapEditorVisualTile.LoneWallTile = Content.Load<Texture2D>("loneWall"); 
-            MapEditorVisualTile.InteriorWall = Content.Load<Texture2D>("InteriorWall");
+            MapEditorVisualWallTile.LoneWallTile = Content.Load<Texture2D>("loneWall"); 
+            MapEditorVisualWallTile.InteriorWall = Content.Load<Texture2D>("InteriorWall");
 
-            MapEditorVisualTile.MiddleWallPiece = Content.Load<Texture2D>("singleMiddleWall");
-            MapEditorVisualTile.SingleWallEnd = Content.Load<Texture2D>("singleWallEnd");
+            MapEditorVisualWallTile.MiddleWallPiece = Content.Load<Texture2D>("singleMiddleWall");
+            MapEditorVisualWallTile.SingleWallEnd = Content.Load<Texture2D>("singleWallEnd");
 
-            MapEditorVisualTile.CornerWallTile = Content.Load<Texture2D>("CornerWalls");
+            MapEditorVisualWallTile.CornerWallTile = Content.Load<Texture2D>("CornerWalls");
             
-            MapEditorVisualTile.CornerWallFilledTile = Content.Load<Texture2D>("CornerWallsFilled");
+            MapEditorVisualWallTile.CornerWallFilledTile = Content.Load<Texture2D>("CornerWallsFilled");
 
-            MapEditorVisualTile.EdgeTile = Content.Load<Texture2D>("EdgeTile");
+            MapEditorVisualWallTile.EdgeTile = Content.Load<Texture2D>("EdgeTile");
 
-            MapEditorVisualTile.InteriorCross = Content.Load<Texture2D>("Cross");
+            MapEditorVisualWallTile.InteriorCross = Content.Load<Texture2D>("Cross");
 
-            MapEditorVisualTile.SingleCross = Content.Load<Texture2D>("SingleCross");
+            MapEditorVisualWallTile.SingleCross = Content.Load<Texture2D>("SingleCross");
 
-            MapEditorVisualTile.InteriorFilledCorner = Content.Load<Texture2D>("InteriorFilledCorner");
+            MapEditorVisualWallTile.InteriorFilledCorner = Content.Load<Texture2D>("InteriorFilledCorner");
 
-            TileGrid = new MapEditorGrid(GridSize, new Point(MapEditorVisualTile.NormalSprite.Width, MapEditorVisualTile.NormalSprite.Height), GridOffest);
-           // PixelGrid = new MapEditorGrid(GridSize, new Point(MapEditorVisualTile.));
+            TileGrid = new MapEditorGrid(GridSize, new Point(MapEditorVisualWallTile.NormalSprite.Width, MapEditorVisualWallTile.NormalSprite.Height), GridOffest);
+            PixelGrid = new MapEditorGrid(new Point(29, 32), new Point(MapEditorVisualWallTile.));
         }
 
         MouseState prevms;
@@ -119,7 +118,7 @@ namespace Pacman
             if (kb.IsKeyDown(Keys.M))
             {
                 string content = System.IO.File.ReadAllText("SavedMap.json");
-                List<MapEditorDataTile> flattenedTiles = JsonConvert.DeserializeObject<List<MapEditorDataTile>>(content);
+                List<MapEditorDataWallTile> flattenedTiles = JsonConvert.DeserializeObject<List<MapEditorDataWallTile>>(content);
                 TileGrid.LoadGrid(flattenedTiles);
                 ;
             }
@@ -225,7 +224,7 @@ namespace Pacman
         {
             TileGrid.Draw(spriteBatch);
 
-            spriteBatch.Draw(MapEditorVisualTile.NormalSprite, new Vector2(40, 80),Color.White);
+            spriteBatch.Draw(MapEditorVisualWallTile.NormalSprite, new Vector2(40, 80),Color.White);
 
             base.Draw(spriteBatch);
         }

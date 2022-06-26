@@ -14,12 +14,9 @@ namespace Pacman
         Eraser,
     }
 
-    public enum States
+    public enum WallTileStates
     {
         Empty,
-        Pellet,
-        PowerPellet,
-        Fruit,
         Wall
     }
 
@@ -64,6 +61,14 @@ namespace Pacman
         BottomLeftInteriorFilledCorner,
 
         notAWall
+    }
+
+    public enum PelletTileStates
+    {
+        Empty,
+        Pellet,
+        PowerPellet,
+        Fruit,
     }
 
     public enum temp
