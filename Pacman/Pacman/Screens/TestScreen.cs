@@ -10,8 +10,8 @@ namespace Pacman.Screens
 {
     class TestScreen : Screen
     {
-        MapEditorVisualWallTile originFloat;
-        MapEditorVisualWallTile originInt;
+        MapEditorVisualTile originFloat;
+        MapEditorVisualTile originInt;
 
         Texture2D pixel;
 

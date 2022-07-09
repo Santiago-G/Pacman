@@ -11,7 +11,7 @@ namespace Pacman
     {
         Vector2 Position;
 
-        public MapEditorVisualWallTile[,] Tiles;
+        public MapEditorVisualTile[,] Tiles;
         Point[] offsets = new Point[] { new Point(-1, -1), new Point(0, -1), new Point(1, -1), new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(-1, 1), new Point(-1, 0) };
 
         #region Functions
@@ -39,7 +39,7 @@ namespace Pacman
             recursiveAddWall(Tiles[index.Y, index.X], true);
         }
 
-        private void recursiveAddWall(MapEditorVisualWallTile currentTile, bool remove = false)
+        private void recursiveAddWall(MapEditorVisualTile currentTile, bool remove = false)
         {
             if (!remove)
             {
@@ -100,7 +100,7 @@ namespace Pacman
             }
             //y, x
 
-            MapEditorVisualWallTile currentTile = Tiles[tileIndex.Y, tileIndex.X];
+            MapEditorVisualTile currentTile = Tiles[tileIndex.Y, tileIndex.X];
 
             WallStates oldState = currentTile.WallStates;
 
@@ -334,16 +334,16 @@ namespace Pacman
 
         public MapEditorGrid(Point gridSize, Point tileSize, Vector2 position)
         {
-            Position = position + new Vector2(MapEditorVisualWallTile.NormalSprite.Width / 2, MapEditorVisualWallTile.NormalSprite.Height / 2);
+            Position = position + new Vector2(MapEditorVisualTile.NormalSprite.Width / 2, MapEditorVisualTile.NormalSprite.Height / 2);
 
-            Tiles = new MapEditorVisualWallTile[gridSize.Y, gridSize.X];
+            Tiles = new MapEditorVisualTile[gridSize.Y, gridSize.X];
 
             for (int y = 0; y < gridSize.Y; y++)
             {
                 for (int x = 0; x < gridSize.X; x++)
                 {
                     //new Vector2(MapEditorVisualTile.NormalSprite.Width /2, MapEditorVisualTile.NormalSprite.Height/2)
-                    Tiles[y, x] = new MapEditorVisualWallTile(MapEditorVisualWallTile.NormalSprite, new Point(y, x), Color.White, Position, Vector2.One, new Vector2(MapEditorVisualWallTile.NormalSprite.Width / 2f, MapEditorVisualWallTile.NormalSprite.Height / 2f), 0f, SpriteEffects.None);
+                    Tiles[y, x] = new MapEditorVisualTile(MapEditorVisualTile.NormalSprite, new Point(y, x), Color.White, Position, Vector2.One, new Vector2(MapEditorVisualTile.NormalSprite.Width / 2f, MapEditorVisualTile.NormalSprite.Height / 2f), 0f, SpriteEffects.None);
 
                     for (int i = 0; i < offsets.Length; i++)
                     {
@@ -357,9 +357,9 @@ namespace Pacman
             
         }
 
-        public void LoadGrid(List<MapEditorDataWallTile> TileList)
+        public void LoadGrid(List<MapEditorDataTile> TileList)
         {
-            Tiles = TileList.Select(x => new MapEditorVisualWallTile(x, Position)).Expand(new Point(Tiles.GetLength(1), Tiles.GetLength(0)));
+            Tiles = TileList.Select(x => new MapEditorVisualTile(x, Position)).Expand(new Point(Tiles.GetLength(1), Tiles.GetLength(0)));
 
             foreach (var tile in Tiles)
             {
