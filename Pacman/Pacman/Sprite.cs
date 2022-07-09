@@ -9,7 +9,7 @@ namespace Pacman
     public abstract class Sprite
     {
         [JsonIgnore]
-        public virtual Texture2D Image { get; set; }
+        public Texture2D Image { get; set; }
         public virtual Vector2 Position { get; set; }
         public virtual Color Tint { get; set; }
 
