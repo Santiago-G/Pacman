@@ -150,11 +150,11 @@ namespace Pacman
                         CurrentImage = PowerPelletSprite;
                         prevImage = PowerPelletEnlargedBorder;
                         break;
-                    case States.Wall:
+                  //  case States.Wall:
 
-                        UpdateWalls();
+                    //    UpdateWalls();
 
-                        break;
+                      //  break;
                 }
             }
             else 
@@ -173,10 +173,10 @@ namespace Pacman
                         prevImage = PowerPelletSprite;
                         CurrentImage = PowerPelletEnlargedBorder;
                         break;
-                    case States.Wall:
-                        UpdateWalls();
+                   // case States.Wall:
+                     //   UpdateWalls();
 
-                        break;
+                        //break;
                 }
             }      
         }
@@ -396,13 +396,13 @@ namespace Pacman
                             TileStates = States.PowerPellet;
                             break;
                         case SelectedType.Eraser:
-                            if (TileStates != States.Wall)
+                           // if (TileStates != States.Wall)
                             {
                                 TileStates = States.Empty;
                             }
                             break;
                         case SelectedType.Wall:
-                            TileStates = States.Wall;
+                            //TileStates = States.Wall;
                             break;
                         default:
                             break;
