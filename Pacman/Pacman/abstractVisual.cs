@@ -8,6 +8,8 @@ using Newtonsoft.Json;
 
 namespace Pacman
 {
+    // public abstract class abstractVisual<T, D> : Sprite where D : abstractData<T>
+    // : abstractVisual<T, pixelData<T>>
     public abstract class abstractVisual<T> : Sprite
     {
         public Texture2D CurrentImage;
@@ -16,7 +18,7 @@ namespace Pacman
         //shift click like in gimp to fill in whatever is selected
         //also have a fill all
 
-         virtual abstractData<T> Data { get; set; }
+        public abstract abstractData<T> Data { get; set; }
 
         public States TileStates
         {
@@ -78,8 +80,9 @@ namespace Pacman
         }
 
 
-        public abstractVisual(Texture2D image, Point cord, Color tint, Vector2 offset, Vector2 scale, Vector2 origin, float rotation, SpriteEffects spriteEffects) : base(image, Vector2.Zero, tint, scale, origin, rotation, spriteEffects)
+        public abstractVisual(abstractData<T> data, Texture2D image, Point cord, Color tint, Vector2 offset, Vector2 scale, Vector2 origin, float rotation, SpriteEffects spriteEffects) : base(image, Vector2.Zero, tint, scale, origin, rotation, spriteEffects)
         {
+            Data = data;
             CurrentImage = image;
             PrevImage = CurrentImage;
             Cord = cord;

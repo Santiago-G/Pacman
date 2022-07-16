@@ -7,7 +7,7 @@ namespace Pacman
 {
     public class MapEditorDataTile
     {
-
+        /*
         public States TileStates = States.Empty;
         public WallStates WallStates = WallStates.notAWall;
 
@@ -16,5 +16,6 @@ namespace Pacman
         public (Point Index, bool isWall)[] Neighbors = new (Point, bool)[8];
 
         public Color Tint;
+        */
     }
 }

@@ -20,6 +20,7 @@ namespace Pacman
         Pellet,
         PowerPellet,
         Fruit,
+        Wall
     }
 
     public enum WallStates

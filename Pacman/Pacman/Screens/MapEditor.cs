@@ -14,7 +14,8 @@ namespace Pacman
     {
         static public SelectedType selectedTileType = SelectedType.Default;
 
-        public MapEditorGrid Grid;
+        public MapEditorGrid PelletGrid;
+        public MapEditorGrid WallGrid;
         Vector2 GridOffest = new Vector2(40, 90);
         Point GridSize = new Point(29, 31);
 
@@ -72,32 +73,32 @@ namespace Pacman
 
             //ADD THING THAT IF SELECTED ONLY DRAWS OVER BLANK TILES
 
-            MapEditorVisualTile.NormalSprite = Content.Load<Texture2D>("mapEditorTile");
-            MapEditorVisualTile.NormalEnlargedBorder = Content.Load<Texture2D>("EnlargeBorderTile");
-            MapEditorVisualTile.PelletSprite = Content.Load<Texture2D>("mapEditorTile2");
-            MapEditorVisualTile.PelletEnlargedBorder = Content.Load<Texture2D>("enlargedPelletTile");
-            MapEditorVisualTile.PowerPelletSprite = Content.Load<Texture2D>("powerPelletSprite");
-            MapEditorVisualTile.PowerPelletEnlargedBorder = Content.Load<Texture2D>("enlargedPowerPelletSprite");
+            pixelVisual.EmptySprite = Content.Load<Texture2D>("mapEditorTile");
+            pixelVisual.HLEmptySprite = Content.Load<Texture2D>("EnlargeBorderTile");
+            pixelVisual.PelletSprite = Content.Load<Texture2D>("mapEditorTile2");
+            pixelVisual.HLPelletSprite = Content.Load<Texture2D>("enlargedPelletTile");
+            pixelVisual.PowerPelletSprite = Content.Load<Texture2D>("powerPelletSprite");
+            pixelVisual.HLPowerPelletSprite = Content.Load<Texture2D>("enlargedPowerPelletSprite");
 
-            MapEditorVisualTile.LoneWallTile = Content.Load<Texture2D>("loneWall"); 
-            MapEditorVisualTile.InteriorWall = Content.Load<Texture2D>("InteriorWall");
+            wallVisual.LoneWallSprite = Content.Load<Texture2D>("loneWall");
+            wallVisual.InteriorWallSprite = Content.Load<Texture2D>("InteriorWall");
 
-            MapEditorVisualTile.MiddleWallPiece = Content.Load<Texture2D>("singleMiddleWall");
-            MapEditorVisualTile.SingleWallEnd = Content.Load<Texture2D>("singleWallEnd");
+            wallVisual.MiddleWallSprite = Content.Load<Texture2D>("singleMiddleWall");
+            wallVisual.SingleWallEnd = Content.Load<Texture2D>("singleWallEnd");
 
-            MapEditorVisualTile.CornerWallTile = Content.Load<Texture2D>("CornerWalls");
-            
-            MapEditorVisualTile.CornerWallFilledTile = Content.Load<Texture2D>("CornerWallsFilled");
+            wallVisual.CornerWallTile = Content.Load<Texture2D>("CornerWalls");
 
-            MapEditorVisualTile.EdgeTile = Content.Load<Texture2D>("EdgeTile");
+            wallVisual.CornerWallFilledTile = Content.Load<Texture2D>("CornerWallsFilled");
 
-            MapEditorVisualTile.InteriorCross = Content.Load<Texture2D>("Cross");
+            wallVisual.EdgeSprite = Content.Load<Texture2D>("EdgeTile");
 
-            MapEditorVisualTile.SingleCross = Content.Load<Texture2D>("SingleCross");
+            wallVisual.InteriorCrossSprite = Content.Load<Texture2D>("Cross");
 
-            MapEditorVisualTile.InteriorFilledCorner = Content.Load<Texture2D>("InteriorFilledCorner");
+            wallVisual.SingleCrossSprite = Content.Load<Texture2D>("SingleCross");
 
-            Grid = new MapEditorGrid(GridSize, new Point(MapEditorVisualTile.NormalSprite.Width, MapEditorVisualTile.NormalSprite.Height), GridOffest);
+            wallVisual.InteriorFilledCorner = Content.Load<Texture2D>("InteriorFilledCorner");
+
+            PelletGrid = new MapEditorGrid(GridSize, new Point(pixelVisual.EmptySprite.Width, pixelVisual.EmptySprite.Height), GridOffest);
         }
 
         MouseState prevms;
@@ -109,7 +110,7 @@ namespace Pacman
 
             if (kb.IsKeyDown(Keys.Space))
             {
-                string stringified = JsonConvert.SerializeObject(Grid.Tiles.Flatten().Select(tile => tile.Data));
+                string stringified = JsonConvert.SerializeObject(PelletGrid.Tiles.Flatten().Select(tile => tile.));
                 System.IO.File.WriteAllText("SavedMap.json", stringified);
             }
 

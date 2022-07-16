@@ -8,8 +8,9 @@ using Newtonsoft.Json;
 
 namespace Pacman
 {
-    public class MapEditorVisualTile : Sprite
+    public class MapEditorVisualTile// : Sprite
     {           
+        /*
         public Texture2D CurrentImage;
 
         #region Textures
@@ -424,5 +425,6 @@ namespace Pacman
             batch.Draw(CurrentImage, Position, null, Tint, Rotation, Origin, Scale, SpriteEffects, 0);
             //batch.Draw(Game1.Pixel, Hitbox, Color.Red * 0.3f);
         }
+        */
     }
 }
