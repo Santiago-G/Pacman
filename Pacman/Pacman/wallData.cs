@@ -5,16 +5,20 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+
+
 namespace Pacman
 {
-    public class wallData : abstractData<(Point, bool)>
+    using Neighbor = System.ValueTuple<Point, bool>;
+   
+    public class wallData : AbstractData<(Point Index, bool isWall)>
     {
-        public WallStates WallStates = WallStates.Empty;
+        public WallStates WallState = WallStates.Empty;
         
-        public override (Point, bool)[] Neighbors { get; set; }
+        public override (Point Index, bool isWall)[] Neighbors { get; set; }
 
         public wallData()
-        {
+        {           
             Neighbors = new (Point, bool)[8];
         }
     }

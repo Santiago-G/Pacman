@@ -9,6 +9,7 @@ namespace Pacman
 {
     public class MapEditorGrid
     {
+        /*
         Vector2 Position;
 
         public MapEditorVisualTile[,] Tiles;
@@ -382,5 +383,6 @@ namespace Pacman
                 tile.Draw(batch);
             }
         }
+        */
     }
 }

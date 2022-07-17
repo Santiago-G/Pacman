@@ -18,54 +18,60 @@ namespace Pacman
         //shift click like in gimp to fill in whatever is selected
         //also have a fill all
 
-        public abstract abstractData<T> Data { get; set; }
+        protected abstract AbstractData<T> data { get; set; }
 
         public States TileStates
         {
-            get { return Data.TileStates; }
-            set { Data.TileStates = value; }
+            get { return data.TileStates; }
+            set { data.TileStates = value; }
         }
         public Point Cord
         {
-            get { return Data.cord; }
-            set { Data.cord = value; }
+            get { return data.cord; }
+            set { data.cord = value; }
         }
 
         public override Color Tint
         {
             get
             {
-                return Data.tint;
+                return data.tint;
             }
             set
             {
-                Data.tint = value;
+                data.tint = value;
             }
         }
         public Vector2 Offset
         {
-            get { return Data.offset; }
-            set { Data.offset = value; }
+            get { return data.offset; }
+            set { data.offset = value; }
         }
         public override Vector2 Scale
         {
-            get { return Data.scale; }
-            set { Data.scale = value; }
+            get { return data.scale; }
+            set { data.scale = value; }
         }
         public override Vector2 Origin
         {
-            get { return Data.origin; }
-            set { Data.origin = value; }
+            get { return data.origin; }
+            set { data.origin = value; }
         }
         public override float Rotation
         {
-            get { return Data.rotation; }
-            set { Data.rotation = value; }
+            get { return data.rotation; }
+            set { data.rotation = value; }
         }
         public override SpriteEffects SpriteEffects
         {
-            get { return Data.spriteEffects; }
-            set { Data.spriteEffects = value; }
+            get { return data.spriteEffects; }
+            set { data.spriteEffects = value; }
+        }
+
+        public T[] Neighbors 
+        { 
+            get { return data.Neighbors; } 
+            set { data.Neighbors = value; }
         }
 
 
@@ -80,18 +86,18 @@ namespace Pacman
         }
 
 
-        public abstractVisual(abstractData<T> data, Texture2D image, Point cord, Color tint, Vector2 offset, Vector2 scale, Vector2 origin, float rotation, SpriteEffects spriteEffects) : base(image, Vector2.Zero, tint, scale, origin, rotation, spriteEffects)
+        public abstractVisual(AbstractData<T> data, Texture2D image, Point cord, Color tint, Vector2 offset, Vector2 scale, Vector2 origin, float rotation, SpriteEffects spriteEffects) : base(image, Vector2.Zero, tint, scale, origin, rotation, spriteEffects)
         {
-            Data = data;
+            this.data = data;
             CurrentImage = image;
             PrevImage = CurrentImage;
             Cord = cord;
-            Offset = offset;
+            Offset = offset;         
         }
 
-        public abstractVisual(abstractData<T> dataTile, Vector2 offset) : base(null, new Vector2(0), dataTile.tint)
+        public abstractVisual(AbstractData<T> dataTile, Vector2 offset) : base(null, new Vector2(0), dataTile.tint)
         {
-            Data = dataTile;
+            data = dataTile;
             Offset = offset;
             UpdateStates(true);
         }

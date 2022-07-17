@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Pacman
 {
-    public abstract class abstractData<T>
+    public abstract class AbstractData<T>
     {
         //Texture2D image, Point cord, Color tint, Vector2 offset, Vector2 scale, Vector2 origin, float rotation, SpriteEffects spriteEffects
         public virtual States TileStates { get; set; }

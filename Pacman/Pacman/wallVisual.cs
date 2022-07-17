@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Pacman
 {
-    public class wallVisual : abstractVisual<(Point, bool)>
+    public class wallVisual : abstractVisual<(Point Index, bool isWall)>
     {
 
         #region Textures
@@ -37,24 +37,36 @@ namespace Pacman
 
         #endregion        
 
-        public override abstractData<(Point, bool)> Data { get; set; }
+        public wallData Data { get; set; }
+
+        protected override AbstractData<(Point, bool)> data { get => Data; set { Data = (wallData)value; } }
+
+        public WallStates WallState
+        {
+            get { return Data.WallState; }
+            set { Data.WallState = value;}
+        }
 
         public wallVisual(Texture2D Image, Point Cord, Color Tint, Vector2 Offset, Vector2 Scale, Vector2 Origin, float Rotation, SpriteEffects spriteEffects) : base(new wallData(), Image, Cord, Tint, Offset, Scale, Origin, Rotation, spriteEffects)
         {
 
         }
 
+        public wallVisual(wallData dataTile, Vector2 offset) : base(dataTile, offset)
+        {
+            
+        }
 
         public override void UpdateStates(bool setDefault = false)
         {
-            if (Data.TileStates == States.Empty)
+            if (data.TileStates == States.Empty)
             {
                 CurrentImage = EmptySprite;
                 PrevImage = HLEmptySprite;
             }
             else 
             {
-                switch (((wallData)Data).WallStates)
+                switch (((wallData)data).WallState)
                 {
                     case WallStates.LoneWall:
                         CurrentImage = LoneWallSprite;

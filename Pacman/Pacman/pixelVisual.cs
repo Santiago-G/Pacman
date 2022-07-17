@@ -24,8 +24,10 @@ namespace Pacman
 
         #endregion
 
+        public pixelData Data { get; set; }
 
-        public override abstractData<Point> Data { get; set; }// = new pixelData();
+        protected override AbstractData<Point> data { get => Data; set { Data = (pixelData)value; } }
+        // = new pixelData();
 
         public pixelVisual(Texture2D Image, Point Cord, Color Tint, Vector2 Offset, Vector2 Scale, Vector2 Origin, float Rotation, SpriteEffects spriteEffects) : base(new pixelData(), Image, Cord, Tint, Offset, Scale, Origin, Rotation, spriteEffects)
         {
