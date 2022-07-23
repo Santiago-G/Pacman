@@ -37,7 +37,7 @@ namespace Pacman
 
         #endregion        
 
-        public wallData Data { get; set; }
+        public wallData Data { get; set; } = new wallData();
 
         protected override AbstractData<(Point, bool)> data { get => Data; set { Data = (wallData)value; } }
 
@@ -47,9 +47,9 @@ namespace Pacman
             set { Data.WallState = value;}
         }
 
-        public wallVisual(Texture2D Image, Point Cord, Color Tint, Vector2 Offset, Vector2 Scale, Vector2 Origin, float Rotation, SpriteEffects spriteEffects) : base(new wallData(), Image, Cord, Tint, Offset, Scale, Origin, Rotation, spriteEffects)
+        public wallVisual(Texture2D Image, Point Cord, Color Tint, Vector2 Offset, Vector2 Scale, Vector2 Origin, float Rotation, SpriteEffects spriteEffects) : base( Image, Cord, Tint, Offset, Scale, Origin, Rotation, spriteEffects)
         {
-
+            ;
         }
 
         public wallVisual(wallData dataTile, Vector2 offset) : base(dataTile, offset)
@@ -201,7 +201,7 @@ namespace Pacman
                 }
             }
 
-            if (setDefault)
+            if (!setDefault)
             {
                 Texture2D bucket = CurrentImage;
                 CurrentImage = PrevImage;

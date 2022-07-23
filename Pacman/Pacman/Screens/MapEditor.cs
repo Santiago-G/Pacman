@@ -14,10 +14,14 @@ namespace Pacman
     {
         static public SelectedType selectedTileType = SelectedType.Default;
 
-        public MapEditorGrid PelletGrid;
-        public MapEditorGrid WallGrid;
-        Vector2 GridOffest = new Vector2(40, 90);
-        Point GridSize = new Point(29, 31);
+        public MapEditorPixelGrid PelletGrid;
+        public MapEditorWallGrid WallGrid;
+
+        static Vector2 wallGridOffest = new Vector2(40, 90);
+        static Point wallGridSize = new Point(29, 31);
+
+        Vector2 pixelGridOffest;
+        Point pixelGridSize;
 
         Image mapEditorImage;
         Texture2D mapEditorSprite;
@@ -73,12 +77,17 @@ namespace Pacman
 
             //ADD THING THAT IF SELECTED ONLY DRAWS OVER BLANK TILES
 
-            pixelVisual.EmptySprite = Content.Load<Texture2D>("mapEditorTile");
-            pixelVisual.HLEmptySprite = Content.Load<Texture2D>("EnlargeBorderTile");
+            pixelVisual.EmptySprite = Content.Load<Texture2D>("emptyPelletTile");
+            pixelVisual.HLEmptySprite = Content.Load<Texture2D>("HLEmptyPelletTile");
             pixelVisual.PelletSprite = Content.Load<Texture2D>("mapEditorTile2");
             pixelVisual.HLPelletSprite = Content.Load<Texture2D>("enlargedPelletTile");
             pixelVisual.PowerPelletSprite = Content.Load<Texture2D>("powerPelletSprite");
             pixelVisual.HLPowerPelletSprite = Content.Load<Texture2D>("enlargedPowerPelletSprite");
+            //change theses texture's background to be transparant, and their color to orange
+            billy man
+
+            wallVisual.EmptySprite = Content.Load<Texture2D>("mapEditorTile");
+            wallVisual.HLEmptySprite = Content.Load<Texture2D>("EnlargeBorderTile");
 
             wallVisual.LoneWallSprite = Content.Load<Texture2D>("loneWall");
             wallVisual.InteriorWallSprite = Content.Load<Texture2D>("InteriorWall");
@@ -98,7 +107,11 @@ namespace Pacman
 
             wallVisual.InteriorFilledCorner = Content.Load<Texture2D>("InteriorFilledCorner");
 
-            PelletGrid = new MapEditorGrid(GridSize, new Point(pixelVisual.EmptySprite.Width, pixelVisual.EmptySprite.Height), GridOffest);
+            pixelGridSize = new Point(wallGridSize.X - 1, wallGridSize.Y - 1);
+            pixelGridOffest = new Vector2(wallGridOffest.X + pixelVisual.EmptySprite.Width / 2, wallGridOffest.Y + pixelVisual.EmptySprite.Height / 2);
+
+            WallGrid = new MapEditorWallGrid(wallGridSize, new Point(wallVisual.EmptySprite.Width, wallVisual.EmptySprite.Height), wallGridOffest);
+            PelletGrid = new MapEditorPixelGrid(pixelGridSize, new Point(pixelVisual.EmptySprite.Width, pixelVisual.EmptySprite.Height), pixelGridOffest);
         }
 
         MouseState prevms;
@@ -110,8 +123,9 @@ namespace Pacman
 
             if (kb.IsKeyDown(Keys.Space))
             {
-                string stringified = JsonConvert.SerializeObject(PelletGrid.Tiles.Flatten().Select(tile => tile.));
-                System.IO.File.WriteAllText("SavedMap.json", stringified);
+                //string stringified = JsonConvert.SerializeObject(PelletGrid.Tiles.Flatten().Select(tile => tile.));
+                //System.IO.File.WriteAllText("SavedMap.json", stringified);
+                ;
             }
 
             if (kb.IsKeyDown(Keys.M))
@@ -120,11 +134,12 @@ namespace Pacman
                 List<MapEditorDataTile> flattenedTiles = JsonConvert.DeserializeObject<List<MapEditorDataTile>>(content);
                 //tiles = flattenedTiles.Select(x => new MapEditorVisualTile(.To2DArray(/*maybe needs parameters*/);
                 //Create grid based on this two d array
-                Grid.LoadGrid(flattenedTiles);
+                //Grid.LoadGrid(flattenedTiles);
                 ;
             }
 
-            Grid.Update(gameTime);
+            PelletGrid.Update(gameTime);
+            WallGrid.Update(gameTime);
 
             if (pelletButton.IsClicked(ms))
             {
@@ -202,7 +217,7 @@ namespace Pacman
             {
                 if (ms.LeftButton == ButtonState.Pressed)
                 {
-                    Grid.addWall(new Vector2(ms.Position.X, ms.Position.Y));
+                    WallGrid.addWall(new Vector2(ms.Position.X, ms.Position.Y));
                 }
             }
 
@@ -210,22 +225,23 @@ namespace Pacman
             {
                 if (ms.LeftButton == ButtonState.Pressed)
                 {
-                    Grid.removeWall(new Vector2(ms.Position.X, ms.Position.Y));
+                    WallGrid.removeWall(new Vector2(ms.Position.X, ms.Position.Y));
                 }
             }
 
             prevms = ms;
 
-            Game1.WindowText = $"{Grid.PosToIndex(new Vector2(ms.Position.X, ms.Position.Y))}, Raw MS {ms.Position}";
+            Game1.WindowText = $"{WallGrid.PosToIndex(new Vector2(ms.Position.X, ms.Position.Y))}, Raw MS {ms.Position}";
 
             base.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            Grid.Draw(spriteBatch);
+            WallGrid.Draw(spriteBatch);
+            PelletGrid.Draw(spriteBatch);
 
-            spriteBatch.Draw(MapEditorVisualTile.NormalSprite, new Vector2(40, 80),Color.White);
+            //spriteBatch.Draw(MapEditorVisualTile.NormalSprite, new Vector2(40, 80),Color.White);
 
             base.Draw(spriteBatch);
         }

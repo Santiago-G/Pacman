@@ -24,12 +24,17 @@ namespace Pacman
 
         #endregion
 
-        public pixelData Data { get; set; }
+       public pixelData Data { get; set; } = new pixelData();
 
         protected override AbstractData<Point> data { get => Data; set { Data = (pixelData)value; } }
         // = new pixelData();
 
-        public pixelVisual(Texture2D Image, Point Cord, Color Tint, Vector2 Offset, Vector2 Scale, Vector2 Origin, float Rotation, SpriteEffects spriteEffects) : base(new pixelData(), Image, Cord, Tint, Offset, Scale, Origin, Rotation, spriteEffects)
+        public pixelVisual(Texture2D Image, Point Cord, Color Tint, Vector2 Offset, Vector2 Scale, Vector2 Origin, float Rotation, SpriteEffects spriteEffects) : base(Image, Cord, Tint, Offset, Scale, Origin, Rotation, spriteEffects)
+        {
+
+        }
+
+        public pixelVisual(pixelData dataTile, Vector2 offset) : base(dataTile, offset)
         {
 
         }
@@ -57,7 +62,7 @@ namespace Pacman
                     break;
             }
 
-            if (setDefault)
+            if (!setDefault)
             {
                 Texture2D bucket = CurrentImage;
                 CurrentImage = PrevImage;

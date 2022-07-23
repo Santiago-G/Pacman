@@ -8,8 +8,9 @@ using System.Text;
 
 namespace Pacman.Screens
 {
-    class TestScreen : Screen
+    class TestScreen
     {
+        /*
         MapEditorVisualTile originFloat;
         MapEditorVisualTile originInt;
 
@@ -61,5 +62,6 @@ namespace Pacman.Screens
         {
             throw new NotImplementedException();
         }
+        */
     }
 }

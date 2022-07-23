@@ -5,16 +5,17 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 
+
 namespace Pacman
 {
     public class MapEditorWallGrid
     {
         Vector2 Position;
+
         public wallVisual[,] Tiles;
+        Point[] offsets = new Point[] { new Point(-1, -1), new Point(0, -1), new Point(1, -1), new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(-1, 1), new Point(-1, 0) };
 
         #region Functions
-
-        Point[] offsets = new Point[] { new Point(-1, -1), new Point(0, -1), new Point(1, -1), new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(-1, 1), new Point(-1, 0) };
 
         public void addWall(Vector2 MousePosition)
         {
@@ -52,9 +53,9 @@ namespace Pacman
 
             foreach (var neighbor in currentTile.Neighbors)
             {
-                if (neighbor.Item2)
+                if (neighbor.isWall)
                 {
-                    recursiveAddWall(Tiles[neighbor.Item1.Y, neighbor.Item1.X]);
+                    recursiveAddWall(Tiles[neighbor.Index.Y, neighbor.Index.X]);
                 }
             }
         }
@@ -331,6 +332,16 @@ namespace Pacman
             return gridIndex.X >= 0 && gridIndex.X < Tiles.GetLength(1) && gridIndex.Y >= 0 && gridIndex.Y < Tiles.GetLength(0);
         }
 
+        public void LoadGrid(List<wallData> TileList)
+        {
+            Tiles = TileList.Select(x => new wallVisual(x, Position)).Expand(new Point(Tiles.GetLength(1), Tiles.GetLength(0)));
+
+            foreach (var tile in Tiles)
+            {
+                tile.UpdateStates();
+            }
+        }
+
         #endregion
 
         public MapEditorWallGrid(Point gridSize, Point tileSize, Vector2 position)
@@ -343,24 +354,13 @@ namespace Pacman
             {
                 for (int x = 0; x < gridSize.X; x++)
                 {
-                    //new Vector2(MapEditorVisualTile.NormalSprite.Width /2, MapEditorVisualTile.NormalSprite.Height/2)
                     Tiles[y, x] = new wallVisual(wallVisual.EmptySprite, new Point(y, x), Color.White, Position, Vector2.One, new Vector2(wallVisual.EmptySprite.Width / 2f, wallVisual.EmptySprite.Height / 2f), 0f, SpriteEffects.None);
 
                     for (int i = 0; i < offsets.Length; i++)
                     {
-                        Tiles[y, x].Neighbors[i].Index = new Point(y + offsets[i].Y, x + offsets[i].X);
+                        Tiles[y, x].Data.Neighbors[i].Item1 = new Point(y + offsets[i].Y, x + offsets[i].X);
                     }
                 }
-            }
-        }
-
-        public void LoadGrid(List<wallData> TileList)
-        {
-            Tiles = TileList.Select(x => new wallVisual(x, Position)).Expand(new Point(Tiles.GetLength(1), Tiles.GetLength(0)));
-
-            foreach (var tile in Tiles)
-            {
-                tile.UpdateStates();
             }
         }
 

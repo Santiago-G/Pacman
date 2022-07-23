@@ -8,8 +8,7 @@ using System.Linq;
 namespace Pacman
 {
     public class MapEditorGrid
-    {
-        /*
+    {/*
         Vector2 Position;
 
         public MapEditorVisualTile[,] Tiles;
@@ -352,10 +351,6 @@ namespace Pacman
                     }
                 }
             }
-        }
-        public void SetUpGrid()
-        {
-            
         }
 
         public void LoadGrid(List<MapEditorDataTile> TileList)

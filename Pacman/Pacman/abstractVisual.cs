@@ -86,9 +86,8 @@ namespace Pacman
         }
 
 
-        public abstractVisual(AbstractData<T> data, Texture2D image, Point cord, Color tint, Vector2 offset, Vector2 scale, Vector2 origin, float rotation, SpriteEffects spriteEffects) : base(image, Vector2.Zero, tint, scale, origin, rotation, spriteEffects)
+        public abstractVisual(Texture2D image, Point cord, Color tint, Vector2 offset, Vector2 scale, Vector2 origin, float rotation, SpriteEffects spriteEffects) : base(image, Vector2.Zero, tint, scale, origin, rotation, spriteEffects)
         {
-            this.data = data;
             CurrentImage = image;
             PrevImage = CurrentImage;
             Cord = cord;
