@@ -21,7 +21,9 @@ namespace Pacman
         public static Texture2D HLPowerPelletSprite;
 
 
-
+        public static Texture2D NBemptySprite;
+        public static Texture2D NBpelletSprite;
+        public static Texture2D NBpowerPelletSprite;
         #endregion
 
        public pixelData Data { get; set; } = new pixelData();
@@ -56,9 +58,8 @@ namespace Pacman
                     CurrentImage = PowerPelletSprite;
                     PrevImage = HLPowerPelletSprite;
                     break;
-                case States.Fruit:
-
-
+                case States.NoBackground:
+                    ;
                     break;
             }
 

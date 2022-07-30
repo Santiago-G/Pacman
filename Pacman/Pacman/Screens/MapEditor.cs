@@ -14,6 +14,8 @@ namespace Pacman
     {
         static public SelectedType selectedTileType = SelectedType.Default;
 
+        public static GridStates currentGridState = GridStates.WallGrid;
+
         public MapEditorPixelGrid PelletGrid;
         public MapEditorWallGrid WallGrid;
 
@@ -41,6 +43,10 @@ namespace Pacman
         Texture2D wallButtonSprite;
         Texture2D selectedWallSprite;
         Button wallButton;
+
+        Texture2D switchButtonSprite;
+        Texture2D HLswitchButtonSprite;
+        Button switchGridButton;
 
         public MapEditor((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
@@ -75,6 +81,11 @@ namespace Pacman
             wallButton = new Button(wallButtonSprite, new Vector2(1000, 500), Color.White);
             objects.Add(wallButton);
 
+            switchButtonSprite = Content.Load<Texture2D>("switchButton");
+            HLswitchButtonSprite = Content.Load<Texture2D>("HLswitchButton");
+            switchGridButton = new Button(switchButtonSprite, new Vector2(830, 90), Color.White);
+            objects.Add(switchGridButton);
+
             //ADD THING THAT IF SELECTED ONLY DRAWS OVER BLANK TILES
 
             pixelVisual.EmptySprite = Content.Load<Texture2D>("emptyPelletTile");
@@ -83,8 +94,12 @@ namespace Pacman
             pixelVisual.HLPelletSprite = Content.Load<Texture2D>("enlargedPelletTile");
             pixelVisual.PowerPelletSprite = Content.Load<Texture2D>("powerPelletSprite");
             pixelVisual.HLPowerPelletSprite = Content.Load<Texture2D>("enlargedPowerPelletSprite");
+
+            pixelVisual.NBemptySprite = Content.Load<Texture2D>("emptyTile");
+            pixelVisual.NBpelletSprite = Content.Load<Texture2D>("NBpixelTile");
+            pixelVisual.NBpowerPelletSprite = Content.Load<Texture2D>("NBpowerPelletTile");
             //change theses texture's background to be transparant, and their color to orange
-            billy man
+            //billy man
 
             wallVisual.EmptySprite = Content.Load<Texture2D>("mapEditorTile");
             wallVisual.HLEmptySprite = Content.Load<Texture2D>("EnlargeBorderTile");
@@ -138,8 +153,7 @@ namespace Pacman
                 ;
             }
 
-            PelletGrid.Update(gameTime);
-            WallGrid.Update(gameTime);
+
 
             if (pelletButton.IsClicked(ms))
             {
@@ -229,11 +243,35 @@ namespace Pacman
                 }
             }
 
+            if (switchGridButton.IsClicked(ms))
+            {
+                if (currentGridState != GridStates.WallGrid)
+                {
+                    currentGridState = GridStates.WallGrid;
+                    WallGrid.GoInFocus();
+                    PelletGrid.GoTransparent();
+                }
+                else
+                {
+                    currentGridState = GridStates.PixelGrid;
+                    PelletGrid.GoInFocus();
+                    WallGrid.GoTransparent();
+                }
+            }
+
             prevms = ms;
 
             Game1.WindowText = $"{WallGrid.PosToIndex(new Vector2(ms.Position.X, ms.Position.Y))}, Raw MS {ms.Position}";
 
             base.Update(gameTime);
+            if (currentGridState == GridStates.WallGrid)
+            {
+                WallGrid.Update(gameTime);
+            }
+            else
+            {
+                PelletGrid.Update(gameTime);
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)

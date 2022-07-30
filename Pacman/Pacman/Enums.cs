@@ -20,7 +20,8 @@ namespace Pacman
         Pellet,
         PowerPellet,
         Fruit,
-        Wall
+        Wall,
+        NoBackground
     }
 
     public enum WallStates
@@ -64,6 +65,12 @@ namespace Pacman
         BottomLeftInteriorFilledCorner,
 
         Empty
+    }
+
+    public enum GridStates
+    {
+        WallGrid,
+        PixelGrid
     }
 
     public enum temp

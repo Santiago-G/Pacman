@@ -35,6 +35,18 @@ namespace Pacman
 
         public static Texture2D InteriorFilledCorner;
 
+
+        public static Texture2D NBemptySprite;
+        public static Texture2D NBloneWallSprite;
+        public static Texture2D NBinteriorWallSprite;
+        public static Texture2D NBmiddleWallSprite;
+        public static Texture2D NBsingleWallEnd;
+        public static Texture2D NBcornerWallTile;
+        public static Texture2D NBcornerWallFilledTile;
+        public static Texture2D NBedgeSprite;
+        public static Texture2D NBinteriorCrossSprite;
+        public static Texture2D NBsingleCrossSprite;
+        public static Texture2D NBinteriorFilledCorner;
         #endregion        
 
         public wallData Data { get; set; } = new wallData();
@@ -70,132 +82,162 @@ namespace Pacman
                 {
                     case WallStates.LoneWall:
                         CurrentImage = LoneWallSprite;
+                        Rotation = 0;
                         PrevImage = CurrentImage;
                         break;
 
                     case WallStates.Horiz:
                         CurrentImage = MiddleWallSprite;
+                        Rotation = (float)(Math.PI * .5);
                         PrevImage = MiddleWallSprite;
                         break;
                     case WallStates.HorizLeftEnd:
                         CurrentImage = SingleWallEnd;
+                        Rotation = (float)(Math.PI * 1.5);
                         PrevImage = CurrentImage;
                         break;
                     case WallStates.HorizRightEnd:
                         CurrentImage = SingleWallEnd;
+                        Rotation = (float)(Math.PI * .5);
                         PrevImage = CurrentImage;
                         break;
 
                     case WallStates.Verti:
                         CurrentImage = MiddleWallSprite;
+                        Rotation = 0;
                         PrevImage = CurrentImage;
                         break;
                     case WallStates.VertiTopEnd:
                         CurrentImage = SingleWallEnd;
+                        Rotation = 0;
                         PrevImage = CurrentImage;
                         break;
                     case WallStates.VertiBottomEnd:
                         CurrentImage = SingleWallEnd;
+                        Rotation = (float)(Math.PI * 1);
                         PrevImage = CurrentImage;
                         break;
 
                     case WallStates.TopLeftCorner:
                         CurrentImage = CornerWallTile;
+                        Rotation = 0;
                         PrevImage = CurrentImage;
                         break;
                     case WallStates.TopRightCorner:
                         CurrentImage = CornerWallTile;
+                        Rotation = (float)(Math.PI * .5);
                         PrevImage = CurrentImage;
                         break;
                     case WallStates.BottomRightCorner:
                         CurrentImage = CornerWallTile;
+                        Rotation = (float)(Math.PI * 1);
                         PrevImage = CurrentImage;
                         break;
                     case WallStates.BottomLeftCorner:
                         CurrentImage = CornerWallTile;
+                        Rotation = (float)(Math.PI * 1.5);
                         PrevImage = CurrentImage;
                         break;
 
                     case WallStates.TopLeftCornerFilled:
                         CurrentImage = CornerWallFilledTile;
+                        Rotation = 0;
                         PrevImage = CurrentImage;
                         break;
                     case WallStates.TopRightCornerFilled:
                         CurrentImage = CornerWallFilledTile;
+                        Rotation = (float)(Math.PI * .5);
                         PrevImage = CurrentImage;
                         break;
                     case WallStates.BottomRightCornerFilled:
                         CurrentImage = CornerWallFilledTile;
+                        Rotation = (float)(Math.PI * 1);
                         PrevImage = CurrentImage;
                         break;
                     case WallStates.BottomLeftCornerFilled:
                         CurrentImage = CornerWallFilledTile;
+                        Rotation = (float)(Math.PI * 1.5);
                         PrevImage = CurrentImage;
                         break;
 
                     case WallStates.TopEdge:
                         CurrentImage = EdgeSprite;
+                        Rotation = 0;
                         PrevImage = CurrentImage;
                         break;
                     case WallStates.RightEdge:
                         CurrentImage = EdgeSprite;
+                        Rotation = (float)(Math.PI * .5);
                         PrevImage = CurrentImage;
                         break;
                     case WallStates.BottomEdge:
                         CurrentImage = EdgeSprite;
+                        Rotation = (float)(Math.PI * 1);
                         PrevImage = CurrentImage;
                         break;
                     case WallStates.LeftEdge:
                         CurrentImage = EdgeSprite;
+                        Rotation = (float)(Math.PI * 1.5);
                         PrevImage = CurrentImage;
                         break;
 
                     case WallStates.TopCross:
                         CurrentImage = SingleCrossSprite;
+                        Rotation = 0;
                         PrevImage = CurrentImage;
                         break;
                     case WallStates.RightCross:
                         CurrentImage = SingleCrossSprite;
+                        Rotation = (float)(Math.PI * .5);
                         PrevImage = CurrentImage;
                         break;
                     case WallStates.BottomCross:
                         CurrentImage = SingleCrossSprite;
+                        Rotation = (float)(Math.PI * 1);
                         PrevImage = CurrentImage;
                         break;
                     case WallStates.LeftCross:
                         CurrentImage = SingleCrossSprite;
+                        Rotation = (float)(Math.PI * 1.5);
                         PrevImage = CurrentImage;
                         break;
 
                     case WallStates.InteriorWall:
                         CurrentImage = InteriorWallSprite;
+                        Rotation = 0;
                         PrevImage = CurrentImage;
                         break;
 
                     case WallStates.InteriorCorner:
                         CurrentImage = InteriorCrossSprite;
+                        Rotation = 0;
                         PrevImage = CurrentImage;
                         break;
 
                     case WallStates.TopLeftInteriorFilledCorner:
                         CurrentImage = InteriorFilledCorner;
+                        Rotation = 0;
                         PrevImage = CurrentImage;
                         break;
                     case WallStates.TopRightInteriorFilledCorner:
                         CurrentImage = InteriorFilledCorner;
+                        Rotation = (float)(Math.PI * .5);
                         PrevImage = CurrentImage;
                         break;
                     case WallStates.BottomRightInteriorFilledCorner:
                         CurrentImage = InteriorFilledCorner;
+                        Rotation = (float)(Math.PI * 1);
                         PrevImage = CurrentImage;
                         break;
                     case WallStates.BottomLeftInteriorFilledCorner:
                         CurrentImage = InteriorFilledCorner;
+                        Rotation = (float)(Math.PI * 1.5);
                         PrevImage = CurrentImage;
                         break;
 
                     case WallStates.Empty:
                         CurrentImage = EmptySprite;
+                        Rotation = 0;
                         PrevImage = HLEmptySprite;
                         break;
                 }

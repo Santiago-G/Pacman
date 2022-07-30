@@ -21,6 +21,7 @@ namespace Pacman
 
         public static GameStates currentScreen = GameStates.TitleScreen;
         GameStates prevScreen;
+
         public static Dictionary<GameStates, Screen> screens = new Dictionary<GameStates, Screen>();
 
         public static float MasterVolume = .5f;

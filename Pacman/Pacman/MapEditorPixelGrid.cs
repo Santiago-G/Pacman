@@ -45,6 +45,50 @@ namespace Pacman
             }
         }
 
+        public void GoTransparent()
+        {
+            foreach (var tile in Tiles)
+            {
+                switch (tile.TileStates)
+                {
+                    case States.Empty:
+                        tile.CurrentImage = pixelVisual.NBemptySprite;
+                        break;
+                    case States.Pellet:
+                        tile.CurrentImage = pixelVisual.NBpelletSprite;
+                        break;
+                    case States.PowerPellet:
+                        tile.CurrentImage = pixelVisual.NBpowerPelletSprite;
+                        break;
+                }
+
+                tile.TileStates = States.NoBackground;
+                //tile.Tint *= 0.2f;
+            }
+        }
+
+        public void GoInFocus()
+        {
+            foreach (var tile in Tiles)
+            {
+                switch (tile.TileStates)
+                {
+                    case States.Empty:
+                        tile.CurrentImage = pixelVisual.EmptySprite;
+                        break;
+                    case States.Pellet:
+                        tile.CurrentImage = pixelVisual.PelletSprite;
+                        break;
+                    case States.PowerPellet:
+                        tile.CurrentImage = pixelVisual.PowerPelletSprite;
+                        break;
+                }
+
+                tile.TileStates = States.NoBackground;
+                //tile.Tint *= 5;
+            }
+        }
+
         public void Update(GameTime gameTime)
         {
             foreach (var tile in Tiles)

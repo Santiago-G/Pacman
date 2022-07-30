@@ -49,6 +49,7 @@ namespace Pacman
                 if (!updated) return;
             }
 
+            currentTile.TileStates = States.Wall;
             currentTile.UpdateStates();
 
             foreach (var neighbor in currentTile.Neighbors)
@@ -361,6 +362,22 @@ namespace Pacman
                         Tiles[y, x].Data.Neighbors[i].Item1 = new Point(y + offsets[i].Y, x + offsets[i].X);
                     }
                 }
+            }
+        }
+
+        public void GoTransparent()
+        {
+            foreach (var tile in Tiles)
+            {
+                tile.Tint *= 0.2f;
+            }
+        }
+
+        public void GoInFocus()
+        {
+            foreach (var tile in Tiles)
+            {
+                tile.Tint *= 5f;
             }
         }
 
