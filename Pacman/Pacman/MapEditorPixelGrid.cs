@@ -53,12 +53,15 @@ namespace Pacman
                 {
                     case States.Empty:
                         tile.CurrentImage = pixelVisual.NBemptySprite;
+                        tile.PrevImage = pixelVisual.NBemptySprite;
                         break;
                     case States.Pellet:
                         tile.CurrentImage = pixelVisual.NBpelletSprite;
+                        tile.PrevImage = pixelVisual.NBemptySprite;
                         break;
                     case States.PowerPellet:
                         tile.CurrentImage = pixelVisual.NBpowerPelletSprite;
+                        tile.PrevImage = pixelVisual.NBemptySprite;
                         break;
                 }
 
@@ -71,21 +74,20 @@ namespace Pacman
         {
             foreach (var tile in Tiles)
             {
-                switch (tile.TileStates)
+                if (tile.CurrentImage == pixelVisual.NBemptySprite)
                 {
-                    case States.Empty:
-                        tile.CurrentImage = pixelVisual.EmptySprite;
-                        break;
-                    case States.Pellet:
-                        tile.CurrentImage = pixelVisual.PelletSprite;
-                        break;
-                    case States.PowerPellet:
-                        tile.CurrentImage = pixelVisual.PowerPelletSprite;
-                        break;
+                    tile.TileStates = States.Empty;
+                }
+                else if (tile.CurrentImage == pixelVisual.NBpelletSprite)
+                {
+                    tile.TileStates = States.Pellet;
+                }
+                else if (tile.CurrentImage == pixelVisual.NBpowerPelletSprite)
+                {
+                    tile.TileStates = States.PowerPellet;
                 }
 
-                tile.TileStates = States.NoBackground;
-                //tile.Tint *= 5;
+                tile.UpdateStates();
             }
         }
 

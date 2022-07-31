@@ -88,7 +88,7 @@ namespace Pacman
 
             //ADD THING THAT IF SELECTED ONLY DRAWS OVER BLANK TILES
 
-            pixelVisual.EmptySprite = Content.Load<Texture2D>("emptyPelletTile");
+            pixelVisual.EmptySprite = Content.Load<Texture2D>("emptyPelletTile");//emptyPelletTile
             pixelVisual.HLEmptySprite = Content.Load<Texture2D>("HLEmptyPelletTile");
             pixelVisual.PelletSprite = Content.Load<Texture2D>("mapEditorTile2");
             pixelVisual.HLPelletSprite = Content.Load<Texture2D>("enlargedPelletTile");

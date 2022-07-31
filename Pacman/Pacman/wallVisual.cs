@@ -266,11 +266,15 @@ namespace Pacman
                         case SelectedType.Default:
                             break;
                         //case SelectedType.Eraser:
-                        //    // if (TileStates != States.Wall)
+                        //    if (TileStates != States.Wall)
                         //    {
                         //        TileStates = States.Empty;
                         //    }
-                            //break;
+                        //    else
+                        //    {
+                        //        Map
+                        //    }
+                        //    break;
                         case SelectedType.Wall:
                             TileStates = States.Wall;
                             break;

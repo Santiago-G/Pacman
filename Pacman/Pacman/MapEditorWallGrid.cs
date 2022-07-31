@@ -369,7 +369,16 @@ namespace Pacman
         {
             foreach (var tile in Tiles)
             {
-                tile.Tint *= 0.2f;
+                switch (tile.TileStates)
+                {
+                    case States.Empty:
+                        tile.CurrentImage = pixelVisual.NBemptySprite;
+                        tile.PrevImage = pixelVisual.NBemptySprite;
+                        break;
+                }
+
+                tile.TileStates = States.NoBackground;
+                //tile.Tint *= 0.2f;
             }
         }
 
