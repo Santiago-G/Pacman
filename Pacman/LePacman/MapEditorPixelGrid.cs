@@ -41,7 +41,8 @@ namespace Pacman
 
             foreach (var tile in Tiles)
             {
-                tile.UpdateStates();
+                tile.UpdateStates(true);
+                ;
             }
         }
 

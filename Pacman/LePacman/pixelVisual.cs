@@ -20,10 +20,12 @@ namespace Pacman
         public static Texture2D PowerPelletSprite;
         public static Texture2D HLPowerPelletSprite;
 
-
         public static Texture2D NBemptySprite;
         public static Texture2D NBpelletSprite;
         public static Texture2D NBpowerPelletSprite;
+
+        public static Texture2D OccupiedSprite;
+        public static Texture2D HLOccupiedSprite;
         #endregion
 
        public pixelData Data { get; set; } = new pixelData();
@@ -61,6 +63,10 @@ namespace Pacman
                 case States.NoBackground:
                     ;
                     break;
+                case States.Occupied:
+                    CurrentImage = OccupiedSprite;
+                    PrevImage = HLOccupiedSprite;
+                    break;
             }
 
             if (!setDefault)
@@ -68,6 +74,10 @@ namespace Pacman
                 Texture2D bucket = CurrentImage;
                 CurrentImage = PrevImage;
                 PrevImage = bucket;
+            }
+            else 
+            {
+                ;
             }
         }
 

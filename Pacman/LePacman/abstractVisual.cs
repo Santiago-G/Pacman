@@ -68,6 +68,8 @@ namespace Pacman
             set { data.spriteEffects = value; }
         }
 
+        public override Rectangle Hitbox => new Rectangle((int)(Position.X - Origin.X * Scale.X), (int)(Position.Y - Origin.Y * Scale.Y), (int)(CurrentImage.Width * Scale.X), (int)(CurrentImage.Height * Scale.Y));
+
         public T[] Neighbors 
         { 
             get { return data.Neighbors; } 

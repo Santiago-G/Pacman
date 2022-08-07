@@ -21,7 +21,8 @@ namespace Pacman
         PowerPellet,
         Fruit,
         Wall,
-        NoBackground
+        NoBackground,
+        Occupied
     }
 
     public enum WallStates

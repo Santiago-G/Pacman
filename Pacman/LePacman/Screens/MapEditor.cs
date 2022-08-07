@@ -20,7 +20,7 @@ namespace Pacman
         public MapEditorWallGrid WallGrid;
 
         static Vector2 wallGridOffest = new Vector2(40, 90);
-        static Point wallGridSize = new Point(29, 31);
+        static Point wallGridSize = new Point(29, 32);
 
         Vector2 pixelGridOffest;
         Point pixelGridSize;
@@ -139,23 +139,40 @@ namespace Pacman
 
             /* TO DO LIST
              * 
-             * Fix saving and loading
-             * Block pixels from being places in walls, and vice versa
+             * Block pixels from being places in walls, and vice versa  [I made occupied texture for pixel, do pixel first.]
              * Add border walls (maybe you're only allowed to place then once you finished making your grid)
+             * Button that toggles drawing over objects
+             * Shift Click like in GIMP
              * 
              */
 
-            la babusha
-
+            March Of The Black Queen
+           
             #region Saving and Loading
 
             if (kb.IsKeyDown(Keys.Space))
             {
-                string stringifiedPellets = JsonConvert.SerializeObject(PelletGrid.Tiles.Flatten().Select(tile => tile.Data));
+                GridStates prevCurrGridState = currentGridState;
+
+                PelletGrid.GoInFocus();
+                WallGrid.GoInFocus();
+
+                string stringifiedPellets = JsonConvert.SerializeObject(PelletGrid.Tiles.Flatten().Select(tile => tile.Data));            
                 System.IO.File.WriteAllText("SavedPelletMap.json", stringifiedPellets);
 
-                string stringifiedWall = JsonConvert.SerializeObject(WallGrid.Tiles.Flatten().Select(tile => tile.Data));
-                System.IO.File.WriteAllText("SavedWallMap.json", stringifiedWall);
+                string stringifiedWalls = JsonConvert.SerializeObject(WallGrid.Tiles.Flatten().Select(tile => tile.Data));
+                System.IO.File.WriteAllText("SavedWallMap.json", stringifiedWalls);
+
+                if (prevCurrGridState == GridStates.PixelGrid)
+                {
+                    WallGrid.GoTransparent();
+                }
+                else 
+                {
+                    PelletGrid.GoTransparent();
+                }
+
+                currentGridState = prevCurrGridState;
                 ;
             }
 
@@ -170,7 +187,21 @@ namespace Pacman
                 //Create grid based on this two d array
                 PelletGrid.LoadGrid(flattenedPelletTiles);
                 WallGrid.LoadGrid(flattenedWallTiles);
-                ;
+
+                if (currentGridState == GridStates.PixelGrid)
+                {
+                    PelletGrid.GoTransparent();
+                    PelletGrid.GoInFocus();
+
+                    WallGrid.GoTransparent();
+                }
+                else
+                {
+                    WallGrid.GoTransparent();
+                    WallGrid.GoInFocus();
+
+                    PelletGrid.GoTransparent();
+                }
             }
             #endregion
 
