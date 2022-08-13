@@ -12,6 +12,8 @@ namespace Pacman
         Vector2 Position;
 
         public pixelVisual[,] Tiles;
+        public List<pixelVisual> FilledTiles = new List<pixelVisual>();
+
         Point[] offsets = new Point[] { new Point(-1, -1), new Point(0, -1), new Point(1, -1), new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(-1, 1), new Point(-1, 0) };
 
         public MapEditorPixelGrid(Point gridSize, Point tileSize, Vector2 position)
@@ -48,6 +50,8 @@ namespace Pacman
 
         public void GoTransparent()
         {
+            FilledTiles.Clear();
+
             foreach (var tile in Tiles)
             {
                 switch (tile.TileStates)
@@ -56,13 +60,19 @@ namespace Pacman
                         tile.CurrentImage = pixelVisual.NBemptySprite;
                         tile.PrevImage = pixelVisual.NBemptySprite;
                         break;
+                    case States.Occupied:
+                        tile.CurrentImage = pixelVisual.NBemptySprite;
+                        tile.PrevImage = pixelVisual.NBemptySprite;
+                        break;
                     case States.Pellet:
                         tile.CurrentImage = pixelVisual.NBpelletSprite;
                         tile.PrevImage = pixelVisual.NBemptySprite;
+                        FilledTiles.Add(tile);
                         break;
                     case States.PowerPellet:
                         tile.CurrentImage = pixelVisual.NBpowerPelletSprite;
                         tile.PrevImage = pixelVisual.NBemptySprite;
+                        FilledTiles.Add(tile);
                         break;
                 }
 
@@ -71,8 +81,9 @@ namespace Pacman
             }
         }
 
-        public void GoInFocus()
+        public void GoInFocus(List<wallVisual> wallTiles)
         {
+
             foreach (var tile in Tiles)
             {
                 if (tile.CurrentImage == pixelVisual.NBemptySprite)
@@ -89,6 +100,19 @@ namespace Pacman
                 }
 
                 tile.UpdateStates();
+            }
+
+            foreach (var tile in wallTiles)
+            {
+                Tiles[tile.Cord.X, tile.Cord.Y].TileStates = States.Occupied;
+                Tiles[tile.Cord.X, tile.Cord.Y - 1].TileStates = States.Occupied;
+                Tiles[tile.Cord.X - 1, tile.Cord.Y - 1].TileStates = States.Occupied;
+                Tiles[tile.Cord.X - 1, tile.Cord.Y].TileStates = States.Occupied;
+
+                Tiles[tile.Cord.X, tile.Cord.Y].UpdateStates();
+                Tiles[tile.Cord.X, tile.Cord.Y - 1].UpdateStates();
+                Tiles[tile.Cord.X - 1, tile.Cord.Y - 1].UpdateStates();
+                Tiles[tile.Cord.X - 1, tile.Cord.Y].UpdateStates();
             }
         }
 

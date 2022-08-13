@@ -19,6 +19,7 @@ namespace Pacman
         public MapEditorPixelGrid PelletGrid;
         public MapEditorWallGrid WallGrid;
 
+
         static Vector2 wallGridOffest = new Vector2(40, 90);
         static Point wallGridSize = new Point(29, 32);
 
@@ -98,8 +99,10 @@ namespace Pacman
             pixelVisual.NBemptySprite = Content.Load<Texture2D>("emptyTile");
             pixelVisual.NBpelletSprite = Content.Load<Texture2D>("NBpixelTile");
             pixelVisual.NBpowerPelletSprite = Content.Load<Texture2D>("NBpowerPelletTile");
-            //change theses texture's background to be transparant, and their color to orange
-            //billy man
+
+            pixelVisual.OccupiedSprite = Content.Load<Texture2D>("occupiedPelletTile");
+
+
 
             wallVisual.EmptySprite = Content.Load<Texture2D>("mapEditorTile");
             wallVisual.HLEmptySprite = Content.Load<Texture2D>("EnlargeBorderTile");
@@ -154,7 +157,7 @@ namespace Pacman
             {
                 GridStates prevCurrGridState = currentGridState;
 
-                PelletGrid.GoInFocus();
+                PelletGrid.GoInFocus(WallGrid.FilledTiles);
                 WallGrid.GoInFocus();
 
                 string stringifiedPellets = JsonConvert.SerializeObject(PelletGrid.Tiles.Flatten().Select(tile => tile.Data));            
@@ -191,7 +194,7 @@ namespace Pacman
                 if (currentGridState == GridStates.PixelGrid)
                 {
                     PelletGrid.GoTransparent();
-                    PelletGrid.GoInFocus();
+                    PelletGrid.GoInFocus(WallGrid.FilledTiles);
 
                     WallGrid.GoTransparent();
                 }
@@ -208,17 +211,17 @@ namespace Pacman
             //Switching Grids
             if (switchGridButton.IsClicked(ms))
             {
-                if (currentGridState != GridStates.WallGrid)
+                if (currentGridState == GridStates.PixelGrid)
                 {
                     currentGridState = GridStates.WallGrid;
-                    WallGrid.GoInFocus();
                     PelletGrid.GoTransparent();
+                    WallGrid.GoInFocus();
                 }
                 else
                 {
                     currentGridState = GridStates.PixelGrid;
-                    PelletGrid.GoInFocus();
                     WallGrid.GoTransparent();
+                    PelletGrid.GoInFocus(WallGrid.FilledTiles);
                 }
             }
 

@@ -25,13 +25,11 @@ namespace Pacman
         public static Texture2D NBpowerPelletSprite;
 
         public static Texture2D OccupiedSprite;
-        public static Texture2D HLOccupiedSprite;
         #endregion
 
-       public pixelData Data { get; set; } = new pixelData();
+        public pixelData Data { get; set; } = new pixelData();
 
         protected override AbstractData<Point> data { get => Data; set { Data = (pixelData)value; } }
-        // = new pixelData();
 
         public pixelVisual(Texture2D Image, Point Cord, Color Tint, Vector2 Offset, Vector2 Scale, Vector2 Origin, float Rotation, SpriteEffects spriteEffects) : base(Image, Cord, Tint, Offset, Scale, Origin, Rotation, spriteEffects)
         {
@@ -65,7 +63,7 @@ namespace Pacman
                     break;
                 case States.Occupied:
                     CurrentImage = OccupiedSprite;
-                    PrevImage = HLOccupiedSprite;
+                    PrevImage = OccupiedSprite;
                     break;
             }
 
@@ -87,14 +85,14 @@ namespace Pacman
 
             if (Hitbox.Contains(ms.Position))
             {
-                if (ms.LeftButton == ButtonState.Pressed)
+                if (ms.LeftButton == ButtonState.Pressed && TileStates != States.Occupied)
                 {
                     switch (MapEditor.selectedTileType)
                     {
                         case SelectedType.Default:
                             break;
                         case SelectedType.Pellet:
-                            TileStates = States.Pellet;
+                                TileStates = States.Pellet;
                             break;
                         case SelectedType.PowerPellet:
                             TileStates = States.PowerPellet;

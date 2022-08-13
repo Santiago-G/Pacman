@@ -13,6 +13,8 @@ namespace Pacman
         Vector2 Position;
 
         public wallVisual[,] Tiles;
+        public List<wallVisual> FilledTiles = new List<wallVisual>();
+
         Point[] offsets = new Point[] { new Point(-1, -1), new Point(0, -1), new Point(1, -1), new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(-1, 1), new Point(-1, 0) };
 
         #region Functions
@@ -369,22 +371,25 @@ namespace Pacman
 
         public void GoTransparent()
         {
+            FilledTiles.Clear();
+
             foreach (var tile in Tiles)
             {
-                switch (tile.TileStates)
+                if (tile.TileStates == States.Empty)
                 {
-                    case States.Empty:
-                        tile.CurrentImage = pixelVisual.NBemptySprite;
-                        tile.PrevImage = pixelVisual.NBemptySprite;
-                        break;
+                    tile.CurrentImage = pixelVisual.NBemptySprite;
+                    tile.PrevImage = pixelVisual.NBemptySprite;
+                }
+                else
+                {
+                    FilledTiles.Add(tile);
                 }
 
                 tile.TileStates = States.NoBackground;
-                //tile.Tint *= 0.2f;
             }
         }
 
-        public void GoInFocus()
+        public void GoInFocus(List<pixelVisual> pixelTiles)
         {
             foreach (var tile in Tiles)
             {
@@ -394,6 +399,19 @@ namespace Pacman
                 }
 
                 tile.UpdateStates();
+            }
+
+            foreach (var tile in pixelTiles)
+            {
+                Tiles[tile.Cord.X, tile.Cord.Y].TileStates = States.Occupied;
+                Tiles[tile.Cord.X, tile.Cord.Y - 1].TileStates = States.Occupied;
+                Tiles[tile.Cord.X - 1, tile.Cord.Y - 1].TileStates = States.Occupied;
+                Tiles[tile.Cord.X - 1, tile.Cord.Y].TileStates = States.Occupied;
+
+                Tiles[tile.Cord.X, tile.Cord.Y].UpdateStates();
+                Tiles[tile.Cord.X, tile.Cord.Y - 1].UpdateStates();
+                Tiles[tile.Cord.X - 1, tile.Cord.Y - 1].UpdateStates();
+                Tiles[tile.Cord.X - 1, tile.Cord.Y].UpdateStates();
             }
         }
 
