@@ -100,8 +100,9 @@ namespace Pacman
             pixelVisual.NBpelletSprite = Content.Load<Texture2D>("NBpixelTile");
             pixelVisual.NBpowerPelletSprite = Content.Load<Texture2D>("NBpowerPelletTile");
 
-            pixelVisual.OccupiedSprite = Content.Load<Texture2D>("occupiedPelletTile");
-
+            //pixelVisual.OccupiedSprite = Content.Load<Texture2D>("occupiedPelletTile");
+            pixelVisual.OccupiedSprite = pixelVisual.NBemptySprite;
+            wallVisual.OccupiedSprite = pixelVisual.OccupiedSprite;
 
 
             wallVisual.EmptySprite = Content.Load<Texture2D>("mapEditorTile");
@@ -142,15 +143,26 @@ namespace Pacman
 
             /* TO DO LIST
              * 
-             * Block pixels from being places in walls, and vice versa  [I made occupied texture for pixel, do pixel first.]
+             * IMPORTANT
+             * ---------
+             * 
+             * Ghost chamber should be one object that you can drag. Make it look like your dragging a monke in Bloons (Red/Gray tint for area you cant place it in)
+             * For the ghosts, once you place the ghost chamber?, make sure they can reach every empty tile in the map via DFS or BFS.
              * Add border walls (maybe you're only allowed to place then once you finished making your grid)
+             * Before you can "save" the map, make sure it fills out a list of requirements (like having a ghost chamber.)
+             * 
+             * Quality of Life
+             * ---------------
+             * 
+             * Update textures and placement
              * Button that toggles drawing over objects
              * Shift Click like in GIMP
+             * Maybe have a finished view? (without grayed out tiles and borders)
              * 
              */
 
-            March Of The Black Queen
-           
+            //March Of The Black Queen
+
             #region Saving and Loading
 
             if (kb.IsKeyDown(Keys.Space))
@@ -158,7 +170,7 @@ namespace Pacman
                 GridStates prevCurrGridState = currentGridState;
 
                 PelletGrid.GoInFocus(WallGrid.FilledTiles);
-                WallGrid.GoInFocus();
+                WallGrid.GoInFocus(PelletGrid.FilledTiles);
 
                 string stringifiedPellets = JsonConvert.SerializeObject(PelletGrid.Tiles.Flatten().Select(tile => tile.Data));            
                 System.IO.File.WriteAllText("SavedPelletMap.json", stringifiedPellets);
@@ -201,7 +213,7 @@ namespace Pacman
                 else
                 {
                     WallGrid.GoTransparent();
-                    WallGrid.GoInFocus();
+                    WallGrid.GoInFocus(PelletGrid.FilledTiles);
 
                     PelletGrid.GoTransparent();
                 }
@@ -215,7 +227,7 @@ namespace Pacman
                 {
                     currentGridState = GridStates.WallGrid;
                     PelletGrid.GoTransparent();
-                    WallGrid.GoInFocus();
+                    WallGrid.GoInFocus(PelletGrid.FilledTiles);
                 }
                 else
                 {

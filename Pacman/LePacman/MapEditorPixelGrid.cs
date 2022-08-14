@@ -104,15 +104,20 @@ namespace Pacman
 
             foreach (var tile in wallTiles)
             {
-                Tiles[tile.Cord.X, tile.Cord.Y].TileStates = States.Occupied;
-                Tiles[tile.Cord.X, tile.Cord.Y - 1].TileStates = States.Occupied;
-                Tiles[tile.Cord.X - 1, tile.Cord.Y - 1].TileStates = States.Occupied;
-                Tiles[tile.Cord.X - 1, tile.Cord.Y].TileStates = States.Occupied;
+                int leftX = Math.Max(tile.Cord.X - 1, 0);
+                int topY = Math.Max(tile.Cord.Y - 1, 0);
+                int y = Math.Min(tile.Cord.Y, 27);
+                int x = Math.Min(tile.Cord.X, 30);
 
-                Tiles[tile.Cord.X, tile.Cord.Y].UpdateStates();
-                Tiles[tile.Cord.X, tile.Cord.Y - 1].UpdateStates();
-                Tiles[tile.Cord.X - 1, tile.Cord.Y - 1].UpdateStates();
-                Tiles[tile.Cord.X - 1, tile.Cord.Y].UpdateStates();
+                Tiles[leftX, topY].TileStates = States.Occupied;
+                Tiles[leftX, y].TileStates = States.Occupied;
+                Tiles[x, y].TileStates = States.Occupied;
+                Tiles[x, topY].TileStates = States.Occupied;
+
+                Tiles[leftX, topY].UpdateStates();
+                Tiles[leftX, y].UpdateStates();
+                Tiles[x, y].UpdateStates();
+                Tiles[x, topY].UpdateStates();
             }
         }
 

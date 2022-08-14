@@ -47,6 +47,8 @@ namespace Pacman
         public static Texture2D NBinteriorCrossSprite;
         public static Texture2D NBsingleCrossSprite;
         public static Texture2D NBinteriorFilledCorner;
+
+        public static Texture2D OccupiedSprite;
         #endregion        
 
         public wallData Data { get; set; } = new wallData();
@@ -56,17 +58,17 @@ namespace Pacman
         public WallStates WallState
         {
             get { return Data.WallState; }
-            set { Data.WallState = value;}
+            set { Data.WallState = value; }
         }
 
-        public wallVisual(Texture2D Image, Point Cord, Color Tint, Vector2 Offset, Vector2 Scale, Vector2 Origin, float Rotation, SpriteEffects spriteEffects) : base( Image, Cord, Tint, Offset, Scale, Origin, Rotation, spriteEffects)
+        public wallVisual(Texture2D Image, Point Cord, Color Tint, Vector2 Offset, Vector2 Scale, Vector2 Origin, float Rotation, SpriteEffects spriteEffects) : base(Image, Cord, Tint, Offset, Scale, Origin, Rotation, spriteEffects)
         {
             ;
         }
 
         public wallVisual(wallData dataTile, Vector2 offset) : base(dataTile, offset)
         {
-            
+
         }
 
         public override void UpdateStates(bool setDefault = false)
@@ -76,7 +78,12 @@ namespace Pacman
                 CurrentImage = EmptySprite;
                 PrevImage = HLEmptySprite;
             }
-            else 
+            else if (data.TileStates == States.Occupied)
+            {
+                CurrentImage = OccupiedSprite;
+                PrevImage = OccupiedSprite;
+            }
+            else
             {
                 switch (((wallData)data).WallState)
                 {
@@ -259,28 +266,24 @@ namespace Pacman
 
             if (Hitbox.Contains(ms.Position))
             {
-                if (ms.LeftButton == ButtonState.Pressed)
+                if (ms.LeftButton == ButtonState.Pressed && TileStates != States.Occupied)
                 {
-                    switch (MapEditor.selectedTileType)
-                    {
-                        case SelectedType.Default:
-                            break;
-                        //case SelectedType.Eraser:
-                        //    if (TileStates != States.Wall)
-                        //    {
-                        //        TileStates = States.Empty;
-                        //    }
-                        //    else
-                        //    {
-                        //        Map
-                        //    }
-                        //    break;
-                        case SelectedType.Wall:
-                            TileStates = States.Wall;
-                            break;
-                        default:
-                            break;
-                    }
+                    //switch (MapEditor.selectedTileType)
+                    //{
+                    //    //case SelectedType.Eraser:
+                    //    //    if (TileStates != States.Wall)
+                    //    //    {
+                    //    //        TileStates = States.Empty;
+                    //    //    }
+                    //    //    else
+                    //    //    {
+                    //    //        Map
+                    //    //    }
+                    //    //    break;
+                    //    case SelectedType.Wall:
+                    //        TileStates = States.Wall;
+                    //        break;
+                    //}
 
                 }
 
