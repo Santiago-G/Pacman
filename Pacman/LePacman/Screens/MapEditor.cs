@@ -49,6 +49,11 @@ namespace Pacman
         Texture2D HLswitchButtonSprite;
         Button switchGridButton;
 
+        Texture2D ghostChamberTexture;
+        Button ghostChamberButton;
+        Image ghostChamberMS;
+        bool selectedGhostChamber = false;
+
         public MapEditor((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
             size = Size;
@@ -69,23 +74,29 @@ namespace Pacman
 
             eraserButtonSprite = Content.Load<Texture2D>("eraserButton");
             selectedEraserSprite = Content.Load<Texture2D>("selectedEraserButton");
-            eraserButton = new Button(eraserButtonSprite, new Vector2(1000, 300), Color.White);
+            eraserButton = new Button(eraserButtonSprite, new Vector2(1000, 500), Color.White);
             objects.Add(eraserButton);
 
             powerPelletButtonSprite = Content.Load<Texture2D>("powerPelletButton");
             selectedPowerPelletSprite = Content.Load<Texture2D>("selectedPowerPellet");
-            powerPelletButton = new Button(powerPelletButtonSprite, new Vector2(1000, 400), Color.White);
+            powerPelletButton = new Button(powerPelletButtonSprite, new Vector2(1000, 300), Color.White);
             objects.Add(powerPelletButton);
 
             wallButtonSprite = Content.Load<Texture2D>("wallButton");
             selectedWallSprite = Content.Load<Texture2D>("selectedWallButton");
-            wallButton = new Button(wallButtonSprite, new Vector2(1000, 500), Color.White);
+            wallButton = new Button(wallButtonSprite, new Vector2(1000, 400), Color.White);
             objects.Add(wallButton);
 
             switchButtonSprite = Content.Load<Texture2D>("switchButton");
             HLswitchButtonSprite = Content.Load<Texture2D>("HLswitchButton");
             switchGridButton = new Button(switchButtonSprite, new Vector2(830, 90), Color.White);
             objects.Add(switchGridButton);
+
+            ghostChamberTexture = Content.Load<Texture2D>("pacManGhostChamber");
+            ghostChamberButton = new Button(ghostChamberTexture, new Vector2(1000, 600), Color.White);
+            ghostChamberMS = new Image(ghostChamberTexture, new Vector2(-200), Color.White, new Vector2(1), new Vector2(ghostChamberTexture.Width/2, ghostChamberTexture.Height/2), 0f, SpriteEffects.None);
+            objects.Add(ghostChamberButton);
+            objects.Add(ghostChamberMS);
 
             //ADD THING THAT IF SELECTED ONLY DRAWS OVER BLANK TILES
 
@@ -228,40 +239,76 @@ namespace Pacman
                     currentGridState = GridStates.WallGrid;
                     PelletGrid.GoTransparent();
                     WallGrid.GoInFocus(PelletGrid.FilledTiles);
+
+                    pelletButton.Tint = Color.Gray;
+                    powerPelletButton.Tint = Color.Gray;
+                    wallButton.Tint = Color.White;
+                    ghostChamberButton.Tint = Color.White;
                 }
                 else
                 {
                     currentGridState = GridStates.PixelGrid;
                     WallGrid.GoTransparent();
                     PelletGrid.GoInFocus(WallGrid.FilledTiles);
+
+                    wallButton.Tint = Color.Gray;
+                    ghostChamberButton.Tint = Color.Gray;
+                    powerPelletButton.Tint = Color.White;
+                    pelletButton.Tint = Color.White;
                 }
             }
 
             if (currentGridState == GridStates.WallGrid)
             {
-                if (wallButton.IsClicked(ms))
+                if (!selectedGhostChamber)
                 {
-                    if (selectedTileType != SelectedType.Wall)
+                    if (wallButton.IsClicked(ms))
                     {
-                        selectedTileType = SelectedType.Wall;
-                        wallButton.Image = selectedWallSprite;
+                        if (selectedTileType != SelectedType.Wall)
+                        {
+                            selectedTileType = SelectedType.Wall;
+                            wallButton.Image = selectedWallSprite;
 
-                        pelletButton.Image = pelletButtonSprite;
-                        eraserButton.Image = eraserButtonSprite;
-                        powerPelletButton.Image = powerPelletButtonSprite;
+                            pelletButton.Image = pelletButtonSprite;
+                            eraserButton.Image = eraserButtonSprite;
+                            powerPelletButton.Image = powerPelletButtonSprite;
+                        }
+                        else
+                        {
+                            selectedTileType = SelectedType.Default;
+                            wallButton.Image = wallButtonSprite;
+                        }
                     }
-                    else
+
+                    if (selectedTileType == SelectedType.Wall)
                     {
-                        selectedTileType = SelectedType.Default;
-                        wallButton.Image = wallButtonSprite;
+                        if (ms.LeftButton == ButtonState.Pressed)
+                        {
+                            WallGrid.addWall(new Vector2(ms.Position.X, ms.Position.Y));
+                        }
+                    }
+
+                    if (ghostChamberButton.IsClicked(ms))
+                    {
+                        selectedGhostChamber = true;
+                        ghostChamberButton.Tint = Color.Gray;
                     }
                 }
-
-                if (selectedTileType == SelectedType.Wall)
+                if (selectedGhostChamber)
                 {
-                    if (ms.LeftButton == ButtonState.Pressed)
+                    ghostChamberMS.Position = ms.Position.ToVector2();
+
+
+                    if (false)
                     {
-                        WallGrid.addWall(new Vector2(ms.Position.X, ms.Position.Y));
+                        //logic for placement, make sure it doesnt just go to white below.    
+                    }
+
+                    if (ms.LeftButton == ButtonState.Released)
+                    {
+                        selectedGhostChamber = false;
+                        ghostChamberButton.Tint = Color.White;
+                        ghostChamberMS.Position = new Vector2(-200);
                     }
                 }
             }
@@ -304,7 +351,7 @@ namespace Pacman
                 }
             }
 
-            if (eraserButton.IsClicked(ms))
+            if (eraserButton.IsClicked(ms) && !selectedGhostChamber)
             {
                 if (selectedTileType != SelectedType.Eraser)
                 {

@@ -18,7 +18,7 @@ namespace Pacman
         public virtual float Rotation { get; set; } = 0f;
         public virtual SpriteEffects SpriteEffects { get; set; } = SpriteEffects.None;
 
-        public virtual Rectangle Hitbox => new Rectangle((int)(Position.X - Origin.X * Scale.X), (int)(Position.Y - Origin.Y * Scale.Y), (int)(Image.Width * Scale.X), (int)(Image.Height * Scale.Y));
+        public virtual Rectangle Hitbox => new Rectangle((int)((Position.X - Origin.X) * Scale.X), (int)((Position.Y - Origin.Y) * Scale.Y), (int)(Image.Width * Scale.X), (int)(Image.Height * Scale.Y));
 
         public Sprite(Texture2D Image, Vector2 Position, Color Tint)
         {
