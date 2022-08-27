@@ -23,8 +23,6 @@ namespace Pacman
         public static Texture2D NBemptySprite;
         public static Texture2D NBpelletSprite;
         public static Texture2D NBpowerPelletSprite;
-
-        public static Texture2D OccupiedSprite;
         #endregion
 
         public pixelData Data { get; set; } = new pixelData();
@@ -62,8 +60,8 @@ namespace Pacman
                     ;
                     break;
                 case States.Occupied:
-                    CurrentImage = OccupiedSprite;
-                    PrevImage = OccupiedSprite;
+                    CurrentImage = NBemptySprite;
+                    PrevImage = NBemptySprite;
                     break;
             }
 

@@ -47,8 +47,6 @@ namespace Pacman
         public static Texture2D NBinteriorCrossSprite;
         public static Texture2D NBsingleCrossSprite;
         public static Texture2D NBinteriorFilledCorner;
-
-        public static Texture2D OccupiedSprite;
         #endregion        
 
         public wallData Data { get; set; } = new wallData();
@@ -73,15 +71,15 @@ namespace Pacman
 
         public override void UpdateStates(bool setDefault = false)
         {
-            if (data.TileStates == States.Empty && data.TileStates == States.GhostChamber)
+            if (data.TileStates == States.Empty)
             {
                 CurrentImage = EmptySprite;
                 PrevImage = HLEmptySprite;
             }
-            else if (data.TileStates == States.Occupied)
+            else if (data.TileStates == States.Occupied || data.TileStates == States.GhostChamber)
             {
-                CurrentImage = OccupiedSprite;
-                PrevImage = OccupiedSprite;
+                CurrentImage = NBemptySprite;
+                PrevImage = NBemptySprite;
             }
             else
             {
@@ -265,28 +263,28 @@ namespace Pacman
             //Try replacing switches with dictionaries
 
             if (Hitbox.Contains(ms.Position))
-            {
+            {/*
                 if (ms.LeftButton == ButtonState.Pressed && TileStates != States.Occupied)
                 {
-                    //switch (MapEditor.selectedTileType)
-                    //{
-                    //    //case SelectedType.Eraser:
-                    //    //    if (TileStates != States.Wall)
-                    //    //    {
-                    //    //        TileStates = States.Empty;
-                    //    //    }
-                    //    //    else
-                    //    //    {
-                    //    //        Map
-                    //    //    }
-                    //    //    break;
-                    //    case SelectedType.Wall:
-                    //        TileStates = States.Wall;
-                    //        break;
-                    //}
+                    switch (MapEditor.selectedTileType)
+                    {
+                        //case SelectedType.Eraser:
+                        //    if (TileStates != States.Wall)
+                        //    {
+                        //        TileStates = States.Empty;
+                        //    }
+                        //    else
+                        //    {
+                        //        Map
+                        //    }
+                        //    break;
+                        case SelectedType.Wall:
+                            TileStates = States.Wall;
+                            break;
+                    }
 
                 }
-
+                */
                 UpdateStates();
             }
             else

@@ -25,7 +25,7 @@ namespace Pacman
 
             Point index = PosToIndex(MousePosition);
 
-            if (index == new Point(-1) || Tiles[index.Y, index.X].TileStates == States.Occupied) return;
+            if (index == new Point(-1) || Tiles[index.Y, index.X].TileStates == States.Occupied || Tiles[index.Y, index.X].TileStates == States.GhostChamber) return;
 
             recursiveAddWall(Tiles[index.Y, index.X]);
         }
@@ -344,16 +344,17 @@ namespace Pacman
    
             while (true)
             {
-                Tiles[y, x].TileStates = States.GhostChamber;
+                Tiles[x, y].TileStates = States.GhostChamber;
+                Tiles[x, y].UpdateStates();
                 y++;
 
-                if (y - index.Y > 7)
+                if (y - index.Y > 6)
                 {
                     y = index.Y;
                     x++;
                 }
 
-                if (x - index.X > 4)
+                if (x - index.X > 3)
                 {
                     break;
                 }
@@ -418,7 +419,10 @@ namespace Pacman
             {
                 if (tile.CurrentImage == pixelVisual.NBemptySprite)
                 {
-                    tile.TileStates = States.Empty;
+                    if (tile.TileStates != States.GhostChamber)
+                    {
+                        tile.TileStates = States.Empty;
+                    }
                 }
 
                 tile.UpdateStates();
@@ -426,9 +430,6 @@ namespace Pacman
 
             foreach (var tile in pixelTiles)
             {
-                //int rightX = Math.Min(tile.Cord.X + 1, 0);
-                //int bottomY = Math.Min(tile.Cord.Y + 1, 0);
-
                 Tiles[tile.Cord.X, tile.Cord.Y].TileStates = States.Occupied;
                 Tiles[tile.Cord.X, tile.Cord.Y + 1].TileStates = States.Occupied;
                 Tiles[tile.Cord.X + 1, tile.Cord.Y + 1].TileStates = States.Occupied;

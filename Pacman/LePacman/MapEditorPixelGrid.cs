@@ -75,7 +75,7 @@ namespace Pacman
                         FilledTiles.Add(tile);
                         break;
                 }
-
+                
                 tile.TileStates = States.NoBackground;
                 //tile.Tint *= 0.2f;
             }

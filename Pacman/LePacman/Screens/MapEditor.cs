@@ -19,7 +19,6 @@ namespace Pacman
         public MapEditorPixelGrid PelletGrid;
         public MapEditorWallGrid WallGrid;
 
-
         static Vector2 wallGridOffest = new Vector2(40, 90);
         static Point wallGridSize = new Point(29, 32);
 
@@ -113,9 +112,7 @@ namespace Pacman
             pixelVisual.NBpowerPelletSprite = Content.Load<Texture2D>("NBpowerPelletTile");
 
             //pixelVisual.OccupiedSprite = Content.Load<Texture2D>("occupiedPelletTile");
-            pixelVisual.OccupiedSprite = pixelVisual.NBemptySprite;
-            wallVisual.OccupiedSprite = pixelVisual.OccupiedSprite;
-
+            wallVisual.NBemptySprite = pixelVisual.NBemptySprite;
 
             wallVisual.EmptySprite = Content.Load<Texture2D>("mapEditorTile");
             wallVisual.HLEmptySprite = Content.Load<Texture2D>("EnlargeBorderTile");
@@ -205,29 +202,32 @@ namespace Pacman
 
             if (kb.IsKeyDown(Keys.M))
             {
-                string pelletContent = System.IO.File.ReadAllText("SavedPelletMap.json");
-                string wallContent = System.IO.File.ReadAllText("SavedWallMap.json");
-
-                List<pixelData> flattenedPelletTiles = JsonConvert.DeserializeObject<List<pixelData>>(pelletContent);
-                List<wallData> flattenedWallTiles = JsonConvert.DeserializeObject<List<wallData>>(wallContent);
-                //tiles = flattenedTiles.Select(x => new MapEditorVisualTile(.To2DArray(/*maybe needs parameters*/);
-                //Create grid based on this two d array
-                PelletGrid.LoadGrid(flattenedPelletTiles);
-                WallGrid.LoadGrid(flattenedWallTiles);
-
-                if (currentGridState == GridStates.PixelGrid)
+                if (System.IO.File.Exists("SavedPelletMap.json"))
                 {
-                    PelletGrid.GoTransparent();
-                    PelletGrid.GoInFocus(WallGrid.FilledTiles);
+                    string pelletContent = System.IO.File.ReadAllText("SavedPelletMap.json");
+                    string wallContent = System.IO.File.ReadAllText("SavedWallMap.json");
 
-                    WallGrid.GoTransparent();
-                }
-                else
-                {
-                    WallGrid.GoTransparent();
-                    WallGrid.GoInFocus(PelletGrid.FilledTiles);
+                    List<pixelData> flattenedPelletTiles = JsonConvert.DeserializeObject<List<pixelData>>(pelletContent);
+                    List<wallData> flattenedWallTiles = JsonConvert.DeserializeObject<List<wallData>>(wallContent);
+                    //tiles = flattenedTiles.Select(x => new MapEditorVisualTile(.To2DArray(/*maybe needs parameters*/);
+                    //Create grid based on this two d array
+                    PelletGrid.LoadGrid(flattenedPelletTiles);
+                    WallGrid.LoadGrid(flattenedWallTiles);
 
-                    PelletGrid.GoTransparent();
+                    if (currentGridState == GridStates.PixelGrid)
+                    {
+                        PelletGrid.GoTransparent();
+                        PelletGrid.GoInFocus(WallGrid.FilledTiles);
+
+                        WallGrid.GoTransparent();
+                    }
+                    else
+                    {
+                        WallGrid.GoTransparent();
+                        WallGrid.GoInFocus(PelletGrid.FilledTiles);
+
+                        PelletGrid.GoTransparent();
+                    }
                 }
             }
             #endregion
@@ -261,7 +261,44 @@ namespace Pacman
 
             if (currentGridState == GridStates.WallGrid)
             {
-                if (!selectedGhostChamber)
+                if (!ghostChamberPlaced && ghostChamberButton.IsClicked(ms))
+                {
+                    selectedGhostChamber = true;
+                    ghostChamberButton.Tint = Color.Gray;
+                }
+                if (selectedGhostChamber && !ghostChamberPlaced)
+                {
+                    Point index = WallGrid.PosToIndex(ms.Position.ToVector2());
+                    int concord = 0;
+
+                    if (index != new Point(-1) && index.X < wallGridSize.X - 7 && index.Y < wallGridSize.Y - 4)
+                    {
+                        ghostChamberMS.Position = new Vector2(WallGrid.Tiles[index.Y, index.X].Position.X - pixelVisual.EmptySprite.Width / 2, WallGrid.Tiles[index.Y, index.X].Position.Y - pixelVisual.EmptySprite.Height / 2);
+                        concord = 1;
+                    }
+                    else
+                    {
+                        ghostChamberMS.Position = new Vector2(ms.Position.X, ms.Position.Y);
+                        concord = 0;
+                    }
+
+                    if (ms.LeftButton == ButtonState.Released)
+                    {
+                        selectedGhostChamber = false;
+
+                        if (concord > 0)
+                        {
+                            ghostChamberPlaced = true;
+                            WallGrid.PlaceGhostChamber(new Point(index.Y, index.X));
+                        }
+                        else
+                        {
+                            ghostChamberButton.Tint = Color.White;
+                            ghostChamberMS.Position = new Vector2(-200);
+                        }
+                    }
+                }
+                else 
                 {
                     if (wallButton.IsClicked(ms))
                     {
@@ -288,45 +325,7 @@ namespace Pacman
                             WallGrid.addWall(new Vector2(ms.Position.X, ms.Position.Y));
                         }
                     }
-
-                    if (ghostChamberButton.IsClicked(ms) && !ghostChamberPlaced)
-                    {
-                        selectedGhostChamber = true;
-                        ghostChamberButton.Tint = Color.Gray;
-                    }
-                }
-                if (selectedGhostChamber && !ghostChamberPlaced)
-                {
-                    Point index = WallGrid.PosToIndex(ms.Position.ToVector2());
-                    int concord = 0;
-
-                    if (index != new Point(-1) && index.X < wallGridSize.X-7 && index.Y < wallGridSize.Y - 4)
-                    {
-                        ghostChamberMS.Position = new Vector2(WallGrid.Tiles[index.Y, index.X].Position.X - pixelVisual.EmptySprite.Width/2, WallGrid.Tiles[index.Y, index.X].Position.Y - pixelVisual.EmptySprite.Height / 2);
-                        concord = 1;
-
-                    }
-                    else
-                    {
-                        ghostChamberMS.Position = new Vector2(ms.Position.X, ms.Position.Y);
-                        concord = 0;
-                    }
-
-                    if (ms.LeftButton == ButtonState.Released)
-                    {
-                        if (concord > 0)
-                        {
-                            ghostChamberPlaced = true;
-                            WallGrid.PlaceGhostChamber(new Point(index.Y, index.X));
-                        }
-                        else 
-                        {
-                            selectedGhostChamber = false;
-                            ghostChamberButton.Tint = Color.White;
-                            ghostChamberMS.Position = new Vector2(-200);
-                        }
-                    }
-                }
+                }        
             }
             else 
             {
