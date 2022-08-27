@@ -84,7 +84,7 @@ namespace Pacman
             get
             {
                 return new Vector2(Cord.Y * CurrentImage.Width, Cord.X * CurrentImage.Height) + Offset;
-            }
+            } 
         }
 
 

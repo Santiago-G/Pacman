@@ -337,6 +337,29 @@ namespace Pacman
             return gridIndex.X >= 0 && gridIndex.X < Tiles.GetLength(1) && gridIndex.Y >= 0 && gridIndex.Y < Tiles.GetLength(0);
         }
 
+        public void PlaceGhostChamber(Point index)
+        {
+            int x = index.X;
+            int y = index.Y;
+   
+            while (true)
+            {
+                Tiles[y, x].TileStates = States.GhostChamber;
+                y++;
+
+                if (y - index.Y > 7)
+                {
+                    y = index.Y;
+                    x++;
+                }
+
+                if (x - index.X > 4)
+                {
+                    break;
+                }
+            }
+        }
+
         public void LoadGrid(List<wallData> TileList)
         {
             Tiles = TileList.Select(x => new wallVisual(x, Position)).Expand(new Point(Tiles.GetLength(1), Tiles.GetLength(0)));

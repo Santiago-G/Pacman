@@ -53,6 +53,7 @@ namespace Pacman
         Button ghostChamberButton;
         Image ghostChamberMS;
         bool selectedGhostChamber = false;
+        bool ghostChamberPlaced = false;
 
         public MapEditor((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
@@ -94,7 +95,7 @@ namespace Pacman
 
             ghostChamberTexture = Content.Load<Texture2D>("pacManGhostChamber");
             ghostChamberButton = new Button(ghostChamberTexture, new Vector2(1000, 600), Color.White);
-            ghostChamberMS = new Image(ghostChamberTexture, new Vector2(-200), Color.White, new Vector2(1), new Vector2(ghostChamberTexture.Width/2, ghostChamberTexture.Height/2), 0f, SpriteEffects.None);
+            ghostChamberMS = new Image(ghostChamberTexture, new Vector2(-200), Color.White, new Vector2(1), Vector2.Zero, 0f, SpriteEffects.None);
             objects.Add(ghostChamberButton);
             objects.Add(ghostChamberMS);
 
@@ -288,27 +289,42 @@ namespace Pacman
                         }
                     }
 
-                    if (ghostChamberButton.IsClicked(ms))
+                    if (ghostChamberButton.IsClicked(ms) && !ghostChamberPlaced)
                     {
                         selectedGhostChamber = true;
                         ghostChamberButton.Tint = Color.Gray;
                     }
                 }
-                if (selectedGhostChamber)
+                if (selectedGhostChamber && !ghostChamberPlaced)
                 {
-                    ghostChamberMS.Position = ms.Position.ToVector2();
+                    Point index = WallGrid.PosToIndex(ms.Position.ToVector2());
+                    int concord = 0;
 
-
-                    if (false)
+                    if (index != new Point(-1) && index.X < wallGridSize.X-7 && index.Y < wallGridSize.Y - 4)
                     {
-                        //logic for placement, make sure it doesnt just go to white below.    
+                        ghostChamberMS.Position = new Vector2(WallGrid.Tiles[index.Y, index.X].Position.X - pixelVisual.EmptySprite.Width/2, WallGrid.Tiles[index.Y, index.X].Position.Y - pixelVisual.EmptySprite.Height / 2);
+                        concord = 1;
+
+                    }
+                    else
+                    {
+                        ghostChamberMS.Position = new Vector2(ms.Position.X, ms.Position.Y);
+                        concord = 0;
                     }
 
                     if (ms.LeftButton == ButtonState.Released)
                     {
-                        selectedGhostChamber = false;
-                        ghostChamberButton.Tint = Color.White;
-                        ghostChamberMS.Position = new Vector2(-200);
+                        if (concord > 0)
+                        {
+                            ghostChamberPlaced = true;
+                            WallGrid.PlaceGhostChamber(new Point(index.Y, index.X));
+                        }
+                        else 
+                        {
+                            selectedGhostChamber = false;
+                            ghostChamberButton.Tint = Color.White;
+                            ghostChamberMS.Position = new Vector2(-200);
+                        }
                     }
                 }
             }

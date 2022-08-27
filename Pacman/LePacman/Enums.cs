@@ -21,6 +21,7 @@ namespace Pacman
         PowerPellet,
         Fruit,
         Wall,
+        GhostChamber,
         NoBackground,
         Occupied
     }

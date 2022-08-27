@@ -73,7 +73,7 @@ namespace Pacman
 
         public override void UpdateStates(bool setDefault = false)
         {
-            if (data.TileStates == States.Empty)
+            if (data.TileStates == States.Empty && data.TileStates == States.GhostChamber)
             {
                 CurrentImage = EmptySprite;
                 PrevImage = HLEmptySprite;
