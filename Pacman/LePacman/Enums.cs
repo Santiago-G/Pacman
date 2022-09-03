@@ -21,7 +21,6 @@ namespace Pacman
         PowerPellet,
         Fruit,
         Wall,
-        GhostChamber,
         NoBackground,
         Occupied
     }
@@ -65,6 +64,8 @@ namespace Pacman
         TopRightInteriorFilledCorner,
         BottomRightInteriorFilledCorner,
         BottomLeftInteriorFilledCorner,
+
+        GhostChamber,
 
         Empty
     }

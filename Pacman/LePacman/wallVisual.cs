@@ -69,21 +69,208 @@ namespace Pacman
 
         }
 
+        //public override void UpdateStates(bool setDefault = false)
+        //{
+        //    if (data.TileStates == States.Empty)
+        //    {
+        //        CurrentImage = EmptySprite;
+        //        PrevImage = HLEmptySprite;
+        //    }
+        //    else if (data.TileStates == States.Occupied || Data == WallStates.GhostChamber)
+        //    {
+        //        CurrentImage = NBemptySprite;
+        //        PrevImage = NBemptySprite;
+        //    }
+        //    else
+        //    {
+        //        switch (((wallData)data).WallState)
+        //        {
+        //            case WallStates.LoneWall:
+        //                CurrentImage = LoneWallSprite;
+        //                Rotation = 0;
+        //                PrevImage = CurrentImage;
+        //                break;
+
+        //            case WallStates.Horiz:
+        //                CurrentImage = MiddleWallSprite;
+        //                Rotation = (float)(Math.PI * .5);
+        //                PrevImage = MiddleWallSprite;
+        //                break;
+        //            case WallStates.HorizLeftEnd:
+        //                CurrentImage = SingleWallEnd;
+        //                Rotation = (float)(Math.PI * 1.5);
+        //                PrevImage = CurrentImage;
+        //                break;
+        //            case WallStates.HorizRightEnd:
+        //                CurrentImage = SingleWallEnd;
+        //                Rotation = (float)(Math.PI * .5);
+        //                PrevImage = CurrentImage;
+        //                break;
+
+        //            case WallStates.Verti:
+        //                CurrentImage = MiddleWallSprite;
+        //                Rotation = 0;
+        //                PrevImage = CurrentImage;
+        //                break;
+        //            case WallStates.VertiTopEnd:
+        //                CurrentImage = SingleWallEnd;
+        //                Rotation = 0;
+        //                PrevImage = CurrentImage;
+        //                break;
+        //            case WallStates.VertiBottomEnd:
+        //                CurrentImage = SingleWallEnd;
+        //                Rotation = (float)(Math.PI * 1);
+        //                PrevImage = CurrentImage;
+        //                break;
+
+        //            case WallStates.TopLeftCorner:
+        //                CurrentImage = CornerWallTile;
+        //                Rotation = 0;
+        //                PrevImage = CurrentImage;
+        //                break;
+        //            case WallStates.TopRightCorner:
+        //                CurrentImage = CornerWallTile;
+        //                Rotation = (float)(Math.PI * .5);
+        //                PrevImage = CurrentImage;
+        //                break;
+        //            case WallStates.BottomRightCorner:
+        //                CurrentImage = CornerWallTile;
+        //                Rotation = (float)(Math.PI * 1);
+        //                PrevImage = CurrentImage;
+        //                break;
+        //            case WallStates.BottomLeftCorner:
+        //                CurrentImage = CornerWallTile;
+        //                Rotation = (float)(Math.PI * 1.5);
+        //                PrevImage = CurrentImage;
+        //                break;
+
+        //            case WallStates.TopLeftCornerFilled:
+        //                CurrentImage = CornerWallFilledTile;
+        //                Rotation = 0;
+        //                PrevImage = CurrentImage;
+        //                break;
+        //            case WallStates.TopRightCornerFilled:
+        //                CurrentImage = CornerWallFilledTile;
+        //                Rotation = (float)(Math.PI * .5);
+        //                PrevImage = CurrentImage;
+        //                break;
+        //            case WallStates.BottomRightCornerFilled:
+        //                CurrentImage = CornerWallFilledTile;
+        //                Rotation = (float)(Math.PI * 1);
+        //                PrevImage = CurrentImage;
+        //                break;
+        //            case WallStates.BottomLeftCornerFilled:
+        //                CurrentImage = CornerWallFilledTile;
+        //                Rotation = (float)(Math.PI * 1.5);
+        //                PrevImage = CurrentImage;
+        //                break;
+
+        //            case WallStates.TopEdge:
+        //                CurrentImage = EdgeSprite;
+        //                Rotation = 0;
+        //                PrevImage = CurrentImage;
+        //                break;
+        //            case WallStates.RightEdge:
+        //                CurrentImage = EdgeSprite;
+        //                Rotation = (float)(Math.PI * .5);
+        //                PrevImage = CurrentImage;
+        //                break;
+        //            case WallStates.BottomEdge:
+        //                CurrentImage = EdgeSprite;
+        //                Rotation = (float)(Math.PI * 1);
+        //                PrevImage = CurrentImage;
+        //                break;
+        //            case WallStates.LeftEdge:
+        //                CurrentImage = EdgeSprite;
+        //                Rotation = (float)(Math.PI * 1.5);
+        //                PrevImage = CurrentImage;
+        //                break;
+
+        //            case WallStates.TopCross:
+        //                CurrentImage = SingleCrossSprite;
+        //                Rotation = 0;
+        //                PrevImage = CurrentImage;
+        //                break;
+        //            case WallStates.RightCross:
+        //                CurrentImage = SingleCrossSprite;
+        //                Rotation = (float)(Math.PI * .5);
+        //                PrevImage = CurrentImage;
+        //                break;
+        //            case WallStates.BottomCross:
+        //                CurrentImage = SingleCrossSprite;
+        //                Rotation = (float)(Math.PI * 1);
+        //                PrevImage = CurrentImage;
+        //                break;
+        //            case WallStates.LeftCross:
+        //                CurrentImage = SingleCrossSprite;
+        //                Rotation = (float)(Math.PI * 1.5);
+        //                PrevImage = CurrentImage;
+        //                break;
+
+        //            case WallStates.InteriorWall:
+        //                CurrentImage = InteriorWallSprite;
+        //                Rotation = 0;
+        //                PrevImage = CurrentImage;
+        //                break;
+
+        //            case WallStates.InteriorCorner:
+        //                CurrentImage = InteriorCrossSprite;
+        //                Rotation = 0;
+        //                PrevImage = CurrentImage;
+        //                break;
+
+        //            case WallStates.TopLeftInteriorFilledCorner:
+        //                CurrentImage = InteriorFilledCorner;
+        //                Rotation = 0;
+        //                PrevImage = CurrentImage;
+        //                break;
+        //            case WallStates.TopRightInteriorFilledCorner:
+        //                CurrentImage = InteriorFilledCorner;
+        //                Rotation = (float)(Math.PI * .5);
+        //                PrevImage = CurrentImage;
+        //                break;
+        //            case WallStates.BottomRightInteriorFilledCorner:
+        //                CurrentImage = InteriorFilledCorner;
+        //                Rotation = (float)(Math.PI * 1);
+        //                PrevImage = CurrentImage;
+        //                break;
+        //            case WallStates.BottomLeftInteriorFilledCorner:
+        //                CurrentImage = InteriorFilledCorner;
+        //                Rotation = (float)(Math.PI * 1.5);
+        //                PrevImage = CurrentImage;
+        //                break;
+
+        //            case WallStates.Empty:
+        //                CurrentImage = EmptySprite;
+        //                Rotation = 0;
+        //                PrevImage = HLEmptySprite;
+        //                break;
+        //        }
+        //    }
+
+        //    if (!setDefault)
+        //    {
+        //        Texture2D bucket = CurrentImage;
+        //        CurrentImage = PrevImage;
+        //        PrevImage = bucket;
+        //    }
+        //}
+
         public override void UpdateStates(bool setDefault = false)
         {
-            if (data.TileStates == States.Empty)
+            if (Data.TileStates == States.Empty)
             {
                 CurrentImage = EmptySprite;
                 PrevImage = HLEmptySprite;
             }
-            else if (data.TileStates == States.Occupied || data.TileStates == States.GhostChamber)
+            else if (Data.TileStates == States.Occupied || Data.WallState == WallStates.GhostChamber)
             {
                 CurrentImage = NBemptySprite;
                 PrevImage = NBemptySprite;
             }
             else
             {
-                switch (((wallData)data).WallState)
+                switch (Data.WallState)
                 {
                     case WallStates.LoneWall:
                         CurrentImage = LoneWallSprite;

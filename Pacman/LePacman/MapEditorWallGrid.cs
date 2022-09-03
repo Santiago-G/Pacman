@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Reflection;
 
 
 namespace Pacman
@@ -19,29 +20,34 @@ namespace Pacman
 
         #region Functions
 
+        #region Adding/Removing Walls
         public void addWall(Vector2 MousePosition)
         {
             //check if it's out of bounds
 
             Point index = PosToIndex(MousePosition);
 
-            if (index == new Point(-1) || Tiles[index.Y, index.X].TileStates == States.Occupied || Tiles[index.Y, index.X].TileStates == States.GhostChamber) return;
+            if (index == new Point(-1) || Tiles[index.Y, index.X].TileStates == States.Occupied || Tiles[index.Y, index.X].WallState == WallStates.GhostChamber) return;
 
             recursiveAddWall(Tiles[index.Y, index.X]);
         }
-
         public void removeWall(Vector2 MousePosition)
         {
             Point index = PosToIndex(MousePosition);
 
             if (index == new Point(-1) || Tiles[index.Y, index.X].TileStates != States.Wall) return;
 
+            if (Tiles[index.Y, index.X].WallState == WallStates.GhostChamber)
+            {
+                removeGhostChamber();
+                return;
+            }
+
             Tiles[index.Y, index.X].TileStates = States.Empty;
             Tiles[index.Y, index.X].WallState = WallStates.Empty;
 
             recursiveAddWall(Tiles[index.Y, index.X], true);
         }
-
         private void recursiveAddWall(wallVisual currentTile, bool remove = false)
         {
             if (!remove)
@@ -54,8 +60,6 @@ namespace Pacman
                 currentTile.UpdateStates();
             }
 
-
-
             foreach (var neighbor in currentTile.Neighbors)
             {
                 if (neighbor.isWall)
@@ -64,36 +68,6 @@ namespace Pacman
                 }
             }
         }
-
-        public Point PosToIndex(Vector2 Pos)
-        {
-            Pos.X -= Position.X - Tiles[0, 0].Origin.X * Tiles[0, 0].Scale.X;
-            Pos.Y -= Position.Y - Tiles[0, 0].Origin.Y * Tiles[0, 0].Scale.Y;
-
-            //check if the float is valid, set it to floats
-
-            float gridXf = (Pos.X / Tiles[0, 0].Hitbox.Width);
-            float gridYf = (Pos.Y / Tiles[0, 0].Hitbox.Height);
-
-            if (gridXf < 0)
-            {
-                gridXf = -1;
-            }
-            if (gridYf < 0)
-            {
-                gridYf = -1;
-            }
-
-            int gridX = (int)(gridXf);
-            int gridY = (int)(gridYf);
-
-            Game1.WindowText = $"GridX: {gridX}, GridY: {gridY}, Offset: {Pos}";
-
-            Point retPoint = new Point(gridX, gridY);
-            if (!IsValid(retPoint)) return new Point(-1);
-            return retPoint;
-        }
-
         private bool UpdateWall(Vector2 Position)
         {
             return UpdateWall(PosToIndex(Position));
@@ -331,20 +305,51 @@ namespace Pacman
             //    Tiles[tileIndex.Y, tileIndex.X].wallStates = MapEditorTile.WallStates.InteriorCorner;
             //}
         }
+        #endregion
 
-        private bool IsValid(Point gridIndex)
+        #region Ghost Chamber
+
+        public bool CanPlaceGC(Point index)
         {
-            return gridIndex.X >= 0 && gridIndex.X < Tiles.GetLength(1) && gridIndex.Y >= 0 && gridIndex.Y < Tiles.GetLength(0);
-        }
+            if (index != new Point(-1))
+            {
+                //it starts in the top left
 
+                int x = index.X;
+                int y = index.Y;
+
+                while (true)
+                {
+                    if (index[x, y])
+                    {
+                        if its occupied
+                    }
+                    y++;
+
+                    if (y - index.Y > 6)
+                    {
+                        y = index.Y;
+                        x++;
+                    }
+
+                    if (x - index.X > 3)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return false;
+        }
         public void PlaceGhostChamber(Point index)
         {
             int x = index.X;
             int y = index.Y;
-   
+
             while (true)
             {
-                Tiles[x, y].TileStates = States.GhostChamber;
+                Tiles[x, y].WallState = WallStates.GhostChamber;
+                Tiles[x, y].TileStates = States.Wall;
                 Tiles[x, y].UpdateStates();
                 y++;
 
@@ -361,12 +366,76 @@ namespace Pacman
             }
         }
 
+        private void removeGhostChamber()
+        {
+            foreach (var tile in Tiles)
+            {
+                if (tile.WallState == WallStates.GhostChamber)
+                {
+                    tile.TileStates = States.Empty;
+                    tile.WallState = WallStates.Empty;
+                    tile.UpdateStates();
+                }
+            }
+
+            MapEditor.ghostChamberMS.Position = new Vector2(-300);
+            MapEditor.ghostChamberButton.Tint = Color.White;
+            MapEditor.selectedGhostChamber = false;
+            MapEditor.ghostChamberPlaced = false;
+        }
+
+        #endregion
+
+        public Point PosToIndex(Vector2 Pos)
+        {
+            Pos.X -= Position.X - Tiles[0, 0].Origin.X * Tiles[0, 0].Scale.X;
+            Pos.Y -= Position.Y - Tiles[0, 0].Origin.Y * Tiles[0, 0].Scale.Y;
+
+            //check if the float is valid, set it to floats
+
+            float gridXf = (Pos.X / Tiles[0, 0].Hitbox.Width);
+            float gridYf = (Pos.Y / Tiles[0, 0].Hitbox.Height);
+
+            if (gridXf < 0)
+            {
+                gridXf = -1;
+            }
+            if (gridYf < 0)
+            {
+                gridYf = -1;
+            }
+
+            int gridX = (int)(gridXf);
+            int gridY = (int)(gridYf);
+
+            Game1.WindowText = $"GridX: {gridX}, GridY: {gridY}, Offset: {Pos}";
+
+            Point retPoint = new Point(gridX, gridY);
+            if (!IsValid(retPoint)) return new Point(-1);
+            return retPoint;
+        }
+
+        private bool IsValid(Point gridIndex)
+        {
+            return gridIndex.X >= 0 && gridIndex.X < Tiles.GetLength(1) && gridIndex.Y >= 0 && gridIndex.Y < Tiles.GetLength(0);
+        }
+
+
+
+
+
         public void LoadGrid(List<wallData> TileList)
         {
             Tiles = TileList.Select(x => new wallVisual(x, Position)).Expand(new Point(Tiles.GetLength(1), Tiles.GetLength(0)));
+            bool foundGhostChamber = false;
 
             foreach (var tile in Tiles)
             {
+                if (!foundGhostChamber && tile.WallState == WallStates.GhostChamber)
+                {
+                    MapEditor.ghostChamberMS.Position = new Vector2(tile.Position.X - 13, tile.Position.Y - 13);
+                    foundGhostChamber = true;
+                }
                 tile.UpdateStates(true);
             }
         }
@@ -409,7 +478,7 @@ namespace Pacman
                     FilledTiles.Add(tile);
                 }
 
-                //tile.TileStates = States.NoBackground;
+                tile.TileStates = States.NoBackground;
             }
         }
 
@@ -417,15 +486,25 @@ namespace Pacman
         {
             foreach (var tile in Tiles)
             {
-                if (tile.CurrentImage == pixelVisual.NBemptySprite)
+                if (tile.CurrentImage == wallVisual.NBemptySprite && tile.WallState != WallStates.GhostChamber)
                 {
-                    if (tile.TileStates != States.GhostChamber)
-                    {
-                        tile.TileStates = States.Empty;
-                    }
+                    tile.TileStates = States.Empty;
+                }
+                else 
+                {
+                    tile.TileStates = States.Wall;
                 }
 
                 tile.UpdateStates();
+
+                if (tile.CurrentImage == pixelVisual.NBemptySprite)
+                {
+                    if (tile.WallState != WallStates.GhostChamber)
+                    {
+                        tile.WallState = WallStates.Empty;
+                    }
+                }
+
             }
 
             foreach (var tile in pixelTiles)
