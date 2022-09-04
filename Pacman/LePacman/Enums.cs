@@ -12,6 +12,8 @@ namespace Pacman
         PowerPellet,
         Wall,
         Eraser,
+        //GhostChamber,
+        //PacmanSP,
     }
 
     public enum States

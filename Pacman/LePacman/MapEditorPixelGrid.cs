@@ -121,6 +121,21 @@ namespace Pacman
             }
         }
 
+        public List<pixelVisual> GetFilledTiles()
+        {
+            FilledTiles.Clear();
+
+            foreach (var tile in Tiles)
+            {
+                if (tile.TileStates != States.Empty && tile.TileStates != States.Occupied)
+                {
+                    FilledTiles.Add(tile);
+                }
+            }
+
+            return FilledTiles;
+        }
+
         public void Update(GameTime gameTime)
         {
             foreach (var tile in Tiles)

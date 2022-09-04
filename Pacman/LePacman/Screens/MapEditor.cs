@@ -54,6 +54,11 @@ namespace Pacman
         public static bool selectedGhostChamber = false;
         public static bool ghostChamberPlaced = false;
 
+        Texture2D pmPlacementSprite;
+        Button pacmanPlacementButton;
+        bool selectedPacman = false;
+        bool pacmanPlaced = false;
+
         public MapEditor((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
             size = Size;
@@ -97,6 +102,10 @@ namespace Pacman
             ghostChamberMS = new Image(ghostChamberTexture, new Vector2(-200), Color.White, new Vector2(1), Vector2.Zero, 0f, SpriteEffects.None);
             objects.Add(ghostChamberButton);
             objects.Add(ghostChamberMS);
+
+            pmPlacementSprite = Content.Load<Texture2D>("eraserButton");
+            pacmanPlacementButton = new Button(pmPlacementSprite, new Vector2(1000, 750), Color.White);
+            objects.Add(pacmanPlacementButton);
 
             //ADD THING THAT IF SELECTED ONLY DRAWS OVER BLANK TILES
 
@@ -155,7 +164,7 @@ namespace Pacman
              * IMPORTANT
              * ---------
              * 
-             * Starting point for pacman
+             * Starting point for pacman. Have it be a transparent pacman. Have you drag it, and make it lock on to the grid
              * Ghost chamber should be one object that you can drag. Make it look like your dragging a monke in Bloons (Red/Gray tint for area you cant place it in)
              * For the ghosts, once you place the ghost chamber?, make sure they can reach every empty tile in the map via DFS or BFS.
              * Add border walls (maybe you're only allowed to place then once you finished making your grid)
@@ -180,7 +189,7 @@ namespace Pacman
                 GridStates prevCurrGridState = currentGridState;
 
                 PelletGrid.GoInFocus(WallGrid.FilledTiles);
-                WallGrid.GoInFocus(PelletGrid.FilledTiles);
+                WallGrid.GoInFocus(PelletGrid.GetFilledTiles());
 
                 string stringifiedPellets = JsonConvert.SerializeObject(PelletGrid.Tiles.Flatten().Select(tile => tile.Data));
                 System.IO.File.WriteAllText("SavedPelletMap.json", stringifiedPellets);
@@ -262,22 +271,12 @@ namespace Pacman
 
             if (currentGridState == GridStates.WallGrid)
             {
-                if (!ghostChamberPlaced && ghostChamberButton.IsClicked(ms))
-                {
-                    selectedTileType = SelectedType.Default;
-                    wallButton.Image = wallButtonSprite;
-                    eraserButton.Image = eraserButtonSprite;
-
-                    selectedGhostChamber = true;
-                    ghostChamberButton.Tint = Color.Gray;
-                }
-
                 if (selectedGhostChamber)
                 {
                     Point index = WallGrid.PosToIndex(ms.Position.ToVector2());
                     int concord = 0;
 
-                    if (index != new Point(-1) && index.X < wallGridSize.X - 7 && index.Y < wallGridSize.Y - 4)
+                    if (index != new Point(-1) && index.X < wallGridSize.X - 6 && index.Y < wallGridSize.Y - 3)
                     {
                         ghostChamberMS.Position = new Vector2(WallGrid.Tiles[index.Y, index.X].Position.X - pixelVisual.EmptySprite.Width / 2, WallGrid.Tiles[index.Y, index.X].Position.Y - pixelVisual.EmptySprite.Height / 2);
                         concord = 1;
@@ -305,7 +304,13 @@ namespace Pacman
                         }
                     }
                 }
+                else if (selectedPacman)
+                {
+                    Point index = WallGrid.PosToIndex(ms.Position.ToVector2());
+                    bool isInGrid = false;
 
+
+                }
                 else
                 {
                     if (wallButton.IsClicked(ms))
@@ -325,6 +330,27 @@ namespace Pacman
                             wallButton.Image = wallButtonSprite;
                         }
                     }
+
+                    if (!ghostChamberPlaced && ghostChamberButton.IsClicked(ms))
+                    {
+                        selectedTileType = SelectedType.Default;
+                        wallButton.Image = wallButtonSprite;
+                        eraserButton.Image = eraserButtonSprite;
+
+                        selectedGhostChamber = true;
+                        ghostChamberButton.Tint = Color.Gray;
+                    }
+
+                    if (!pacmanPlaced && pacmanPlacementButton.IsClicked(ms))
+                    {
+                        selectedTileType = SelectedType.Default;
+                        wallButton.Image = wallButtonSprite;
+                        eraserButton.Image = eraserButtonSprite;
+
+                        selectedPacman = true;
+                        pacmanPlacementButton.Tint = Color.Gray;
+                    }
+
 
                     if (selectedTileType == SelectedType.Wall)
                     {
@@ -381,23 +407,32 @@ namespace Pacman
                 }
             }
 
-            if (eraserButton.IsClicked(ms) && !selectedGhostChamber)
+            if (!selectedGhostChamber)
             {
-                if (selectedTileType != SelectedType.Eraser)
+                if (eraserButton.IsClicked(ms))
                 {
-                    selectedTileType = SelectedType.Eraser;
-                    eraserButton.Image = selectedEraserSprite;
+                    if (selectedTileType != SelectedType.Eraser)
+                    {
+                        selectedTileType = SelectedType.Eraser;
+                        eraserButton.Image = selectedEraserSprite;
 
-                    pelletButton.Image = pelletButtonSprite;
-                    powerPelletButton.Image = powerPelletButtonSprite;
-                    wallButton.Image = wallButtonSprite;
+                        pelletButton.Image = pelletButtonSprite;
+                        powerPelletButton.Image = powerPelletButtonSprite;
+                        wallButton.Image = wallButtonSprite;
+                    }
+                    else
+                    {
+                        selectedTileType = SelectedType.Default;
+                        eraserButton.Image = eraserButtonSprite;
+                    }
                 }
-                else
+
+                if (pacmanPlacementButton.IsClicked(ms))
                 {
-                    selectedTileType = SelectedType.Default;
-                    eraserButton.Image = eraserButtonSprite;
+                    
                 }
             }
+
 
             prevms = ms;
 

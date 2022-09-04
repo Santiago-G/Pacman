@@ -313,55 +313,39 @@ namespace Pacman
         {
             if (index != new Point(-1))
             {
-                //it starts in the top left
+                int x = index.Y;
+                int y = index.X;
 
-                int x = index.X;
-                int y = index.Y;
-
-                while (true)
+                for (int i = 0; i < 4; i++)
                 {
-                    if (index[x, y])
+                    for (int j = 0; j < 7; j++)
                     {
-                        if its occupied
-                    }
-                    y++;
-
-                    if (y - index.Y > 6)
-                    {
-                        y = index.Y;
-                        x++;
-                    }
-
-                    if (x - index.X > 3)
-                    {
-                        break;
+                        if (Tiles[x + i, y + j].TileStates != States.Empty)
+                        {
+                            return false;
+                        }
                     }
                 }
+                return true;
             }
 
             return false;
         }
         public void PlaceGhostChamber(Point index)
         {
-            int x = index.X;
-            int y = index.Y;
-
-            while (true)
+            if (index != new Point(-1))
             {
-                Tiles[x, y].WallState = WallStates.GhostChamber;
-                Tiles[x, y].TileStates = States.Wall;
-                Tiles[x, y].UpdateStates();
-                y++;
+                int x = index.X;
+                int y = index.Y;
 
-                if (y - index.Y > 6)
+                for (int i = 0; i < 4; i++)
                 {
-                    y = index.Y;
-                    x++;
-                }
-
-                if (x - index.X > 3)
-                {
-                    break;
+                    for (int j = 0; j < 7; j++)
+                    {
+                        Tiles[x + i, y + j].WallState = WallStates.GhostChamber;
+                        Tiles[x + i, y + j].TileStates = States.Wall;
+                        Tiles[x + i, y + j].UpdateStates();
+                    }
                 }
             }
         }
@@ -419,10 +403,6 @@ namespace Pacman
         {
             return gridIndex.X >= 0 && gridIndex.X < Tiles.GetLength(1) && gridIndex.Y >= 0 && gridIndex.Y < Tiles.GetLength(0);
         }
-
-
-
-
 
         public void LoadGrid(List<wallData> TileList)
         {
@@ -482,17 +462,32 @@ namespace Pacman
             }
         }
 
+        public List<wallVisual> GetFilledTiles()
+        {
+            FilledTiles.Clear();
+
+            foreach (var tile in Tiles)
+            {
+                if (tile.TileStates != States.Empty && tile.TileStates != States.Occupied)
+                {
+                    FilledTiles.Add(tile);
+                }
+            }
+
+            return FilledTiles;
+        }
+
         public void GoInFocus(List<pixelVisual> pixelTiles)
         {
             foreach (var tile in Tiles)
             {
-                if (tile.CurrentImage == wallVisual.NBemptySprite && tile.WallState != WallStates.GhostChamber)
-                {
-                    tile.TileStates = States.Empty;
-                }
-                else 
+                if (tile.CurrentImage != wallVisual.NBemptySprite && tile.CurrentImage != wallVisual.EmptySprite || tile.WallState == WallStates.GhostChamber)
                 {
                     tile.TileStates = States.Wall;
+                }
+                else
+                {
+                    tile.TileStates = States.Empty;
                 }
 
                 tile.UpdateStates();
