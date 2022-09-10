@@ -263,7 +263,7 @@ namespace Pacman
                 CurrentImage = EmptySprite;
                 PrevImage = HLEmptySprite;
             }
-            else if (Data.TileStates == States.Occupied || Data.WallState == WallStates.GhostChamber)
+            else if (Data.TileStates == States.Occupied || Data.WallState == WallStates.GhostChamber || Data.TileStates == States.Pacman)
             {
                 CurrentImage = NBemptySprite;
                 PrevImage = NBemptySprite;

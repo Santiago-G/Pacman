@@ -58,6 +58,7 @@ namespace Pacman
         Button pacmanPlacementButton;
         bool selectedPacman = false;
         bool pacmanPlaced = false;
+        Image pacmanTileIcon;
 
         public MapEditor((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
@@ -103,9 +104,12 @@ namespace Pacman
             objects.Add(ghostChamberButton);
             objects.Add(ghostChamberMS);
 
-            pmPlacementSprite = Content.Load<Texture2D>("eraserButton");
+            pmPlacementSprite = Content.Load<Texture2D>("pacManButton");
+            pacmanTileIcon = new Image(Content.Load<Texture2D>("pacManTileImage"), new Vector2(-200), Color.White);
             pacmanPlacementButton = new Button(pmPlacementSprite, new Vector2(1000, 750), Color.White);
             objects.Add(pacmanPlacementButton);
+            objects.Add(pacmanTileIcon);
+
 
             //ADD THING THAT IF SELECTED ONLY DRAWS OVER BLANK TILES
 
@@ -164,6 +168,7 @@ namespace Pacman
              * IMPORTANT
              * ---------
              * 
+             * FIX GHOST CHAMBER BECOMING WALLS. use flag enum.
              * Starting point for pacman. Have it be a transparent pacman. Have you drag it, and make it lock on to the grid
              * Ghost chamber should be one object that you can drag. Make it look like your dragging a monke in Bloons (Red/Gray tint for area you cant place it in)
              * For the ghosts, once you place the ghost chamber?, make sure they can reach every empty tile in the map via DFS or BFS.
@@ -304,13 +309,6 @@ namespace Pacman
                         }
                     }
                 }
-                else if (selectedPacman)
-                {
-                    Point index = WallGrid.PosToIndex(ms.Position.ToVector2());
-                    bool isInGrid = false;
-
-
-                }
                 else
                 {
                     if (wallButton.IsClicked(ms))
@@ -323,6 +321,13 @@ namespace Pacman
                             pelletButton.Image = pelletButtonSprite;
                             eraserButton.Image = eraserButtonSprite;
                             powerPelletButton.Image = powerPelletButtonSprite;
+
+                            if (!pacmanPlaced)
+                            {
+                                selectedPacman = false;
+                                pacmanPlacementButton.Tint = Color.White;
+                                pacmanTileIcon.Position = new Vector2(-200);
+                            }
                         }
                         else
                         {
@@ -343,12 +348,38 @@ namespace Pacman
 
                     if (!pacmanPlaced && pacmanPlacementButton.IsClicked(ms))
                     {
-                        selectedTileType = SelectedType.Default;
-                        wallButton.Image = wallButtonSprite;
-                        eraserButton.Image = eraserButtonSprite;
+                        if (selectedPacman)
+                        {
+                            selectedPacman = !selectedPacman;
+                            pacmanPlacementButton.Tint = Color.White;
+                            pacmanTileIcon.Position = new Vector2(-200);
+                        }
+                        else
+                        {
+                            selectedTileType = SelectedType.Default;
+                            wallButton.Image = wallButtonSprite;
+                            eraserButton.Image = eraserButtonSprite;
 
-                        selectedPacman = true;
-                        pacmanPlacementButton.Tint = Color.Gray;
+                            selectedPacman = true;
+                            pacmanPlacementButton.Tint = Color.Gray;
+                        }
+                    }
+                    if (selectedPacman)
+                    {
+                        Point index = WallGrid.PosToIndex(ms.Position.ToVector2());
+
+                        if (index != new Point(-1))
+                        {
+                            //make a small pacman image, and have it follow "lock" the mouse
+                            pacmanTileIcon.Position = new Vector2(WallGrid.Tiles[index.Y, index.X].Position.X - pixelVisual.EmptySprite.Width / 2, WallGrid.Tiles[index.Y, index.X].Position.Y - pixelVisual.EmptySprite.Height / 2);
+
+                            if (ms.LeftButton == ButtonState.Pressed && WallGrid.Tiles[index.Y, index.X].TileStates == States.Empty)
+                            {
+                                selectedPacman = false;
+                                pacmanPlaced = true;
+                                WallGrid.Tiles[index.Y, index.X].TileStates = States.Pacman;
+                            }
+                        }
                     }
 
 
@@ -429,7 +460,7 @@ namespace Pacman
 
                 if (pacmanPlacementButton.IsClicked(ms))
                 {
-                    
+
                 }
             }
 

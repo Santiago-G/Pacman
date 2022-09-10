@@ -23,6 +23,7 @@ namespace Pacman
         PowerPellet,
         Fruit,
         Wall,
+        Pacman,
         NoBackground,
         Occupied
     }
