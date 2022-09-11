@@ -38,15 +38,6 @@ namespace Pacman
 
         public static Texture2D NBemptySprite;
         public static Texture2D NBloneWallSprite;
-        public static Texture2D NBinteriorWallSprite;
-        public static Texture2D NBmiddleWallSprite;
-        public static Texture2D NBsingleWallEnd;
-        public static Texture2D NBcornerWallTile;
-        public static Texture2D NBcornerWallFilledTile;
-        public static Texture2D NBedgeSprite;
-        public static Texture2D NBinteriorCrossSprite;
-        public static Texture2D NBsingleCrossSprite;
-        public static Texture2D NBinteriorFilledCorner;
         #endregion        
 
         public wallData Data { get; set; } = new wallData();
@@ -263,7 +254,7 @@ namespace Pacman
                 CurrentImage = EmptySprite;
                 PrevImage = HLEmptySprite;
             }
-            else if (Data.TileStates == States.Occupied || Data.WallState == WallStates.GhostChamber || Data.TileStates == States.Pacman)
+            else if (Data.TileStates == States.Occupied || Data.TileStates == States.GhostChamber || Data.TileStates == States.Pacman)
             {
                 CurrentImage = NBemptySprite;
                 PrevImage = NBemptySprite;

@@ -16,6 +16,45 @@ namespace Pacman
         //PacmanSP,
     }
 
+    [Flags]
+    public enum billyMan : short
+    {
+        /*
+         * Empty/Alive
+         * 
+         * 
+        */
+
+        isWall = 1,
+
+        Up = 2,
+        Down = 4,
+        Left = 8,
+        Right = 16,
+
+        topLeft = 32,
+        topRight = 64,
+        BottomRight = 128,
+        BottomLeft = 256,
+
+        LoneWall = isWall,
+
+        Horiz = Left | Right,
+        HorizLeftEnd = Right,
+        HorizRightEnd = Left,
+
+        Verti = Up | Down,
+        VertiTopEnd = Down,
+        VertiBottomEnd = Up,
+
+        TopLeftCorner = Down | Right,
+        TopRightCorner = Down | Left,
+        BottomRightCorner = Up | Left,
+        BottomLeftCorner = Up | Right,
+
+        finish this
+    }
+
     public enum States
     {
         Empty,
@@ -23,6 +62,7 @@ namespace Pacman
         PowerPellet,
         Fruit,
         Wall,
+        GhostChamber,
         Pacman,
         NoBackground,
         Occupied
@@ -67,8 +107,6 @@ namespace Pacman
         TopRightInteriorFilledCorner,
         BottomRightInteriorFilledCorner,
         BottomLeftInteriorFilledCorner,
-
-        GhostChamber,
 
         Empty
     }

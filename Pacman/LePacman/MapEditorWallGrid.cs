@@ -27,7 +27,7 @@ namespace Pacman
 
             Point index = PosToIndex(MousePosition);
 
-            if (index == new Point(-1) || Tiles[index.Y, index.X].TileStates == States.Occupied || Tiles[index.Y, index.X].WallState == WallStates.GhostChamber) return;
+            if (index == new Point(-1) || Tiles[index.Y, index.X].TileStates == States.Occupied || Tiles[index.Y, index.X].TileStates == States.GhostChamber) return;
 
             recursiveAddWall(Tiles[index.Y, index.X]);
         }
@@ -35,11 +35,15 @@ namespace Pacman
         {
             Point index = PosToIndex(MousePosition);
 
-            if (index == new Point(-1) || Tiles[index.Y, index.X].TileStates != States.Wall) return;
+            if (index == new Point(-1)) return;
 
-            if (Tiles[index.Y, index.X].WallState == WallStates.GhostChamber)
+            if (Tiles[index.Y, index.X].TileStates != States.Wall)
             {
-                removeGhostChamber();
+                if (Tiles[index.Y, index.X].TileStates == States.GhostChamber)
+                {
+                    removeGhostChamber();
+                }
+
                 return;
             }
 
@@ -342,8 +346,7 @@ namespace Pacman
                 {
                     for (int j = 0; j < 7; j++)
                     {
-                        Tiles[x + i, y + j].WallState = WallStates.GhostChamber;
-                        Tiles[x + i, y + j].TileStates = States.Wall;
+                        Tiles[x + i, y + j].TileStates = States.GhostChamber;
                         Tiles[x + i, y + j].UpdateStates();
                     }
                 }
@@ -354,7 +357,7 @@ namespace Pacman
         {
             foreach (var tile in Tiles)
             {
-                if (tile.WallState == WallStates.GhostChamber)
+                if (tile.TileStates == States.GhostChamber)
                 {
                     tile.TileStates = States.Empty;
                     tile.WallState = WallStates.Empty;
@@ -411,7 +414,7 @@ namespace Pacman
 
             foreach (var tile in Tiles)
             {
-                if (!foundGhostChamber && tile.WallState == WallStates.GhostChamber)
+                if (!foundGhostChamber && tile.TileStates == States.GhostChamber)
                 {
                     MapEditor.ghostChamberMS.Position = new Vector2(tile.Position.X - 13, tile.Position.Y - 13);
                     foundGhostChamber = true;
@@ -458,7 +461,10 @@ namespace Pacman
                     FilledTiles.Add(tile);
                 }
 
-                tile.TileStates = States.NoBackground;
+                if (tile.TileStates != States.GhostChamber || tile.TileStates != States.Pacman)
+                {
+                    tile.TileStates = States.NoBackground;
+                }
             }
         }
 
@@ -481,25 +487,24 @@ namespace Pacman
         {
             foreach (var tile in Tiles)
             {
-                if (tile.CurrentImage != wallVisual.NBemptySprite && tile.CurrentImage != wallVisual.EmptySprite || tile.WallState == WallStates.GhostChamber)
+                if (tile.TileStates != States.GhostChamber)
                 {
-                    tile.TileStates = States.Wall;
-                }
-                else
-                {
-                    tile.TileStates = States.Empty;
-                }
+                    if (tile.CurrentImage != wallVisual.NBemptySprite && tile.CurrentImage != wallVisual.EmptySprite)
+                    {
+                        tile.TileStates = States.Wall;
+                    }
+                    else
+                    {
+                        tile.TileStates = States.Empty;
+                    }
 
-                tile.UpdateStates();
+                    tile.UpdateStates();
 
-                if (tile.CurrentImage == pixelVisual.NBemptySprite)
-                {
-                    if (tile.WallState != WallStates.GhostChamber)
+                    if (tile.CurrentImage == pixelVisual.NBemptySprite)
                     {
                         tile.WallState = WallStates.Empty;
                     }
                 }
-
             }
 
             foreach (var tile in pixelTiles)
