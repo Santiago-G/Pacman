@@ -56,9 +56,6 @@ namespace Pacman
                     CurrentImage = PowerPelletSprite;
                     PrevImage = HLPowerPelletSprite;
                     break;
-                case States.NoBackground:
-                    ;
-                    break;
                 case States.Occupied:
                     CurrentImage = NBemptySprite;
                     PrevImage = NBemptySprite;
@@ -70,10 +67,6 @@ namespace Pacman
                 Texture2D bucket = CurrentImage;
                 CurrentImage = PrevImage;
                 PrevImage = bucket;
-            }
-            else 
-            {
-                ;
             }
         }
 
@@ -98,13 +91,8 @@ namespace Pacman
                         case SelectedType.Eraser:
                             TileStates = States.Empty;
                             break;
-
-
-                        default:
-                            break;
                     }
                 }
-
                 UpdateStates();
             }
             else
@@ -112,7 +100,6 @@ namespace Pacman
                 CurrentImage = PrevImage;
             }
         }
-
 
         public override void Draw(SpriteBatch batch)
         {

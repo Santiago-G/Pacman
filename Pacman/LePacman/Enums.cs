@@ -12,32 +12,20 @@ namespace Pacman
         PowerPellet,
         Wall,
         Eraser,
-        //GhostChamber,
-        //PacmanSP,
     }
 
     [Flags]
-    public enum billyMan : short
+    public enum WallStates : byte
     {
-        /*
-         * Empty/Alive
-         * 
-         * 
-        */
-
+        Empty = 0,
         isWall = 1,
 
-        Up = 2,
-        Down = 4,
-        Left = 8,
-        Right = 16,
-
-        topLeft = 32,
-        topRight = 64,
-        BottomRight = 128,
-        BottomLeft = 256,
-
         LoneWall = isWall,
+
+        Up = 2 | LoneWall,
+        Down = 4 | LoneWall,
+        Left = 8 | LoneWall,
+        Right = 16 | LoneWall,
 
         Horiz = Left | Right,
         HorizLeftEnd = Right,
@@ -52,63 +40,25 @@ namespace Pacman
         BottomRightCorner = Up | Left,
         BottomLeftCorner = Up | Right,
 
-        finish this
+        TopEdge = Down | Left | Right,
+        RightEdge = Left | Up | Down,
+        BottomEdge = Up | Left | Right,
+        LeftEdge = Right | Up | Down,
+
+        Interior = Up | Down | Left | Right,
     }
 
+    [Flags]
     public enum States
     {
         Empty,
+        Occupied = 8,
         Pellet,
         PowerPellet,
         Fruit,
         Wall,
         GhostChamber,
-        Pacman,
-        NoBackground,
-        Occupied
-    }
-
-    public enum WallStates
-    {
-        LoneWall,
-
-        Horiz,
-        HorizLeftEnd,
-        HorizRightEnd,
-
-        Verti,
-        VertiTopEnd,
-        VertiBottomEnd,
-
-        TopLeftCorner,
-        TopRightCorner,
-        BottomRightCorner,
-        BottomLeftCorner,
-
-        TopLeftCornerFilled,
-        TopRightCornerFilled,
-        BottomRightCornerFilled,
-        BottomLeftCornerFilled,
-
-        TopEdge,
-        RightEdge,
-        BottomEdge,
-        LeftEdge,
-
-        TopCross,
-        RightCross,
-        BottomCross,
-        LeftCross,
-
-        InteriorWall,
-        InteriorCorner,
-
-        TopLeftInteriorFilledCorner,
-        TopRightInteriorFilledCorner,
-        BottomRightInteriorFilledCorner,
-        BottomLeftInteriorFilledCorner,
-
-        Empty
+        Pacman,  
     }
 
     public enum GridStates

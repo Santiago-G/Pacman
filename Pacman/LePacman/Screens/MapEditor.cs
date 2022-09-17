@@ -168,7 +168,6 @@ namespace Pacman
              * IMPORTANT
              * ---------
              * 
-             * FIX GHOST CHAMBER BECOMING WALLS. use flag enum.
              * Starting point for pacman. Have it be a transparent pacman. Have you drag it, and make it lock on to the grid
              * Ghost chamber should be one object that you can drag. Make it look like your dragging a monke in Bloons (Red/Gray tint for area you cant place it in)
              * For the ghosts, once you place the ghost chamber?, make sure they can reach every empty tile in the map via DFS or BFS.
@@ -184,8 +183,6 @@ namespace Pacman
              * Maybe have a finished view? (without grayed out tiles and borders)
              * 
              */
-
-            //March Of The Black Queen
 
             #region Saving and Loading
 
@@ -247,6 +244,7 @@ namespace Pacman
             }
             #endregion
 
+
             //Switching Grids
             if (switchGridButton.IsClicked(ms))
             {
@@ -273,6 +271,7 @@ namespace Pacman
                     pelletButton.Tint = Color.White;
                 }
             }
+
 
             if (currentGridState == GridStates.WallGrid)
             {
@@ -484,8 +483,6 @@ namespace Pacman
         {
             WallGrid.Draw(spriteBatch);
             PelletGrid.Draw(spriteBatch);
-
-            //spriteBatch.Draw(MapEditorVisualTile.NormalSprite, new Vector2(40, 80),Color.White);
 
             base.Draw(spriteBatch);
         }
