@@ -37,6 +37,38 @@ namespace Pacman
             }
         }
 
+        public Point PosToIndex(Vector2 Pos)
+        {
+            Pos.X -= Position.X - Tiles[0, 0].Origin.X * Tiles[0, 0].Scale.X;
+            Pos.Y -= Position.Y - Tiles[0, 0].Origin.Y * Tiles[0, 0].Scale.Y;
+
+            //check if the float is valid, set it to floats
+
+            float gridXf = (Pos.X / Tiles[0, 0].Hitbox.Width);
+            float gridYf = (Pos.Y / Tiles[0, 0].Hitbox.Height);
+
+            if (gridXf < 0)
+            {
+                gridXf = -1;
+            }
+            if (gridYf < 0)
+            {
+                gridYf = -1;
+            }
+
+            int gridX = (int)(gridXf);
+            int gridY = (int)(gridYf);
+
+            Point retPoint = new Point(gridX, gridY);
+            if (!IsValid(retPoint)) return new Point(-1);
+            return retPoint;
+        }
+
+        private bool IsValid(Point gridIndex)
+        {
+            return gridIndex.X >= 0 && gridIndex.X < Tiles.GetLength(1) && gridIndex.Y >= 0 && gridIndex.Y < Tiles.GetLength(0);
+        }
+
         public void LoadGrid(List<pixelData> TileList)
         {
             Tiles = TileList.Select(x => new pixelVisual(x, Position)).Expand(new Point(Tiles.GetLength(1), Tiles.GetLength(0)));

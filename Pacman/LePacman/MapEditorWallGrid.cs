@@ -27,7 +27,7 @@ namespace Pacman
 
             Point index = PosToIndex(MousePosition);
 
-            if (index == new Point(-1) || Tiles[index.Y, index.X].TileStates == States.Occupied || Tiles[index.Y, index.X].TileStates == States.GhostChamber) return;
+            if (index == new Point(-1) || Tiles[index.Y, index.X].TileStates == States.Occupied || Tiles[index.Y, index.X].TileStates == States.GhostChamber || Tiles[index.Y, index.X].TileStates == States.Pacman) return;
 
             recursiveAddWall(Tiles[index.Y, index.X]);
         }
@@ -42,6 +42,11 @@ namespace Pacman
                 if (Tiles[index.Y, index.X].TileStates == States.GhostChamber)
                 {
                     removeGhostChamber();
+                }
+
+                else if (Tiles[index.Y, index.X].TileStates == States.Pacman)
+                {
+                    removePacman(index);
                 }
 
                 return;
@@ -169,6 +174,36 @@ namespace Pacman
 
         #endregion
 
+        private void removePacman(Point index)
+        {
+            Point originIndex = index;
+
+            if (Tiles[index.Y - 1, index.X].TileStates == States.Pacman)
+            {
+                originIndex.Y--;
+            }
+            if (Tiles[index.Y, index.X- 1].TileStates == States.Pacman)
+            {
+                originIndex.X--;
+            }
+
+            Tiles[originIndex.Y, originIndex.X].TileStates = States.Empty;
+            Tiles[originIndex.Y, originIndex.X + 1].TileStates = States.Empty;
+            Tiles[originIndex.Y + 1, originIndex.X + 1].TileStates = States.Empty;
+            Tiles[originIndex.Y + 1, originIndex.X].TileStates = States.Empty;
+                 
+            Tiles[originIndex.Y, originIndex.X].UpdateStates();
+            Tiles[originIndex.Y, originIndex.X + 1].UpdateStates();
+            Tiles[originIndex.Y + 1, originIndex.X + 1].UpdateStates();
+            Tiles[originIndex.Y + 1, originIndex.X].UpdateStates();
+
+
+            MapEditor.pacmanTileIcon.Position = new Vector2(-200);
+            MapEditor.pacmanPlacementButton.Tint = Color.White;
+            MapEditor.selectedPacman = false;
+            MapEditor.pacmanPlaced = false;
+        }
+
         public Point PosToIndex(Vector2 Pos)
         {
             Pos.X -= Position.X - Tiles[0, 0].Origin.X * Tiles[0, 0].Scale.X;
@@ -191,7 +226,7 @@ namespace Pacman
             int gridX = (int)(gridXf);
             int gridY = (int)(gridYf);
 
-            Game1.WindowText = $"GridX: {gridX}, GridY: {gridY}, Offset: {Pos}";
+           // Game1.WindowText = $"GridX: {gridX}, GridY: {gridY}, Offset: {Pos}";
 
             Point retPoint = new Point(gridX, gridY);
             if (!IsValid(retPoint)) return new Point(-1);

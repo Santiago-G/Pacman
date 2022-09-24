@@ -60,6 +60,10 @@ namespace Pacman
                     CurrentImage = NBemptySprite;
                     PrevImage = NBemptySprite;
                     break;
+                case States.Pacman:
+                    CurrentImage = NBemptySprite;
+                    PrevImage = CurrentImage;
+                    break;
             }
 
             if (!setDefault)
