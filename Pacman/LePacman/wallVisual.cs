@@ -9,6 +9,7 @@ namespace Pacman
 {
     public class wallVisual : abstractVisual<(Point Index, bool isWall)>
     {
+        public static MapEditorWallGrid Grid;
 
         #region Textures
 

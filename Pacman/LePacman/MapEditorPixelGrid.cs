@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Reflection;
 
 namespace Pacman
 {
@@ -67,6 +68,44 @@ namespace Pacman
         private bool IsValid(Point gridIndex)
         {
             return gridIndex.X >= 0 && gridIndex.X < Tiles.GetLength(1) && gridIndex.Y >= 0 && gridIndex.Y < Tiles.GetLength(0);
+        }
+
+        public void removePacman(Point gridIndex)
+        {
+            Point pacmanIndex = gridIndex;
+
+            if (Tiles[gridIndex.Y, gridIndex.X - 1].TileStates == States.Pacman)
+            {
+                pacmanIndex.X -= 1;
+            }
+
+            if (Tiles[gridIndex.Y - 2, gridIndex.X].TileStates == States.Pacman)
+            {
+                pacmanIndex.Y -= 2;
+            }
+            else if (Tiles[gridIndex.Y - 1, gridIndex.X].TileStates == States.Pacman)
+            {
+                pacmanIndex.Y -= 1;
+            }
+
+            Tiles[pacmanIndex.Y, pacmanIndex.X].TileStates = States.Empty;
+            Tiles[pacmanIndex.Y, pacmanIndex.X + 1].TileStates = States.Empty;
+            Tiles[pacmanIndex.Y + 1, pacmanIndex.X].TileStates = States.Empty;
+            Tiles[pacmanIndex.Y + 1, pacmanIndex.X + 1].TileStates = States.Empty;
+            Tiles[pacmanIndex.Y + 2, pacmanIndex.X].TileStates = States.Empty;
+            Tiles[pacmanIndex.Y + 2, pacmanIndex.X + 1].TileStates = States.Empty;
+
+            Tiles[pacmanIndex.Y, pacmanIndex.X].UpdateStates();
+            Tiles[pacmanIndex.Y, pacmanIndex.X + 1].UpdateStates();
+            Tiles[pacmanIndex.Y + 1, pacmanIndex.X].UpdateStates();
+            Tiles[pacmanIndex.Y + 1, pacmanIndex.X + 1].UpdateStates();
+            Tiles[pacmanIndex.Y + 2, pacmanIndex.X].UpdateStates();
+            Tiles[pacmanIndex.Y + 2, pacmanIndex.X + 1].UpdateStates();
+
+            MapEditor.pacmanTileIcon.Position = new Vector2(-200);
+            MapEditor.pacmanPlacementButton.Tint = Color.White;
+            MapEditor.selectedPacman = false;
+            MapEditor.pacmanPlaced = false;
         }
 
         public void LoadGrid(List<pixelData> TileList)

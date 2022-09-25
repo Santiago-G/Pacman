@@ -51,14 +51,14 @@ namespace Pacman
     [Flags]
     public enum States
     {
-        Empty,
-        Occupied = 8,
-        Pellet,
-        PowerPellet,
-        Fruit,
-        Wall,
-        GhostChamber,
-        Pacman,  
+        Empty = 0,
+        Occupied = 1,
+        Pellet = 2,
+        PowerPellet = 4,
+        Fruit = 8,
+        Wall = 16,
+        GhostChamber = 32,
+        Pacman = 64,
     }
 
     public enum GridStates

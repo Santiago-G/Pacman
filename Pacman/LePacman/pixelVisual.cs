@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace Pacman
@@ -25,6 +26,8 @@ namespace Pacman
         public static Texture2D NBpowerPelletSprite;
         #endregion
 
+        public static MapEditorPixelGrid Grid;
+        
         public pixelData Data { get; set; } = new pixelData();
 
         protected override AbstractData<Point> data { get => Data; set { Data = (pixelData)value; } }
@@ -80,23 +83,31 @@ namespace Pacman
 
             if (Hitbox.Contains(ms.Position))
             {
-                if (ms.LeftButton == ButtonState.Pressed && TileStates != States.Occupied)
+                if (ms.LeftButton == ButtonState.Pressed) 
                 {
-                    switch (MapEditor.selectedTileType)
+                    if (TileStates != States.Occupied && TileStates != States.Pacman)
                     {
-                        case SelectedType.Default:
-                            break;
-                        case SelectedType.Pellet:
+                        switch (MapEditor.selectedTileType)
+                        {
+                            case SelectedType.Default:
+                                break;
+                            case SelectedType.Pellet:
                                 TileStates = States.Pellet;
-                            break;
-                        case SelectedType.PowerPellet:
-                            TileStates = States.PowerPellet;
-                            break;
-                        case SelectedType.Eraser:
-                            TileStates = States.Empty;
-                            break;
+                                break;
+                            case SelectedType.PowerPellet:
+                                TileStates = States.PowerPellet;
+                                break;
+                            case SelectedType.Eraser:
+                                TileStates = States.Empty;
+                                break;
+                        }
+                    }
+                    if (TileStates == States.Pacman && MapEditor.selectedTileType == SelectedType.Eraser)
+                    {
+                        Grid.removePacman(Grid.PosToIndex(ms.Position.ToVector2()));
                     }
                 }
+
                 UpdateStates();
             }
             else

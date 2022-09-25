@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Pacman.Dummies;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Pacman
 {
@@ -59,7 +60,7 @@ namespace Pacman
         public static Image pacmanTileIcon;
         public static bool selectedPacman = false;
         public static bool pacmanPlaced = false;
-        
+
         public MapEditor((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
             size = Size;
@@ -154,7 +155,10 @@ namespace Pacman
             pixelGridOffest = new Vector2(wallGridOffest.X + pixelVisual.EmptySprite.Width / 2, wallGridOffest.Y + pixelVisual.EmptySprite.Height / 2);
 
             WallGrid = new MapEditorWallGrid(wallGridSize, new Point(wallVisual.EmptySprite.Width, wallVisual.EmptySprite.Height), wallGridOffest);
+            wallVisual.Grid = WallGrid;
+
             PelletGrid = new MapEditorPixelGrid(pixelGridSize, new Point(pixelVisual.EmptySprite.Width, pixelVisual.EmptySprite.Height), pixelGridOffest);
+            pixelVisual.Grid = PelletGrid;
         }
 
         MouseState prevms;
@@ -168,7 +172,7 @@ namespace Pacman
              * IMPORTANT
              * ---------
              * 
-             * Get the pacman working for the pellet grid
+             * DO NEIGHBOR CHECKS FOR WALL AND PIXEL GRIDS FOR PACMAN
              * 
              * Starting point for pacman. Have it be a transparent pacman. Have you drag it, and make it lock on to the grid
              * Ghost chamber should be one object that you can drag. Make it look like your dragging a monke in Bloons (Red/Gray tint for area you cant place it in)
@@ -179,6 +183,7 @@ namespace Pacman
              * Quality of Life
              * ---------------
              * 
+             * KEYBINDS
              * Update textures and placement
              * Button that toggles drawing over objects
              * Shift Click like in GIMP
@@ -354,7 +359,6 @@ namespace Pacman
                         ghostChamberButton.Tint = Color.Gray;
                     }
 
-
                     if (selectedPacman)
                     {
                         Point index = WallGrid.PosToIndex(ms.Position.ToVector2());
@@ -364,19 +368,18 @@ namespace Pacman
                             //make a small pacman image, and have it follow "lock" the mouse
                             pacmanTileIcon.Position = new Vector2(WallGrid.Tiles[index.Y, index.X].Position.X - pixelVisual.EmptySprite.Width / 2, WallGrid.Tiles[index.Y, index.X].Position.Y - pixelVisual.EmptySprite.Height / 2);
 
-                            if (ms.LeftButton == ButtonState.Pressed && WallGrid.Tiles[index.Y, index.X].TileStates == States.Empty)
+                            if (ms.LeftButton == ButtonState.Pressed && WallGrid.Tiles[index.Y, index.X].TileStates == States.Empty && WallGrid.Tiles[index.Y, index.X + 1].TileStates == States.Empty && WallGrid.Tiles[index.Y + 1, index.X].TileStates == States.Empty)
                             {
                                 selectedPacman = false;
                                 pacmanPlaced = true;
                                 WallGrid.Tiles[index.Y, index.X].TileStates = States.Pacman;
-                                WallGrid.Tiles[index.Y, index.X+1].TileStates = States.Pacman;
-                                WallGrid.Tiles[index.Y+1, index.X+1].TileStates = States.Pacman;
-                                WallGrid.Tiles[index.Y+1, index.X].TileStates = States.Pacman;
+                                WallGrid.Tiles[index.Y, index.X + 1].TileStates = States.Pacman;
+                                WallGrid.Tiles[index.Y + 1, index.X + 1].TileStates = States.Pacman;
+                                WallGrid.Tiles[index.Y + 1, index.X].TileStates = States.Pacman;
 
                             }
                         }
                     }
-
 
                     if (selectedTileType == SelectedType.Wall)
                     {
@@ -439,22 +442,32 @@ namespace Pacman
                     if (index != new Point(-1))
                     {
                         //make a small pacman image, and have it follow "lock" the mouse
-                        pacmanTileIcon.Position = new Vector2(PelletGrid.Tiles[index.Y, index.X].Position.X - pixelVisual.EmptySprite.Width / 2, PelletGrid.Tiles[index.Y, index.X].Position.Y - pixelVisual.EmptySprite.Height / 2);
+                        //pacmanTileIcon.Position = new Vector2(PelletGrid.Tiles[index.Y, index.X].Position.X - pixelVisual.EmptySprite.Width / 2, PelletGrid.Tiles[index.Y, index.X].Position.Y - pixelVisual.EmptySprite.Height / 2);
+
+                        pacmanTileIcon.Position = new Vector2(PelletGrid.Tiles[index.Y, index.X].Position.X - pacmanTileIcon.Image.Width / 4, PelletGrid.Tiles[index.Y, index.X].Position.Y - pacmanTileIcon.Image.Height / 2);
 
                         if (ms.LeftButton == ButtonState.Pressed && PelletGrid.Tiles[index.Y, index.X].TileStates == States.Empty)
                         {
-                            selectedPacman = false;
-                            pacmanPlaced = true;
-                            PelletGrid.Tiles[index.Y, index.X].TileStates = States.Pacman;
-                            PelletGrid.Tiles[index.Y, index.X + 1].TileStates = States.Pacman;
-                            PelletGrid.Tiles[index.Y + 1, index.X + 1].TileStates = States.Pacman;
-                            PelletGrid.Tiles[index.Y + 1, index.X].TileStates = States.Pacman;
+                            //Neighbor check.
+                            if (PelletGrid.Tiles[index.Y, index.X + 1].TileStates == States.Empty)
+                            {
+                                selectedPacman = false;
+                                pacmanPlaced = true;
 
-                            PelletGrid.Tiles[index.Y, index.X].UpdateStates();
-                            PelletGrid.Tiles[index.Y, index.X + 1].UpdateStates();
-                            PelletGrid.Tiles[index.Y + 1, index.X + 1].UpdateStates();
-                            PelletGrid.Tiles[index.Y + 1, index.X].UpdateStates();
+                                PelletGrid.Tiles[index.Y, index.X].TileStates = States.Pacman;
+                                PelletGrid.Tiles[index.Y, index.X + 1].TileStates = States.Pacman;
+                                PelletGrid.Tiles[index.Y + 1, index.X + 1].TileStates = States.Pacman;
+                                PelletGrid.Tiles[index.Y + 1, index.X].TileStates = States.Pacman;
+                                PelletGrid.Tiles[index.Y - 1, index.X].TileStates = States.Pacman;
+                                PelletGrid.Tiles[index.Y - 1, index.X + 1].TileStates = States.Pacman;
 
+                                PelletGrid.Tiles[index.Y, index.X].UpdateStates();
+                                PelletGrid.Tiles[index.Y, index.X + 1].UpdateStates();
+                                PelletGrid.Tiles[index.Y + 1, index.X + 1].UpdateStates();
+                                PelletGrid.Tiles[index.Y + 1, index.X].UpdateStates();
+                                PelletGrid.Tiles[index.Y - 1, index.X].UpdateStates();
+                                PelletGrid.Tiles[index.Y - 1, index.X + 1].UpdateStates();
+                            }
                         }
                     }
                 }
