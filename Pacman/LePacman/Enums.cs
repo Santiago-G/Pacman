@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Pacman
 {
@@ -11,6 +9,7 @@ namespace Pacman
         Pellet,
         PowerPellet,
         Wall,
+        OuterWall,
         Eraser,
     }
 
@@ -48,17 +47,16 @@ namespace Pacman
         Interior = Up | Down | Left | Right,
     }
 
-    [Flags]
     public enum States
     {
-        Empty = 0,
-        Occupied = 1,
-        Pellet = 2,
-        PowerPellet = 4,
-        Fruit = 8,
-        Wall = 16,
-        GhostChamber = 32,
-        Pacman = 64,
+        Empty,
+        Occupied,
+        Pellet,
+        PowerPellet,
+        Fruit,
+        Wall,
+        GhostChamber,
+        Pacman,
     }
 
     public enum GridStates

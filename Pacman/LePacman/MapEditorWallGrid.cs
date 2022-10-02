@@ -15,6 +15,8 @@ namespace Pacman
 
         public wallVisual[,] Tiles;
         public List<wallVisual> FilledTiles = new List<wallVisual>();
+        private List<Point> pacmanTileIndex = new List<Point>();
+        Point pacmanOrigin;
 
         Point[] offsets = new Point[] { new Point(0, -1), new Point(0, 1), new Point(-1, 0), new Point(1, 0) };
 
@@ -46,7 +48,7 @@ namespace Pacman
 
                 else if (Tiles[index.Y, index.X].TileStates == States.Pacman)
                 {
-                    removePacman(index);
+                    RemovePacman(index);
                 }
 
                 return;
@@ -174,35 +176,43 @@ namespace Pacman
 
         #endregion
 
-        private void removePacman(Point index)
+        #region Pacman 
+        public void AddPacman(Point index)
         {
-            Point originIndex = index;
+            MapEditor.selectedPacman = false;
+            MapEditor.pacmanPlaced = true;
+            Tiles[index.Y, index.X].TileStates = States.Pacman;
+            pacmanTileIndex.Add(index);
+            pacmanOrigin = index;
 
-            if (Tiles[index.Y - 1, index.X].TileStates == States.Pacman)
+            Tiles[index.Y, index.X + 1].TileStates = States.Pacman;
+            pacmanTileIndex.Add(new Point(index.X + 1, index.Y));
+
+            Tiles[index.Y + 1, index.X + 1].TileStates = States.Pacman;
+            pacmanTileIndex.Add(new Point(index.X + 1, index.Y + 1));
+
+            Tiles[index.Y + 1, index.X].TileStates = States.Pacman;
+            pacmanTileIndex.Add(new Point(index.X, index.Y + 1));
+        }
+
+        private void RemovePacman(Point index)
+        {
+            foreach (var Index in pacmanTileIndex)
             {
-                originIndex.Y--;
-            }
-            if (Tiles[index.Y, index.X- 1].TileStates == States.Pacman)
-            {
-                originIndex.X--;
+                Tiles[Index.Y, Index.X].TileStates = States.Empty;
+                Tiles[Index.Y, Index.X].UpdateStates();
             }
 
-            Tiles[originIndex.Y, originIndex.X].TileStates = States.Empty;
-            Tiles[originIndex.Y, originIndex.X + 1].TileStates = States.Empty;
-            Tiles[originIndex.Y + 1, originIndex.X + 1].TileStates = States.Empty;
-            Tiles[originIndex.Y + 1, originIndex.X].TileStates = States.Empty;
-                 
-            Tiles[originIndex.Y, originIndex.X].UpdateStates();
-            Tiles[originIndex.Y, originIndex.X + 1].UpdateStates();
-            Tiles[originIndex.Y + 1, originIndex.X + 1].UpdateStates();
-            Tiles[originIndex.Y + 1, originIndex.X].UpdateStates();
+            pacmanOrigin = new Point(-1);
 
+            pacmanTileIndex.Clear();
 
             MapEditor.pacmanTileIcon.Position = new Vector2(-200);
             MapEditor.pacmanPlacementButton.Tint = Color.White;
             MapEditor.selectedPacman = false;
             MapEditor.pacmanPlaced = false;
         }
+        #endregion 
 
         public Point PosToIndex(Vector2 Pos)
         {
@@ -291,6 +301,11 @@ namespace Pacman
         {
             foreach (var tile in Tiles)
             {
+                if (tile.TileStates == States.Occupied)
+                {
+                    tile.TileStates = States.Empty;
+                }
+
                 tile.UpdateStates();
             }
 

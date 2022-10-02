@@ -102,9 +102,9 @@ namespace Pacman
                                 break;
                         }
                     }
-                    if (TileStates == States.Pacman && MapEditor.selectedTileType == SelectedType.Eraser)
+                    else if (TileStates == States.Pacman && MapEditor.selectedTileType == SelectedType.Eraser)
                     {
-                        Grid.removePacman(Grid.PosToIndex(ms.Position.ToVector2()));
+                        Grid.RemovePacman(Grid.PosToIndex(ms.Position.ToVector2()));
                     }
                 }
 

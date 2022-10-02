@@ -45,6 +45,10 @@ namespace Pacman
         Texture2D selectedWallSprite;
         Button wallButton;
 
+        Texture2D outerWallButtonSprite;
+        Texture2D selectedOuterWallSprite;
+        Button outerWallButton;
+
         Texture2D switchButtonSprite;
         Texture2D HLswitchButtonSprite;
         Button switchGridButton;
@@ -61,12 +65,11 @@ namespace Pacman
         public static bool selectedPacman = false;
         public static bool pacmanPlaced = false;
 
+
         public MapEditor((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
             size = Size;
         }
-
-        //enum that changes states when selecting walls, pelets, ect...
 
         public override void LoadContent(ContentManager Content)
         {
@@ -94,6 +97,11 @@ namespace Pacman
             wallButton = new Button(wallButtonSprite, new Vector2(1000, 400), Color.White);
             objects.Add(wallButton);
 
+            outerWallButtonSprite = Content.Load<Texture2D>("outerWallButton");
+            selectedOuterWallSprite = Content.Load<Texture2D>();
+            outerWallButton = new Button(outerWallButtonSprite, new Vector2(1000, 500), Color.White);
+            objects.Add(wallButton);
+
             switchButtonSprite = Content.Load<Texture2D>("switchButton");
             HLswitchButtonSprite = Content.Load<Texture2D>("HLswitchButton");
             switchGridButton = new Button(switchButtonSprite, new Vector2(830, 90), Color.White);
@@ -114,7 +122,7 @@ namespace Pacman
 
             //ADD THING THAT IF SELECTED ONLY DRAWS OVER BLANK TILES
 
-            pixelVisual.EmptySprite = Content.Load<Texture2D>("emptyPelletTile");//emptyPelletTile
+            pixelVisual.EmptySprite = Content.Load<Texture2D>("emptyPelletTile");
             pixelVisual.HLEmptySprite = Content.Load<Texture2D>("HLEmptyPelletTile");
             pixelVisual.PelletSprite = Content.Load<Texture2D>("mapEditorTile2");
             pixelVisual.HLPelletSprite = Content.Load<Texture2D>("enlargedPelletTile");
@@ -125,7 +133,6 @@ namespace Pacman
             pixelVisual.NBpelletSprite = Content.Load<Texture2D>("NBpixelTile");
             pixelVisual.NBpowerPelletSprite = Content.Load<Texture2D>("NBpowerPelletTile");
 
-            //pixelVisual.OccupiedSprite = Content.Load<Texture2D>("occupiedPelletTile");
             wallVisual.NBemptySprite = pixelVisual.NBemptySprite;
 
             wallVisual.EmptySprite = Content.Load<Texture2D>("mapEditorTile");
@@ -172,12 +179,13 @@ namespace Pacman
              * IMPORTANT
              * ---------
              * 
-             * DO NEIGHBOR CHECKS FOR WALL AND PIXEL GRIDS FOR PACMAN
+             * Outer Walls, have them be placable. Once they're all placed, have a flood fill to check if all the outer walls are on the outside
+             * if they're not, highlight the outer wall tiles that arent and give an error
              * 
-             * Starting point for pacman. Have it be a transparent pacman. Have you drag it, and make it lock on to the grid
              * Ghost chamber should be one object that you can drag. Make it look like your dragging a monke in Bloons (Red/Gray tint for area you cant place it in)
              * For the ghosts, once you place the ghost chamber?, make sure they can reach every empty tile in the map via DFS or BFS.
              * Add border walls (maybe you're only allowed to place then once you finished making your grid)
+             * Portals
              * Before you can "save" the map, make sure it fills out a list of requirements (like having a ghost chamber.)
              * 
              * Quality of Life
@@ -185,6 +193,7 @@ namespace Pacman
              * 
              * KEYBINDS
              * Update textures and placement
+             * If you hover over a button, a small info box tells you the name and what it does. General Info
              * Button that toggles drawing over objects
              * Shift Click like in GIMP
              * Maybe have a finished view? (without grayed out tiles and borders)
@@ -334,6 +343,7 @@ namespace Pacman
                             pelletButton.Image = pelletButtonSprite;
                             eraserButton.Image = eraserButtonSprite;
                             powerPelletButton.Image = powerPelletButtonSprite;
+                            outerWallButton.Image = outerWallButtonSprite;
 
                             if (!pacmanPlaced)
                             {
@@ -349,11 +359,38 @@ namespace Pacman
                         }
                     }
 
+                    if (outerWallButton.IsClicked(ms))
+                    {
+                        if (selectedTileType != SelectedType.OuterWall)
+                        {
+                            selectedTileType = SelectedType.OuterWall;
+                            outerWallButton.Image = selectedOuterWallSprite;
+
+                            wallButton.Image = wallButtonSprite;
+                            pelletButton.Image = pelletButtonSprite;
+                            eraserButton.Image = eraserButtonSprite;
+                            powerPelletButton.Image = powerPelletButtonSprite;
+
+                            if (!pacmanPlaced)
+                            {
+                                selectedPacman = false;
+                                pacmanPlacementButton.Tint = Color.White;
+                                pacmanTileIcon.Position = new Vector2(-200);
+                            }
+                        }
+                        else 
+                        {
+                            selectedTileType = SelectedType.Default;
+                            outerWallButton.Image = outerWallButtonSprite;
+                        }
+                    }
+
                     if (!ghostChamberPlaced && ghostChamberButton.IsClicked(ms))
                     {
                         selectedTileType = SelectedType.Default;
                         wallButton.Image = wallButtonSprite;
                         eraserButton.Image = eraserButtonSprite;
+                        outerWallButton.Image = outerWallButtonSprite;
 
                         selectedGhostChamber = true;
                         ghostChamberButton.Tint = Color.Gray;
@@ -370,13 +407,7 @@ namespace Pacman
 
                             if (ms.LeftButton == ButtonState.Pressed && WallGrid.Tiles[index.Y, index.X].TileStates == States.Empty && WallGrid.Tiles[index.Y, index.X + 1].TileStates == States.Empty && WallGrid.Tiles[index.Y + 1, index.X].TileStates == States.Empty)
                             {
-                                selectedPacman = false;
-                                pacmanPlaced = true;
-                                WallGrid.Tiles[index.Y, index.X].TileStates = States.Pacman;
-                                WallGrid.Tiles[index.Y, index.X + 1].TileStates = States.Pacman;
-                                WallGrid.Tiles[index.Y + 1, index.X + 1].TileStates = States.Pacman;
-                                WallGrid.Tiles[index.Y + 1, index.X].TileStates = States.Pacman;
-
+                                WallGrid.AddPacman(index);
                             }
                         }
                     }
@@ -441,32 +472,14 @@ namespace Pacman
 
                     if (index != new Point(-1))
                     {
-                        //make a small pacman image, and have it follow "lock" the mouse
-                        //pacmanTileIcon.Position = new Vector2(PelletGrid.Tiles[index.Y, index.X].Position.X - pixelVisual.EmptySprite.Width / 2, PelletGrid.Tiles[index.Y, index.X].Position.Y - pixelVisual.EmptySprite.Height / 2);
-
                         pacmanTileIcon.Position = new Vector2(PelletGrid.Tiles[index.Y, index.X].Position.X - pacmanTileIcon.Image.Width / 4, PelletGrid.Tiles[index.Y, index.X].Position.Y - pacmanTileIcon.Image.Height / 2);
 
                         if (ms.LeftButton == ButtonState.Pressed && PelletGrid.Tiles[index.Y, index.X].TileStates == States.Empty)
                         {
-                            //Neighbor check.
+
                             if (PelletGrid.Tiles[index.Y, index.X + 1].TileStates == States.Empty)
                             {
-                                selectedPacman = false;
-                                pacmanPlaced = true;
-
-                                PelletGrid.Tiles[index.Y, index.X].TileStates = States.Pacman;
-                                PelletGrid.Tiles[index.Y, index.X + 1].TileStates = States.Pacman;
-                                PelletGrid.Tiles[index.Y + 1, index.X + 1].TileStates = States.Pacman;
-                                PelletGrid.Tiles[index.Y + 1, index.X].TileStates = States.Pacman;
-                                PelletGrid.Tiles[index.Y - 1, index.X].TileStates = States.Pacman;
-                                PelletGrid.Tiles[index.Y - 1, index.X + 1].TileStates = States.Pacman;
-
-                                PelletGrid.Tiles[index.Y, index.X].UpdateStates();
-                                PelletGrid.Tiles[index.Y, index.X + 1].UpdateStates();
-                                PelletGrid.Tiles[index.Y + 1, index.X + 1].UpdateStates();
-                                PelletGrid.Tiles[index.Y + 1, index.X].UpdateStates();
-                                PelletGrid.Tiles[index.Y - 1, index.X].UpdateStates();
-                                PelletGrid.Tiles[index.Y - 1, index.X + 1].UpdateStates();
+                                PelletGrid.AddPacman(index);
                             }
                         }
                     }
@@ -498,8 +511,6 @@ namespace Pacman
                         selectedTileType = SelectedType.Default;
                         eraserButton.Image = eraserButtonSprite;
                     }
-
-
                 }
 
                 if (!pacmanPlaced && pacmanPlacementButton.IsClicked(ms))
@@ -521,7 +532,6 @@ namespace Pacman
                     }
                 }
             }
-
 
             prevms = ms;
 

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Pacman
 {
@@ -14,6 +15,9 @@ namespace Pacman
 
         public pixelVisual[,] Tiles;
         public List<pixelVisual> FilledTiles = new List<pixelVisual>();
+
+        private List<Point> pacmanTileIndex = new List<Point>();
+        Point pacmanOrigin;
 
         Point[] offsets = new Point[] { new Point(-1, -1), new Point(0, -1), new Point(1, -1), new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(-1, 1), new Point(-1, 0) };
 
@@ -70,37 +74,52 @@ namespace Pacman
             return gridIndex.X >= 0 && gridIndex.X < Tiles.GetLength(1) && gridIndex.Y >= 0 && gridIndex.Y < Tiles.GetLength(0);
         }
 
-        public void removePacman(Point gridIndex)
+        #region Pacman
+        public void AddPacman(Point index)
         {
-            Point pacmanIndex = gridIndex;
+            MapEditor.selectedPacman = false;
+            MapEditor.pacmanPlaced = true;
+            Point[] offsets = new Point[] { new Point(1, 1), new Point(0, 1), new Point(0, -1), new Point(1, -1) };
 
-            if (Tiles[gridIndex.Y, gridIndex.X - 1].TileStates == States.Pacman)
+            Tiles[index.Y, index.X].TileStates = States.Pacman;
+            Tiles[index.Y, index.X + 1].TileStates = States.Pacman;
+
+            Tiles[index.Y, index.X].UpdateStates();
+            Tiles[index.Y, index.X + 1].UpdateStates();
+
+            pacmanTileIndex.Add(index);
+            pacmanTileIndex.Add(new Point(index.X + 1, index.Y));
+
+            pacmanOrigin = index;
+
+            foreach (var offset in offsets)
             {
-                pacmanIndex.X -= 1;
+                if (Tiles[index.Y + offset.Y, index.X + offset.X].TileStates == States.Empty)
+                {
+                    Tiles[index.Y + offset.Y, index.X + offset.X].TileStates = States.Pacman;
+                    Tiles[index.Y + offset.Y, index.X + offset.X].UpdateStates();
+
+                    pacmanTileIndex.Add(new Point(index.X + offset.X, index.Y + offset.Y));
+                }
+            }
+        }
+
+        #endregion
+
+        public void RemovePacman(Point gridIndex)
+        {
+            foreach (var index in pacmanTileIndex)
+            {
+                if (Tiles[index.Y, index.X].TileStates == States.Pacman)
+                {
+                    Tiles[index.Y, index.X].TileStates = States.Empty;
+                    Tiles[index.Y, index.X].UpdateStates();
+                }
             }
 
-            if (Tiles[gridIndex.Y - 2, gridIndex.X].TileStates == States.Pacman)
-            {
-                pacmanIndex.Y -= 2;
-            }
-            else if (Tiles[gridIndex.Y - 1, gridIndex.X].TileStates == States.Pacman)
-            {
-                pacmanIndex.Y -= 1;
-            }
+            pacmanOrigin = new Point(-1);
 
-            Tiles[pacmanIndex.Y, pacmanIndex.X].TileStates = States.Empty;
-            Tiles[pacmanIndex.Y, pacmanIndex.X + 1].TileStates = States.Empty;
-            Tiles[pacmanIndex.Y + 1, pacmanIndex.X].TileStates = States.Empty;
-            Tiles[pacmanIndex.Y + 1, pacmanIndex.X + 1].TileStates = States.Empty;
-            Tiles[pacmanIndex.Y + 2, pacmanIndex.X].TileStates = States.Empty;
-            Tiles[pacmanIndex.Y + 2, pacmanIndex.X + 1].TileStates = States.Empty;
-
-            Tiles[pacmanIndex.Y, pacmanIndex.X].UpdateStates();
-            Tiles[pacmanIndex.Y, pacmanIndex.X + 1].UpdateStates();
-            Tiles[pacmanIndex.Y + 1, pacmanIndex.X].UpdateStates();
-            Tiles[pacmanIndex.Y + 1, pacmanIndex.X + 1].UpdateStates();
-            Tiles[pacmanIndex.Y + 2, pacmanIndex.X].UpdateStates();
-            Tiles[pacmanIndex.Y + 2, pacmanIndex.X + 1].UpdateStates();
+            pacmanTileIndex.Clear();
 
             MapEditor.pacmanTileIcon.Position = new Vector2(-200);
             MapEditor.pacmanPlacementButton.Tint = Color.White;
@@ -115,7 +134,6 @@ namespace Pacman
             foreach (var tile in Tiles)
             {
                 tile.UpdateStates(true);
-                ;
             }
         }
 
@@ -140,6 +158,16 @@ namespace Pacman
                     case States.PowerPellet:
                         tile.CurrentImage = pixelVisual.NBpowerPelletSprite;
                         FilledTiles.Add(tile);
+                        break;
+                    case States.Pacman:
+                        if (Tiles[pacmanOrigin.Y, pacmanOrigin.X] == tile)
+                        {
+                            tile.CurrentImage = pixelVisual.NBemptySprite;
+                            FilledTiles.Add(tile);
+
+                            Tiles[pacmanOrigin.Y, pacmanOrigin.X + 1].CurrentImage = pixelVisual.NBemptySprite;
+                            FilledTiles.Add(Tiles[pacmanOrigin.Y, pacmanOrigin.X + 1]);
+                        }
                         break;
                 }
             }
