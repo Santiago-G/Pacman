@@ -84,7 +84,7 @@ namespace Pacman
 
             eraserButtonSprite = Content.Load<Texture2D>("eraserButton");
             selectedEraserSprite = Content.Load<Texture2D>("selectedEraserButton");
-            eraserButton = new Button(eraserButtonSprite, new Vector2(1000, 500), Color.White);
+            eraserButton = new Button(eraserButtonSprite, new Vector2(1000, 600), Color.White);
             objects.Add(eraserButton);
 
             powerPelletButtonSprite = Content.Load<Texture2D>("powerPelletButton");
@@ -98,9 +98,9 @@ namespace Pacman
             objects.Add(wallButton);
 
             outerWallButtonSprite = Content.Load<Texture2D>("outerWallButton");
-            selectedOuterWallSprite = Content.Load<Texture2D>();
+            selectedOuterWallSprite = Content.Load<Texture2D>("selectedOuterWallButton");
             outerWallButton = new Button(outerWallButtonSprite, new Vector2(1000, 500), Color.White);
-            objects.Add(wallButton);
+            objects.Add(outerWallButton);
 
             switchButtonSprite = Content.Load<Texture2D>("switchButton");
             HLswitchButtonSprite = Content.Load<Texture2D>("HLswitchButton");
@@ -108,14 +108,14 @@ namespace Pacman
             objects.Add(switchGridButton);
 
             ghostChamberTexture = Content.Load<Texture2D>("pacManGhostChamber");
-            ghostChamberButton = new Button(ghostChamberTexture, new Vector2(1000, 600), Color.White);
+            ghostChamberButton = new Button(ghostChamberTexture, new Vector2(1000, 700), Color.White);
             ghostChamberMS = new Image(ghostChamberTexture, new Vector2(-200), Color.White, new Vector2(1), Vector2.Zero, 0f, SpriteEffects.None);
             objects.Add(ghostChamberButton);
             objects.Add(ghostChamberMS);
 
             pmPlacementSprite = Content.Load<Texture2D>("pacManButton");
             pacmanTileIcon = new Image(Content.Load<Texture2D>("pacManTileImage"), new Vector2(-200), Color.White);
-            pacmanPlacementButton = new Button(pmPlacementSprite, new Vector2(1000, 750), Color.White);
+            pacmanPlacementButton = new Button(pmPlacementSprite, new Vector2(1000, 850), Color.White);
             objects.Add(pacmanPlacementButton);
             objects.Add(pacmanTileIcon);
 
@@ -146,7 +146,6 @@ namespace Pacman
 
             wallVisual.CornerWallFilledTile = Content.Load<Texture2D>("CornerWallsFilled");
 
-            //wallVisual.CornerWallTile = Content.Load<Texture2D>("CornerWalls");
             wallVisual.CornerWallTile = wallVisual.CornerWallFilledTile;
 
             wallVisual.EdgeSprite = Content.Load<Texture2D>("EdgeTile");
@@ -157,6 +156,8 @@ namespace Pacman
             wallVisual.SingleCrossSprite = wallVisual.EdgeSprite;
 
             wallVisual.InteriorFilledCorner = Content.Load<Texture2D>("InteriorFilledCorner");
+
+            wallVisual.MiddleOuterWall = Content.Load<Texture2D>("singleMiddleOuterWall");
 
             pixelGridSize = new Point(wallGridSize.X - 1, wallGridSize.Y - 1);
             pixelGridOffest = new Vector2(wallGridOffest.X + pixelVisual.EmptySprite.Width / 2, wallGridOffest.Y + pixelVisual.EmptySprite.Height / 2);
@@ -178,6 +179,9 @@ namespace Pacman
              * 
              * IMPORTANT
              * ---------
+             * 
+             * Make placing Outer Walls a chain thing. Once you place one, you have to either connect it to another chain
+             * or the edge of the map (for portals)
              * 
              * Outer Walls, have them be placable. Once they're all placed, have a flood fill to check if all the outer walls are on the outside
              * if they're not, highlight the outer wall tiles that arent and give an error
@@ -412,7 +416,7 @@ namespace Pacman
                         }
                     }
 
-                    if (selectedTileType == SelectedType.Wall)
+                    if (selectedTileType == SelectedType.Wall || selectedTileType == SelectedType.OuterWall)
                     {
                         if (ms.LeftButton == ButtonState.Pressed)
                         {

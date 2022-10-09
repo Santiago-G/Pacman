@@ -14,7 +14,7 @@ namespace Pacman
     }
 
     [Flags]
-    public enum WallStates : byte
+    public enum WallStates
     {
         Empty = 0,
         isWall = 1,
@@ -45,6 +45,39 @@ namespace Pacman
         LeftEdge = Right | Up | Down,
 
         Interior = Up | Down | Left | Right,
+
+        OuterWall = 32 | isWall,
+
+        //its direction
+        //FacingUp = 64,
+        //FacingDown = 128,
+        //FacingLeft = 256,
+        //FacingRight = 512,
+
+        OuterUp = 64 | OuterWall,
+        OuterDown = 128 | OuterWall,
+        OuterLeft = 256 | OuterWall,
+        OuterRight = 512 | OuterWall,
+
+
+        OuterVerti = OuterUp | OuterDown,
+        OuterHoriz = OuterRight | OuterLeft,
+
+        OuterTopHoriz,
+        OuterBottomHoriz,
+        OuterLeftVerti,
+        OuterRightVerti,
+    }
+
+    [Flags]
+    public enum OuterWallStates
+    {
+        
+
+        
+
+
+
     }
 
     public enum States

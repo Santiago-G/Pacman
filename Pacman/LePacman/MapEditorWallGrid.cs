@@ -5,7 +5,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Reflection;
-
+using System.Net.NetworkInformation;
+using System.Diagnostics.SymbolStore;
 
 namespace Pacman
 {
@@ -93,25 +94,100 @@ namespace Pacman
             //y, x
 
             wallVisual currentTile = Tiles[tileIndex.Y, tileIndex.X];
-
             WallStates oldState = currentTile.WallState;
 
-            currentTile.WallState = WallStates.isWall;
-            for (int i = 0; i < offsets.Length; i++)
+            if (MapEditor.selectedTileType == SelectedType.OuterWall)
             {
-                var newPosition = new Point(tileIndex.X + offsets[i].X, tileIndex.Y + offsets[i].Y);
+                currentTile.WallState = WallStates.OuterWall;
+                bool isFacingUp = false;
+            
 
-                currentTile.Neighbors[i].isWall = IsValid(newPosition) && Tiles[newPosition.Y, newPosition.X].TileStates == States.Wall;
-                currentTile.Neighbors[i].Index = newPosition;
-
-                if (currentTile.Neighbors[i].isWall)
+                for (int i = 0; i < offsets.Length; i++)
                 {
-                    currentTile.WallState |= (WallStates)Math.Pow(2, i + 1);
+                    var newPosition = new Point(tileIndex.X + offsets[i].X, tileIndex.Y + offsets[i].Y);
+
+                    currentTile.Neighbors[i].isWall = IsValid(newPosition) && Tiles[newPosition.Y, newPosition.X].TileStates == States.Wall;
+                    currentTile.Neighbors[i].Index = newPosition;
+
+                    if (currentTile.Neighbors[i].isWall && Tiles[newPosition.Y, newPosition.X].WallState.HasFlag(WallStates.OuterWall))
+                    {
+
+                        //This causess a stack overflow, and i dont know why
+                        //isFacingUp = Tiles[newPosition.Y, newPosition.X].WallState.HasFlag(WallStates.OuterTopHoriz);
+
+                        if (Tiles[newPosition.Y, newPosition.X].WallState.HasFlag(WallStates.OuterBottomHoriz))
+                        {
+                            isFacingUp = false;
+                        }
+                        else if (Tiles[newPosition.Y, newPosition.X].WallState.HasFlag(WallStates.OuterTopHoriz))
+                        {
+                            isFacingUp = true;
+                        }
+                        currentTile.WallState |= (WallStates)Math.Pow(2, i + 6);
+                    }
+                }
+
+                if (currentTile.WallState == WallStates.OuterWall)
+                {
+                    if (currentTile.Cord.X < 16)
+                    {
+                        currentTile.WallState = WallStates.OuterBottomHoriz;
+                    }
+                    else
+                    {
+                        currentTile.WallState = WallStates.OuterTopHoriz;
+                    }
+                }
+
+                if (currentTile.WallState == WallStates.OuterHoriz)
+                {
+                    if (!isFacingUp) currentTile.WallState = WallStates.OuterBottomHoriz;
+
+                    else currentTile.WallState = WallStates.OuterTopHoriz;
+                }
+                else if (currentTile.WallState == WallStates.OuterVerti)
+                {
+
                 }
             }
-            ;
+
+            else
+            {
+                currentTile.WallState = WallStates.isWall;
+                for (int i = 0; i < offsets.Length; i++)
+                {
+                    var newPosition = new Point(tileIndex.X + offsets[i].X, tileIndex.Y + offsets[i].Y);
+
+                    currentTile.Neighbors[i].isWall = IsValid(newPosition) && Tiles[newPosition.Y, newPosition.X].TileStates == States.Wall;
+                    currentTile.Neighbors[i].Index = newPosition;
+
+                    if (currentTile.Neighbors[i].isWall)
+                    {
+                        currentTile.WallState |= (WallStates)Math.Pow(2, i + 1);
+                    }
+                }
+            }
+
             return oldState != currentTile.WallState;
         }
+
+        private void OuterWallHelperFunction(wallVisual currentTile)
+        {
+            //if it has no neighbors, determin its direction via its location
+
+            int neighborCount = 0;
+
+            foreach (var neighbor in currentTile.Neighbors)
+            {
+                if (neighbor.isWall)
+                {
+                    neighborCount++;
+
+
+                }
+            }
+        }
+
         #endregion
 
         #region Ghost Chamber
@@ -236,7 +312,7 @@ namespace Pacman
             int gridX = (int)(gridXf);
             int gridY = (int)(gridYf);
 
-           // Game1.WindowText = $"GridX: {gridX}, GridY: {gridY}, Offset: {Pos}";
+            // Game1.WindowText = $"GridX: {gridX}, GridY: {gridY}, Offset: {Pos}";
 
             Point retPoint = new Point(gridX, gridY);
             if (!IsValid(retPoint)) return new Point(-1);

@@ -493,6 +493,18 @@
 /processorParam:TextureFormat=Color
 /build:selectedEraserButton.png
 
+#begin selectedOuterWallButton.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:selectedOuterWallButton.png
+
 #begin selectedPowerPellet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -540,6 +552,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:SingleCross.png
+
+#begin singleMiddleOuterWall.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:singleMiddleOuterWall.png
 
 #begin singleMiddleWall.png
 /importer:TextureImporter

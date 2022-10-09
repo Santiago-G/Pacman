@@ -39,6 +39,11 @@ namespace Pacman
 
         public static Texture2D NBemptySprite;
         public static Texture2D NBloneWallSprite;
+
+
+        public static Texture2D MiddleOuterWall;
+        //public static TextInputEv
+
         #endregion        
 
         public wallData Data { get; set; } = new wallData();
@@ -176,6 +181,28 @@ namespace Pacman
                         Rotation = 0;
                         PrevImage = CurrentImage;
                         break;
+
+                    #region Outer Walls
+                    case WallStates.OuterWall:
+                        CurrentImage = LoneWallSprite;
+                        break;
+                    case WallStates.OuterVerti:
+                        CurrentImage = MiddleOuterWall;
+                        break;
+                    case WallStates.OuterHoriz:
+                        CurrentImage = MiddleOuterWall;
+                        Rotation = (float)(Math.PI * 1.5);
+                        break;
+
+                    case WallStates.OuterTopHoriz:
+                        CurrentImage = MiddleOuterWall;
+                        Rotation = (float)(Math.PI * 1.5);
+                        break;
+                    case WallStates.OuterBottomHoriz:
+                        CurrentImage = MiddleOuterWall;
+                        Rotation = (float)(Math.PI * .5);
+                        break;
+                        #endregion
                 }
             }
 
