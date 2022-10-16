@@ -49,6 +49,18 @@
 /processorParam:TextureFormat=Color
 /build:controlsText.png
 
+#begin cornerOuterWall.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:cornerOuterWall.png
+
 #begin CornerWalls.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -552,6 +564,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:SingleCross.png
+
+#begin singleIntersectingOuterWall.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:singleIntersectingOuterWall.png
 
 #begin singleMiddleOuterWall.png
 /importer:TextureImporter

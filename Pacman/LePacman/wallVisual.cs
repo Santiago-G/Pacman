@@ -42,7 +42,10 @@ namespace Pacman
 
 
         public static Texture2D MiddleOuterWall;
-        //public static TextInputEv
+
+        public static Texture2D CornerOuterWall;
+
+        public static Texture2D SingleIntersectingOuterWall;
 
         #endregion        
 
@@ -185,22 +188,67 @@ namespace Pacman
                     #region Outer Walls
                     case WallStates.OuterWall:
                         CurrentImage = LoneWallSprite;
+                        Rotation = 0;
+                        break;
+
+                    case WallStates.OuterUp:
+                        CurrentImage = MiddleOuterWall;
+                        Rotation = 0;
+                        break;
+                    case WallStates.OuterDown:
+                        CurrentImage = MiddleOuterWall;
+                        Rotation = 0;
                         break;
                     case WallStates.OuterVerti:
                         CurrentImage = MiddleOuterWall;
+                        Rotation = 0;
+                        break;
+
+                    case WallStates.OuterLeft:
+                        CurrentImage = MiddleOuterWall;
+                        Rotation = (float)(Math.PI * 1.5);
+                        break;
+                    case WallStates.OuterRight:
+                        CurrentImage = MiddleOuterWall;
+                        Rotation = (float)(Math.PI * 1.5);
                         break;
                     case WallStates.OuterHoriz:
                         CurrentImage = MiddleOuterWall;
                         Rotation = (float)(Math.PI * 1.5);
                         break;
 
-                    case WallStates.OuterTopHoriz:
-                        CurrentImage = MiddleOuterWall;
+                    case WallStates.OuterTopLeftCorner:
+                        CurrentImage = CornerOuterWall;
+                        Rotation = 0;
+                        break;
+                    case WallStates.OuterTopRightCorner:
+                        CurrentImage = CornerOuterWall;
+                        Rotation = (float)(Math.PI * .5);
+                        break;
+                    case WallStates.OuterBottomRightCorner:
+                        CurrentImage = CornerOuterWall;
+                        Rotation = (float)(Math.PI * 1);
+                        break;
+                    case WallStates.OuterBottomLeftCorner:
+                        CurrentImage = CornerOuterWall;
                         Rotation = (float)(Math.PI * 1.5);
                         break;
-                    case WallStates.OuterBottomHoriz:
-                        CurrentImage = MiddleOuterWall;
+
+                    case WallStates.TopIntersectingOuterWall:
+                        CurrentImage = SingleIntersectingOuterWall;
                         Rotation = (float)(Math.PI * .5);
+                        break;
+                    case WallStates.RightIntersectingOuterWall:
+                        CurrentImage = SingleIntersectingOuterWall;
+                        Rotation = (float)(Math.PI * 1);
+                        break;
+                    case WallStates.BottomIntersectingOuterWall:
+                        CurrentImage = SingleIntersectingOuterWall;
+                        Rotation = (float)(Math.PI * 1.5);
+                        break;
+                    case WallStates.LeftIntersectingOuterWall:
+                        CurrentImage = SingleIntersectingOuterWall;
+                        Rotation = 0;
                         break;
                         #endregion
                 }

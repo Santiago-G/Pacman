@@ -158,6 +158,8 @@ namespace Pacman
             wallVisual.InteriorFilledCorner = Content.Load<Texture2D>("InteriorFilledCorner");
 
             wallVisual.MiddleOuterWall = Content.Load<Texture2D>("singleMiddleOuterWall");
+            wallVisual.CornerOuterWall = Content.Load<Texture2D>("cornerOuterWall");
+            wallVisual.SingleIntersectingOuterWall = Content.Load<Texture2D>("singleIntersectingOuterWall");
 
             pixelGridSize = new Point(wallGridSize.X - 1, wallGridSize.Y - 1);
             pixelGridOffest = new Vector2(wallGridOffest.X + pixelVisual.EmptySprite.Width / 2, wallGridOffest.Y + pixelVisual.EmptySprite.Height / 2);
@@ -180,22 +182,23 @@ namespace Pacman
              * IMPORTANT
              * ---------
              * 
-             * Make placing Outer Walls a chain thing. Once you place one, you have to either connect it to another chain
-             * or the edge of the map (for portals)
+             * Fix outer walls "infecting" normal walls
              * 
-             * Outer Walls, have them be placable. Once they're all placed, have a flood fill to check if all the outer walls are on the outside
-             * if they're not, highlight the outer wall tiles that arent and give an error
+             * Fix the pacman sprite not spawning when loading a map
              * 
-             * Ghost chamber should be one object that you can drag. Make it look like your dragging a monke in Bloons (Red/Gray tint for area you cant place it in)
+             * Do Portals
+             * Do Fruits
+             * 
+             * Make sure you check if all the outside walls are valid when the user is done making the map.
+             * 
              * For the ghosts, once you place the ghost chamber?, make sure they can reach every empty tile in the map via DFS or BFS.
-             * Add border walls (maybe you're only allowed to place then once you finished making your grid)
-             * Portals
+             *
              * Before you can "save" the map, make sure it fills out a list of requirements (like having a ghost chamber.)
              * 
              * Quality of Life
              * ---------------
              * 
-             * KEYBINDS
+             * KEYBINDS (And have right click be delete)
              * Update textures and placement
              * If you hover over a button, a small info box tells you the name and what it does. General Info
              * Button that toggles drawing over objects

@@ -46,35 +46,36 @@ namespace Pacman
 
         Interior = Up | Down | Left | Right,
 
+        //////////////
+
         OuterWall = 32 | isWall,
 
-        //its direction
-        //FacingUp = 64,
-        //FacingDown = 128,
-        //FacingLeft = 256,
-        //FacingRight = 512,
-
-        OuterUp = 64 | OuterWall,
-        OuterDown = 128 | OuterWall,
-        OuterLeft = 256 | OuterWall,
-        OuterRight = 512 | OuterWall,
-
+        OuterUp = Up | OuterWall,
+        OuterDown = Down | OuterWall,
+        OuterLeft = Left | OuterWall,
+        OuterRight = Right | OuterWall,
 
         OuterVerti = OuterUp | OuterDown,
         OuterHoriz = OuterRight | OuterLeft,
 
-        OuterTopHoriz,
-        OuterBottomHoriz,
-        OuterLeftVerti,
-        OuterRightVerti,
+        OuterTopLeftCorner = OuterDown | OuterRight,
+        OuterTopRightCorner = OuterDown | OuterLeft,
+        OuterBottomRightCorner = OuterUp | OuterLeft,
+        OuterBottomLeftCorner = OuterUp | OuterRight,
+
+        TopIntersectingOuterWall = OuterWall | TopEdge,
+        RightIntersectingOuterWall = OuterWall | RightEdge,
+        BottomIntersectingOuterWall = OuterWall | BottomEdge,
+        LeftIntersectingOuterWall = OuterWall | LeftEdge,
+
     }
 
     [Flags]
     public enum OuterWallStates
     {
-        
 
-        
+
+
 
 
 

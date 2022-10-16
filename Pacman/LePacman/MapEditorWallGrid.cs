@@ -96,96 +96,33 @@ namespace Pacman
             wallVisual currentTile = Tiles[tileIndex.Y, tileIndex.X];
             WallStates oldState = currentTile.WallState;
 
-            if (MapEditor.selectedTileType == SelectedType.OuterWall)
+            if (MapEditor.selectedTileType == SelectedType.OuterWall || oldState.HasFlag(WallStates.OuterWall)) currentTile.WallState = WallStates.OuterWall;
+            else currentTile.WallState = WallStates.isWall;
+
+            for (int i = 0; i < offsets.Length; i++)
             {
-                currentTile.WallState = WallStates.OuterWall;
-                bool isFacingUp = false;
-            
+                var newPosition = new Point(tileIndex.X + offsets[i].X, tileIndex.Y + offsets[i].Y);
 
-                for (int i = 0; i < offsets.Length; i++)
+                currentTile.Neighbors[i].isWall = IsValid(newPosition) && Tiles[newPosition.Y, newPosition.X].TileStates == States.Wall;
+                currentTile.Neighbors[i].Index = newPosition;
+
+                if (currentTile.Neighbors[i].isWall)
                 {
-                    var newPosition = new Point(tileIndex.X + offsets[i].X, tileIndex.Y + offsets[i].Y);
+                    //if (currentTile.WallState.HasFlag(WallStates.OuterWall) && !Tiles[newPosition.Y, newPosition.X].WallState.HasFlag(WallStates.OuterWall))
+                    //{
+                    //    currentTile.WallState |= (WallStates)Math.Pow(2, i + 1);
+                    //}
 
-                    currentTile.Neighbors[i].isWall = IsValid(newPosition) && Tiles[newPosition.Y, newPosition.X].TileStates == States.Wall;
-                    currentTile.Neighbors[i].Index = newPosition;
-
-                    if (currentTile.Neighbors[i].isWall && Tiles[newPosition.Y, newPosition.X].WallState.HasFlag(WallStates.OuterWall))
-                    {
-
-                        //This causess a stack overflow, and i dont know why
-                        //isFacingUp = Tiles[newPosition.Y, newPosition.X].WallState.HasFlag(WallStates.OuterTopHoriz);
-
-                        if (Tiles[newPosition.Y, newPosition.X].WallState.HasFlag(WallStates.OuterBottomHoriz))
-                        {
-                            isFacingUp = false;
-                        }
-                        else if (Tiles[newPosition.Y, newPosition.X].WallState.HasFlag(WallStates.OuterTopHoriz))
-                        {
-                            isFacingUp = true;
-                        }
-                        currentTile.WallState |= (WallStates)Math.Pow(2, i + 6);
-                    }
-                }
-
-                if (currentTile.WallState == WallStates.OuterWall)
-                {
-                    if (currentTile.Cord.X < 16)
-                    {
-                        currentTile.WallState = WallStates.OuterBottomHoriz;
-                    }
-                    else
-                    {
-                        currentTile.WallState = WallStates.OuterTopHoriz;
-                    }
-                }
-
-                if (currentTile.WallState == WallStates.OuterHoriz)
-                {
-                    if (!isFacingUp) currentTile.WallState = WallStates.OuterBottomHoriz;
-
-                    else currentTile.WallState = WallStates.OuterTopHoriz;
-                }
-                else if (currentTile.WallState == WallStates.OuterVerti)
-                {
-
+                    currentTile.WallState |= (WallStates)Math.Pow(2, i + 1);
                 }
             }
 
-            else
+            if (currentTile.WallState == WallStates.OuterWall)
             {
-                currentTile.WallState = WallStates.isWall;
-                for (int i = 0; i < offsets.Length; i++)
-                {
-                    var newPosition = new Point(tileIndex.X + offsets[i].X, tileIndex.Y + offsets[i].Y);
-
-                    currentTile.Neighbors[i].isWall = IsValid(newPosition) && Tiles[newPosition.Y, newPosition.X].TileStates == States.Wall;
-                    currentTile.Neighbors[i].Index = newPosition;
-
-                    if (currentTile.Neighbors[i].isWall)
-                    {
-                        currentTile.WallState |= (WallStates)Math.Pow(2, i + 1);
-                    }
-                }
+                currentTile.WallState = WallStates.OuterHoriz;
             }
 
             return oldState != currentTile.WallState;
-        }
-
-        private void OuterWallHelperFunction(wallVisual currentTile)
-        {
-            //if it has no neighbors, determin its direction via its location
-
-            int neighborCount = 0;
-
-            foreach (var neighbor in currentTile.Neighbors)
-            {
-                if (neighbor.isWall)
-                {
-                    neighborCount++;
-
-
-                }
-            }
         }
 
         #endregion
