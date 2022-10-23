@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Net.NetworkInformation;
 using System.Diagnostics.SymbolStore;
+using System.Runtime.ExceptionServices;
 
 namespace Pacman
 {
@@ -19,7 +20,7 @@ namespace Pacman
         private List<Point> pacmanTileIndex = new List<Point>();
         Point pacmanOrigin;
 
-        Point[] offsets = new Point[] { new Point(0, -1), new Point(0, 1), new Point(-1, 0), new Point(1, 0) };
+        Point[] offsets = new Point[] { new Point(0, -1), new Point(0, 1), new Point(-1, 0), new Point(1, 0) , new Point(1, -1), new Point(1, 1), new Point(-1, 1), new Point(-1, -1)};
 
         #region Functions
 
@@ -74,9 +75,9 @@ namespace Pacman
 
             foreach (var neighbor in currentTile.Neighbors)
             {
-                if (neighbor.isWall)
+                if (IsValid(neighbor) && Tiles[neighbor.Y, neighbor.X].TileStates == States.Wall)
                 {
-                    recursiveAddWall(Tiles[neighbor.Index.Y, neighbor.Index.X]);
+                    recursiveAddWall(Tiles[neighbor.Y, neighbor.X]);
                 }
             }
         }
@@ -96,24 +97,40 @@ namespace Pacman
             wallVisual currentTile = Tiles[tileIndex.Y, tileIndex.X];
             WallStates oldState = currentTile.WallState;
 
-            if (MapEditor.selectedTileType == SelectedType.OuterWall || oldState.HasFlag(WallStates.OuterWall)) currentTile.WallState = WallStates.OuterWall;
+            if (MapEditor.selectedTileType == SelectedType.OuterWall || oldState.HasFlag(WallStates.OuterWall))
+            {
+                if (!oldState.HasFlag(WallStates.isWall) || oldState.HasFlag(WallStates.OuterWall))
+                {
+                    currentTile.WallState = WallStates.OuterWall;
+                }
+                else return false;
+            }
             else currentTile.WallState = WallStates.isWall;
 
-            for (int i = 0; i < offsets.Length; i++)
+            for (int i = 0; i < offsets.Length / 2; i++)
             {
                 var newPosition = new Point(tileIndex.X + offsets[i].X, tileIndex.Y + offsets[i].Y);
 
-                currentTile.Neighbors[i].isWall = IsValid(newPosition) && Tiles[newPosition.Y, newPosition.X].TileStates == States.Wall;
-                currentTile.Neighbors[i].Index = newPosition;
+                currentTile.Neighbors[i]= newPosition;
 
-                if (currentTile.Neighbors[i].isWall)
+                if (IsValid(newPosition) && Tiles[newPosition.Y, newPosition.X].TileStates == States.Wall)
                 {
-                    //if (currentTile.WallState.HasFlag(WallStates.OuterWall) && !Tiles[newPosition.Y, newPosition.X].WallState.HasFlag(WallStates.OuterWall))
-                    //{
-                    //    currentTile.WallState |= (WallStates)Math.Pow(2, i + 1);
-                    //}
-
                     currentTile.WallState |= (WallStates)Math.Pow(2, i + 1);
+                }
+            }
+
+            if (currentTile.WallState.HasFlag(WallStates.TopIntersectingOW) || currentTile.WallState.HasFlag(WallStates.RightIntersectingOW) || currentTile.WallState.HasFlag(WallStates.BottomIntersectingOW)|| currentTile.WallState.HasFlag(WallStates.LeftIntersectingOW))
+            {
+                for (int i = 4; i < offsets.Length; i++)
+                {
+                    var newPosition = new Point(tileIndex.X + offsets[i].X, tileIndex.Y + offsets[i].Y);
+
+                    currentTile.Neighbors[i] = newPosition;
+
+                    if (IsValid(newPosition) && Tiles[newPosition.Y, newPosition.X].TileStates == States.Wall)
+                    {
+                        currentTile.WallState |= (WallStates)Math.Pow(2, i + 1);
+                    }
                 }
             }
 
@@ -353,7 +370,7 @@ namespace Pacman
 
                     for (int i = 0; i < offsets.Length; i++)
                     {
-                        Tiles[y, x].Data.Neighbors[i].Item1 = new Point(y + offsets[i].Y, x + offsets[i].X);
+                        Tiles[y, x].Data.Neighbors[i] = new Point(y + offsets[i].Y, x + offsets[i].X);
                     }
                 }
             }

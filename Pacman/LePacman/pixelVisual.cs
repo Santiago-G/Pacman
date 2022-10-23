@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Pacman
 {
-    public class pixelVisual : abstractVisual<Point>
+    public class pixelVisual : abstractVisual
     {
         #region Textures
 
@@ -27,10 +27,10 @@ namespace Pacman
         #endregion
 
         public static MapEditorPixelGrid Grid;
-        
+
         public pixelData Data { get; set; } = new pixelData();
 
-        protected override AbstractData<Point> data { get => Data; set { Data = (pixelData)value; } }
+        protected override AbstractData data { get => Data; set { Data = (pixelData)value; } }
 
         public pixelVisual(Texture2D Image, Point Cord, Color Tint, Vector2 Offset, Vector2 Scale, Vector2 Origin, float Rotation, SpriteEffects spriteEffects) : base(Image, Cord, Tint, Offset, Scale, Origin, Rotation, spriteEffects)
         {
@@ -39,7 +39,7 @@ namespace Pacman
 
         public pixelVisual(pixelData dataTile, Vector2 offset) : base(dataTile, offset)
         {
-
+            
         }
 
         public override void UpdateStates(bool setDefault = false)

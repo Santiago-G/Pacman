@@ -50,7 +50,6 @@ namespace Pacman
         Button outerWallButton;
 
         Texture2D switchButtonSprite;
-        Texture2D HLswitchButtonSprite;
         Button switchGridButton;
 
         Texture2D ghostChamberTexture;
@@ -103,7 +102,7 @@ namespace Pacman
             objects.Add(outerWallButton);
 
             switchButtonSprite = Content.Load<Texture2D>("switchButton");
-            HLswitchButtonSprite = Content.Load<Texture2D>("HLswitchButton");
+            //HLswitchButtonSprite = Content.Load<Texture2D>("HLswitchButton");
             switchGridButton = new Button(switchButtonSprite, new Vector2(830, 90), Color.White);
             objects.Add(switchGridButton);
 
@@ -160,6 +159,9 @@ namespace Pacman
             wallVisual.MiddleOuterWall = Content.Load<Texture2D>("singleMiddleOuterWall");
             wallVisual.CornerOuterWall = Content.Load<Texture2D>("cornerOuterWall");
             wallVisual.SingleIntersectingOuterWall = Content.Load<Texture2D>("singleIntersectingOuterWall");
+            wallVisual.MiddleIntersectingOuterWall = Content.Load<Texture2D>("middleIntersectingOuterWall");
+            wallVisual.EdgeIntersectingOuterWall = Content.Load<Texture2D>("edgeIntersectingOuterWall");
+            wallVisual.Edge2IntersectingOuterWall = Content.Load<Texture2D>("edge2IntersectingOuterWall");
 
             pixelGridSize = new Point(wallGridSize.X - 1, wallGridSize.Y - 1);
             pixelGridOffest = new Vector2(wallGridOffest.X + pixelVisual.EmptySprite.Width / 2, wallGridOffest.Y + pixelVisual.EmptySprite.Height / 2);
@@ -182,11 +184,10 @@ namespace Pacman
              * IMPORTANT
              * ---------
              * 
-             * Fix outer walls "infecting" normal walls
-             * 
              * Fix the pacman sprite not spawning when loading a map
+             * Do Delete Keybind
              * 
-             * Do Portals
+             * Do Portals. Portals are 2 tiles wide and there can be multiple.
              * Do Fruits
              * 
              * Make sure you check if all the outside walls are valid when the user is done making the map.
@@ -277,6 +278,11 @@ namespace Pacman
                     pacmanPlacementButton.Tint = Color.White;
                     pacmanTileIcon.Position = new Vector2(-200);
                 }
+                if (!ghostChamberPlaced)
+                {
+                    selectedGhostChamber = false;
+                    ghostChamberMS.Position = new Vector2(-300);
+                }
 
                 if (currentGridState == GridStates.PixelGrid)
                 {
@@ -287,6 +293,7 @@ namespace Pacman
                     pelletButton.Tint = Color.Gray;
                     powerPelletButton.Tint = Color.Gray;
                     wallButton.Tint = Color.White;
+                    outerWallButton.Tint = Color.White;
                     ghostChamberButton.Tint = Color.White;
                 }
                 else
@@ -297,11 +304,11 @@ namespace Pacman
 
                     wallButton.Tint = Color.Gray;
                     ghostChamberButton.Tint = Color.Gray;
+                    outerWallButton.Tint = Color.Gray;
                     powerPelletButton.Tint = Color.White;
                     pelletButton.Tint = Color.White;
                 }
             }
-
 
             if (currentGridState == GridStates.WallGrid)
             {
@@ -505,6 +512,7 @@ namespace Pacman
                         pelletButton.Image = pelletButtonSprite;
                         powerPelletButton.Image = powerPelletButtonSprite;
                         wallButton.Image = wallButtonSprite;
+                        outerWallButton.Image = outerWallButtonSprite;
 
                         if (!pacmanPlaced)
                         {

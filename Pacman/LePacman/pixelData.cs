@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Pacman
 {
-    public class pixelData : AbstractData<Point>
+    public class pixelData : AbstractData
     { 
         public override Point[] Neighbors { get; set; }
 

@@ -46,9 +46,15 @@ namespace Pacman
 
         Interior = Up | Down | Left | Right,
 
+        TopRight = 32 | LoneWall,
+        BottomRight = 64 | LoneWall,
+        BottomLeft = 128 | LoneWall,
+        TopLeft = 256 | LoneWall,
+        //CornerMasker = ~(32 | 64 | 128 | 256),
+
         //////////////
 
-        OuterWall = 32 | isWall,
+        OuterWall = 512 | isWall,
 
         OuterUp = Up | OuterWall,
         OuterDown = Down | OuterWall,
@@ -58,27 +64,34 @@ namespace Pacman
         OuterVerti = OuterUp | OuterDown,
         OuterHoriz = OuterRight | OuterLeft,
 
-        OuterTopLeftCorner = OuterDown | OuterRight,
-        OuterTopRightCorner = OuterDown | OuterLeft,
-        OuterBottomRightCorner = OuterUp | OuterLeft,
-        OuterBottomLeftCorner = OuterUp | OuterRight,
+        TopLeftCornerOW = OuterDown | OuterRight,
+        TopRightCornerOW = OuterDown | OuterLeft,
+        BottomRightCornerOW = OuterUp | OuterLeft,
+        BottomLeftCornerOW = OuterUp | OuterRight,
 
-        TopIntersectingOuterWall = OuterWall | TopEdge,
-        RightIntersectingOuterWall = OuterWall | RightEdge,
-        BottomIntersectingOuterWall = OuterWall | BottomEdge,
-        LeftIntersectingOuterWall = OuterWall | LeftEdge,
-
-    }
-
-    [Flags]
-    public enum OuterWallStates
-    {
+        TopIntersectingOW = OuterWall | TopEdge,
+        RightIntersectingOW = OuterWall | RightEdge,
+        BottomIntersectingOW = OuterWall | BottomEdge,
+        LeftIntersectingOW = OuterWall | LeftEdge,
 
 
+        TopLeftIntersectingOW = TopIntersectingOW | BottomRight,
+        TopRightIntersectingOW = TopIntersectingOW | BottomLeft,
+
+        RightTopIntersectingOW = RightIntersectingOW | BottomLeft,
+        RightBottomIntersectingOW = RightIntersectingOW | TopLeft,
+
+        BottomLeftIntersectingOW = BottomIntersectingOW | TopRight,
+        BottomRightIntersectingOW = BottomIntersectingOW | TopLeft,
+
+        LeftTopIntersectingOW = LeftIntersectingOW | BottomRight,
+        LeftBottomIntersectingOW = LeftIntersectingOW | TopRight,
 
 
-
-
+        MiddleTopIntersectingOW = TopIntersectingOW | BottomLeft | BottomRight,
+        MiddleRightIntersectingOW = RightIntersectingOW | TopLeft | BottomLeft,
+        MiddleBottomIntersectingOW = BottomIntersectingOW | TopLeft | TopRight,
+        MiddleLeftIntersectingOW = LeftIntersectingOW | TopRight | BottomRight,
     }
 
     public enum States
@@ -97,13 +110,5 @@ namespace Pacman
     {
         WallGrid,
         PixelGrid
-    }
-
-    public enum temp
-    {
-        d90,
-        d180,
-        d270,
-        d360
     }
 }

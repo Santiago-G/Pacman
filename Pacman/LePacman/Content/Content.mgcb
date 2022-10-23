@@ -97,6 +97,30 @@
 /processorParam:TextureFormat=Color
 /build:Cross.png
 
+#begin edge2IntersectingOuterWall.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:edge2IntersectingOuterWall.png
+
+#begin edgeIntersectingOuterWall.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:edgeIntersectingOuterWall.png
+
 #begin EdgeTile.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -300,6 +324,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:MasterVolumeText.png
+
+#begin middleIntersectingOuterWall.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:middleIntersectingOuterWall.png
 
 #begin musicVolumeText.png
 /importer:TextureImporter

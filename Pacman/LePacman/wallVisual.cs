@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Pacman
 {
-    public class wallVisual : abstractVisual<(Point Index, bool isWall)>
+    public class wallVisual : abstractVisual
     {
         public static MapEditorWallGrid Grid;
 
@@ -46,12 +46,14 @@ namespace Pacman
         public static Texture2D CornerOuterWall;
 
         public static Texture2D SingleIntersectingOuterWall;
-
+        public static Texture2D MiddleIntersectingOuterWall;
+        public static Texture2D EdgeIntersectingOuterWall;
+        public static Texture2D Edge2IntersectingOuterWall;
         #endregion        
 
         public wallData Data { get; set; } = new wallData();
 
-        protected override AbstractData<(Point, bool)> data { get => Data; set { Data = (wallData)value; } }
+        protected override AbstractData data { get => Data; set { Data = (wallData)value; } }
 
         public WallStates WallState
         {
@@ -191,6 +193,7 @@ namespace Pacman
                         Rotation = 0;
                         break;
 
+                    #region Verticals
                     case WallStates.OuterUp:
                         CurrentImage = MiddleOuterWall;
                         Rotation = 0;
@@ -203,7 +206,9 @@ namespace Pacman
                         CurrentImage = MiddleOuterWall;
                         Rotation = 0;
                         break;
+                    #endregion
 
+                    #region Horizontals
                     case WallStates.OuterLeft:
                         CurrentImage = MiddleOuterWall;
                         Rotation = (float)(Math.PI * 1.5);
@@ -216,40 +221,100 @@ namespace Pacman
                         CurrentImage = MiddleOuterWall;
                         Rotation = (float)(Math.PI * 1.5);
                         break;
+                    #endregion
 
-                    case WallStates.OuterTopLeftCorner:
+                    #region Corners
+                    case WallStates.TopLeftCornerOW:
                         CurrentImage = CornerOuterWall;
                         Rotation = 0;
                         break;
-                    case WallStates.OuterTopRightCorner:
+                    case WallStates.TopRightCornerOW:
                         CurrentImage = CornerOuterWall;
                         Rotation = (float)(Math.PI * .5);
                         break;
-                    case WallStates.OuterBottomRightCorner:
+                    case WallStates.BottomRightCornerOW:
                         CurrentImage = CornerOuterWall;
                         Rotation = (float)(Math.PI * 1);
                         break;
-                    case WallStates.OuterBottomLeftCorner:
+                    case WallStates.BottomLeftCornerOW:
                         CurrentImage = CornerOuterWall;
                         Rotation = (float)(Math.PI * 1.5);
                         break;
+                    #endregion
 
-                    case WallStates.TopIntersectingOuterWall:
+                    #region OuterWalls intersecting with normal walls
+                    case WallStates.TopIntersectingOW:
                         CurrentImage = SingleIntersectingOuterWall;
                         Rotation = (float)(Math.PI * .5);
                         break;
-                    case WallStates.RightIntersectingOuterWall:
+                    case WallStates.RightIntersectingOW:
                         CurrentImage = SingleIntersectingOuterWall;
                         Rotation = (float)(Math.PI * 1);
                         break;
-                    case WallStates.BottomIntersectingOuterWall:
+                    case WallStates.BottomIntersectingOW:
                         CurrentImage = SingleIntersectingOuterWall;
                         Rotation = (float)(Math.PI * 1.5);
                         break;
-                    case WallStates.LeftIntersectingOuterWall:
+                    case WallStates.LeftIntersectingOW:
                         CurrentImage = SingleIntersectingOuterWall;
                         Rotation = 0;
                         break;
+
+                    
+                    case WallStates.TopLeftIntersectingOW:
+                        CurrentImage = EdgeIntersectingOuterWall;
+                        Rotation = (float)(Math.PI * .5);
+                        break;
+                    case WallStates.TopRightIntersectingOW:
+                        CurrentImage = Edge2IntersectingOuterWall;
+                        Rotation = (float)(Math.PI * .5);
+                        break;
+                    ///
+                    case WallStates.RightTopIntersectingOW:
+                        CurrentImage = EdgeIntersectingOuterWall;
+                        Rotation = (float)(Math.PI * 1);
+                        break;
+                    case WallStates.RightBottomIntersectingOW:
+                        CurrentImage = Edge2IntersectingOuterWall;
+                        Rotation = (float)(Math.PI * 1);
+                        break;
+                    ///
+                    case WallStates.BottomLeftIntersectingOW:
+                        CurrentImage = Edge2IntersectingOuterWall;
+                        Rotation = (float)(Math.PI * 1.5);
+                        break;
+                    case WallStates.BottomRightIntersectingOW:
+                        CurrentImage = EdgeIntersectingOuterWall;
+                        Rotation = (float)(Math.PI * 1.5);
+                        break;
+                    ///
+                    case WallStates.LeftTopIntersectingOW:
+                        CurrentImage = Edge2IntersectingOuterWall;
+                        Rotation = 0;
+                        break;
+                    case WallStates.LeftBottomIntersectingOW:
+                        CurrentImage = EdgeIntersectingOuterWall;
+                        Rotation = 0;
+                        break;
+
+                    case WallStates.MiddleTopIntersectingOW:
+                        CurrentImage = MiddleIntersectingOuterWall;
+                        Rotation = (float)(Math.PI * .5);
+                        break;
+                    case WallStates.MiddleRightIntersectingOW:
+                        CurrentImage = MiddleIntersectingOuterWall;
+                        Rotation = (float)(Math.PI * 1);
+                        break;
+                    case WallStates.MiddleBottomIntersectingOW:
+                        CurrentImage = MiddleIntersectingOuterWall;
+                        Rotation = (float)(Math.PI * 1.5);
+                        break;
+                    case WallStates.MiddleLeftIntersectingOW:
+                        CurrentImage = MiddleIntersectingOuterWall;
+                        Rotation = 0;
+                        break;
+                        #endregion
+
                         #endregion
                 }
             }

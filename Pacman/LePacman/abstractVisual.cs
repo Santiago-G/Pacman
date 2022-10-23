@@ -10,7 +10,7 @@ namespace Pacman
 {
     // public abstract class abstractVisual<T, D> : Sprite where D : abstractData<T>
     // : abstractVisual<T, pixelData<T>>
-    public abstract class abstractVisual<T> : Sprite
+    public abstract class abstractVisual : Sprite
     {
         public Texture2D CurrentImage;
         public Texture2D PrevImage;
@@ -18,7 +18,7 @@ namespace Pacman
         //shift click like in gimp to fill in whatever is selected
         //also have a fill all
 
-        protected abstract AbstractData<T> data { get; set; }
+        protected abstract AbstractData data { get; set; }
 
         public States TileStates
         {
@@ -70,7 +70,7 @@ namespace Pacman
 
         public override Rectangle Hitbox => new Rectangle((int)(Position.X - Origin.X * Scale.X), (int)(Position.Y - Origin.Y * Scale.Y), (int)(CurrentImage.Width * Scale.X), (int)(CurrentImage.Height * Scale.Y));
 
-        public T[] Neighbors 
+        public Point[] Neighbors 
         { 
             get { return data.Neighbors; } 
             set { data.Neighbors = value; }
@@ -96,7 +96,7 @@ namespace Pacman
             Offset = offset;         
         }
 
-        public abstractVisual(AbstractData<T> dataTile, Vector2 offset) : base(null, new Vector2(0), dataTile.tint)
+        public abstractVisual(AbstractData dataTile, Vector2 offset) : base(null, new Vector2(0), dataTile.tint)
         {
             data = dataTile;
             Offset = offset;
