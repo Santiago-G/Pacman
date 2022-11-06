@@ -64,6 +64,9 @@ namespace Pacman
         public static bool selectedPacman = false;
         public static bool pacmanPlaced = false;
 
+        Texture2D portalButtonSprite;
+        Button generatePortalButton;
+
 
         public MapEditor((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
@@ -118,6 +121,9 @@ namespace Pacman
             objects.Add(pacmanPlacementButton);
             objects.Add(pacmanTileIcon);
 
+            portalButtonSprite = Content.Load<Texture2D>("portalButton");
+            generatePortalButton = new Button(portalButtonSprite, new Vector2(1000, 900), Color.White);
+            objects.Add(generatePortalButton);
 
             //ADD THING THAT IF SELECTED ONLY DRAWS OVER BLANK TILES
 
@@ -184,7 +190,7 @@ namespace Pacman
              * IMPORTANT
              * ---------
              * 
-             * Fix the pacman sprite not spawning when loading a map
+             * Fix saving and loading
              * Do Delete Keybind
              * 
              * Do Portals. Portals are 2 tiles wide and there can be multiple.
@@ -440,6 +446,13 @@ namespace Pacman
                             WallGrid.removeWall(new Vector2(ms.Position.X, ms.Position.Y));
                         }
                     }
+
+                    if (generatePortalButton.IsClicked(ms))
+                    {
+                        //this is where the fun begins
+
+                        //use a dikstra
+                    }
                 }
             }
             else
@@ -550,7 +563,7 @@ namespace Pacman
 
             prevms = ms;
 
-            Game1.WindowText = $"{WallGrid.PosToIndex(new Vector2(ms.Position.X, ms.Position.Y))}, Raw MS {ms.Position}";
+            //Game1.WindowText = $"{WallGrid.PosToIndex(new Vector2(ms.Position.X, ms.Position.Y))}, Raw MS {ms.Position}";
 
             base.Update(gameTime);
             if (currentGridState == GridStates.WallGrid)

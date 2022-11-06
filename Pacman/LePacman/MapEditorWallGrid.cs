@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Net.NetworkInformation;
 using System.Diagnostics.SymbolStore;
 using System.Runtime.ExceptionServices;
+using LePacman.Pathfinding;
 
 namespace Pacman
 {
@@ -18,9 +19,11 @@ namespace Pacman
         public wallVisual[,] Tiles;
         public List<wallVisual> FilledTiles = new List<wallVisual>();
         private List<Point> pacmanTileIndex = new List<Point>();
+        private Graph graph = new Graph();
+
         Point pacmanOrigin;
 
-        Point[] offsets = new Point[] { new Point(0, -1), new Point(0, 1), new Point(-1, 0), new Point(1, 0) , new Point(1, -1), new Point(1, 1), new Point(-1, 1), new Point(-1, -1)};
+        Point[] offsets = new Point[] { new Point(0, -1), new Point(0, 1), new Point(-1, 0), new Point(1, 0), new Point(1, -1), new Point(1, 1), new Point(-1, 1), new Point(-1, -1) };
 
         #region Functions
 
@@ -111,7 +114,7 @@ namespace Pacman
             {
                 var newPosition = new Point(tileIndex.X + offsets[i].X, tileIndex.Y + offsets[i].Y);
 
-                currentTile.Neighbors[i]= newPosition;
+                currentTile.Neighbors[i] = newPosition;
 
                 if (IsValid(newPosition) && Tiles[newPosition.Y, newPosition.X].TileStates == States.Wall)
                 {
@@ -119,7 +122,7 @@ namespace Pacman
                 }
             }
 
-            if (currentTile.WallState.HasFlag(WallStates.TopIntersectingOW) || currentTile.WallState.HasFlag(WallStates.RightIntersectingOW) || currentTile.WallState.HasFlag(WallStates.BottomIntersectingOW)|| currentTile.WallState.HasFlag(WallStates.LeftIntersectingOW))
+            if (currentTile.WallState.HasFlag(WallStates.TopIntersectingOW) || currentTile.WallState.HasFlag(WallStates.RightIntersectingOW) || currentTile.WallState.HasFlag(WallStates.BottomIntersectingOW) || currentTile.WallState.HasFlag(WallStates.LeftIntersectingOW))
             {
                 for (int i = 4; i < offsets.Length; i++)
                 {
@@ -292,6 +295,62 @@ namespace Pacman
                 }
                 tile.UpdateStates(true);
             }
+        }
+
+        public bool OuterWallsValidity()
+        {
+            graph.Clear();
+
+            //load graph
+
+            foreach (var tile in Tiles)
+            {
+                graph.AddVertex(new Vertex(tile.Cord));
+            }
+
+            for (int y = 0; y < Tiles.GetLength(0); y++)
+            {
+                for (int x = 0; x < Tiles.GetLength(1); x++)
+                {
+                    int i = y * Tiles.GetLength(1) + x;
+
+                    if (x != 0)
+                    {
+                        //no left
+                        graph.AddEdge(graph.vertices[i], graph.vertices[i - 1], getWeight(Tiles[y, x], Tiles[y, x - 1]));
+                    }
+                    else if (x != Tiles.GetLength(1) - 1)
+                    {
+                        //no right
+                        graph.AddEdge(graph.vertices[i], graph.vertices[i + 1], getWeight(Tiles[y, x], Tiles[y, x + 1]));
+                    }
+                    if (y != 0)
+                    {
+                        //no up
+                        graph.AddEdge(graph.vertices[i], graph.vertices[i - Tiles.GetLength(1)], getWeight(Tiles[y, x], Tiles[y - Tiles.GetLength(1), x]));
+                    }
+                    else if (x != Tiles.GetLength(1) - 1)
+                    {
+                        //no right
+                        graph.AddEdge(graph.vertices[i], graph.vertices[i + Tiles.GetLength(1)], getWeight(Tiles[y, x], Tiles[y + Tiles.GetLength(1), x]));
+                    }
+
+                    Pathfinders.Dijkstra(graph, Pathfinders.Dijkstra(graph, graph.vertices[0], new HashSet<Vertex>() { 1}), );
+                    
+                }
+            }
+
+            return false;
+        }
+
+        public int getWeight(wallVisual ab, wallVisual ba)
+        {
+            if (ab.WallState.HasFlag(WallStates.OuterWall) && ba.WallState.HasFlag(WallStates.OuterWall))
+            {
+                return -1;
+            }
+
+            return int.MaxValue;
         }
 
         #region Switching Grids
