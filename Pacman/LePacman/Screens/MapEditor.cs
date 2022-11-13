@@ -449,9 +449,7 @@ namespace Pacman
 
                     if (generatePortalButton.IsClicked(ms))
                     {
-                        //this is where the fun begins
-
-                        //use a dikstra
+                        WallGrid.OuterWallsValidity();
                     }
                 }
             }

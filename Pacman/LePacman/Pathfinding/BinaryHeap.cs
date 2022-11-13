@@ -29,7 +29,7 @@ namespace LePacman.Pathfinding
                 array = newArray;
                 count++;
             }
-            else if (!DupeChecker(value))
+            else
             {
                 count++;
 
@@ -128,8 +128,6 @@ namespace LePacman.Pathfinding
                 {
                     //normal
 
-
-
                     if (Comparer.Compare(array[leftChildIndex], array[rightChildIndex]) > 0) //array[leftChildIndex].CompareTo(array[rightChildIndex]) > 0
                     {
                         theChildIndex = rightChildIndex;
@@ -162,25 +160,6 @@ namespace LePacman.Pathfinding
             }
 
             HeapifyDown(theChildIndex);
-        }
-
-        public bool DupeChecker(T val)
-        {
-            foreach (var item in array)
-            {
-                if (item == null)
-                {
-                    return false;
-                }
-
-                if (item.Equals(val))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-            //dumb dumb heap tree i never want to use these again
         }
 
         public void Clear()

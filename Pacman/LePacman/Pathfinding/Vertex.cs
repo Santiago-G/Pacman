@@ -26,7 +26,7 @@ namespace LePacman.Pathfinding
             Neighbors = new List<Edge>();
             Value = Position;
 
-            DistanceFromStart = int.MaxValue;
+            DistanceFromStart = short.MaxValue;
             Founder = null;
             Visited = false;
         }

@@ -303,11 +303,22 @@ namespace Pacman
 
             //load graph
 
+            HashSet<Vertex> outsideWalls = new HashSet<Vertex>();
+
+            HashSet<Vertex> foundWalls = new HashSet<Vertex>();
+
             foreach (var tile in Tiles)
             {
-                graph.AddVertex(new Vertex(tile.Cord));
+                Vertex newVert = new Vertex(tile.Cord);
+                graph.AddVertex(newVert);
+                if (tile.WallState.HasFlag(WallStates.OuterWall))
+                {
+                    outsideWalls.Add(newVert);
+                }
             }
 
+
+            int j;
             for (int y = 0; y < Tiles.GetLength(0); y++)
             {
                 for (int x = 0; x < Tiles.GetLength(1); x++)
@@ -319,7 +330,7 @@ namespace Pacman
                         //no left
                         graph.AddEdge(graph.vertices[i], graph.vertices[i - 1], getWeight(Tiles[y, x], Tiles[y, x - 1]));
                     }
-                    else if (x != Tiles.GetLength(1) - 1)
+                    if (x != Tiles.GetLength(1) - 1)
                     {
                         //no right
                         graph.AddEdge(graph.vertices[i], graph.vertices[i + 1], getWeight(Tiles[y, x], Tiles[y, x + 1]));
@@ -327,17 +338,35 @@ namespace Pacman
                     if (y != 0)
                     {
                         //no up
-                        graph.AddEdge(graph.vertices[i], graph.vertices[i - Tiles.GetLength(1)], getWeight(Tiles[y, x], Tiles[y - Tiles.GetLength(1), x]));
+                        graph.AddEdge(graph.vertices[i], graph.vertices[i - Tiles.GetLength(1)], getWeight(Tiles[y, x], Tiles[y - 1, x]));
                     }
-                    else if (x != Tiles.GetLength(1) - 1)
+                    if (y != Tiles.GetLength(0) - 1)
                     {
                         //no right
-                        graph.AddEdge(graph.vertices[i], graph.vertices[i + Tiles.GetLength(1)], getWeight(Tiles[y, x], Tiles[y + Tiles.GetLength(1), x]));
+                        graph.AddEdge(graph.vertices[i], graph.vertices[i + Tiles.GetLength(1)], getWeight(Tiles[y, x], Tiles[y + 1, x]));
                     }
-
-                    Pathfinders.Dijkstra(graph, Pathfinders.Dijkstra(graph, graph.vertices[0], new HashSet<Vertex>() { 1}), );
-                    
                 }
+            }
+            //the graph should have 3590 edges
+            //Vertex endpoint = Pathfinders.Dijkstra(graph, Pathfinders.Dijkstra(graph, graph.vertices[0], outsideWalls, 1), outsideWalls);
+            //Vertex currVertex = endpoint;
+
+            foundWalls = Pathfinders.Dijkstra(graph, (Pathfinders.Dijkstra(graph, graph.vertices[0], outsideWalls, 1)).First(), outsideWalls);
+
+            //while (currVertex.Founder != null)
+            //{
+            //    Tiles[currVertex.Value.X, currVertex.Value.Y].Tint = Color.Red;
+            //    currVertex = currVertex.Founder;
+            //}
+
+            foreach (var item in foundWalls)
+            {
+                if (Tiles[item.Value.X, item.Value.Y].TileStates != States.Wall) 
+                {
+                    ;
+                }
+
+                Tiles[item.Value.X, item.Value.Y].Tint = Color.Red;
             }
 
             return false;
@@ -350,7 +379,7 @@ namespace Pacman
                 return -1;
             }
 
-            return int.MaxValue;
+            return short.MaxValue;
         }
 
         #region Switching Grids

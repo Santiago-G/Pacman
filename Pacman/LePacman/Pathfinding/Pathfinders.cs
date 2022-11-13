@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace LePacman.Pathfinding
 {
     public class Pathfinders
     {
-        
+
         public Queue<Vertex> queue = new Queue<Vertex>();
         static Vertex currVertex;
 
@@ -29,8 +30,12 @@ namespace LePacman.Pathfinding
 
         });
 
-        public static HashSet<Vertex> Dijkstra(Graph graph, Vertex Start, HashSet<Vertex> End)
+        public static HashSet<Vertex> Dijkstra(Graph graph, Vertex Start, HashSet<Vertex> End, int length = -1)
         {
+            if (length == -1)
+            {
+                length = End.Count;
+            }
             HashSet<Vertex> foundVertices = new HashSet<Vertex>();
             int endsFound = 0;
 
@@ -39,50 +44,65 @@ namespace LePacman.Pathfinding
             foreach (var vertex in graph.vertices)
             {
                 vertex.Visited = false;
-                vertex.DistanceFromStart = int.MaxValue;
+                vertex.DistanceFromStart = float.PositiveInfinity;
                 vertex.Founder = null;
+                vertex.inBinaryHeap = false;
             }
 
             Start.DistanceFromStart = 0;
 
             PriorityQueue.Insert(Start);
 
-            while (endsFound < End.Count)
+            // setup ^
+
+            while (endsFound < length)
             {
                 currVertex = PriorityQueue.Pop();
 
-                if (currVertex.Visited == false)
+                foreach (var Neighbor in currVertex.Neighbors)
                 {
+                    float tentativeDistance = currVertex.DistanceFromStart + Neighbor.Weight;
 
-                    foreach (var Neighbor in currVertex.Neighbors)
+                    if (!Neighbor.End.Visited && !Neighbor.End.inBinaryHeap && tentativeDistance < Neighbor.End.DistanceFromStart)
                     {
-                        float tentativeDistance = currVertex.DistanceFromStart + Neighbor.Weight;
-
-                        if (tentativeDistance < Neighbor.End.DistanceFromStart)
-                        {
-                            Neighbor.End.DistanceFromStart = tentativeDistance;
-                            Neighbor.End.Founder = currVertex;
-                            Neighbor.End.Visited = false;
-                        }
-
-                        if (!Neighbor.End.Visited)
-                        {
-                            PriorityQueue.Insert(Neighbor.End);
-                            Neighbor.End.inBinaryHeap = true;
-                        }
+                        Neighbor.End.DistanceFromStart = tentativeDistance;
+                        Neighbor.End.Founder = currVertex;
+                        PriorityQueue.Insert(Neighbor.End);
+                        Neighbor.End.inBinaryHeap = true;
                     }
+                }
 
-                    currVertex.Visited = true;
+                currVertex.Visited = true;
 
-                    if (End.Contains(currVertex))
-                    {
-                        endsFound++;
-                        foundVertices.Add(currVertex);
-                    }
+                if (End.Contains(currVertex))
+                {
+                    endsFound++;
                 }
             }
 
-            return End;
+            /* WHATS WRONG WITH THE PATHFINDING
+
+                Distances from start are the same when they should not be, causing multiple paths across the portals/gaps
+                likely reasons: incorrectly getting reset/set                
+            */
+
+            //loop through every outer wall
+            //go up their founders (adding them to found as you do) until you reach a known point
+            //at the beginning known point is start
+            //after the first time, every vertex you've already visited as you go up the founders is known (because they already led back to start)
+            int i = 0;
+            foreach (var wall in End)
+            {
+                i++;
+                Vertex currVer = wall;
+                while (currVer != null && !foundVertices.Contains(currVer))
+                {
+                    foundVertices.Add(currVer);
+                    currVer = currVer.Founder;
+                }
+            }
+
+            return foundVertices;
         }
     }
 }

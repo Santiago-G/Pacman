@@ -96,7 +96,6 @@ namespace Pacman
                     case WallStates.LoneWall:
                         CurrentImage = LoneWallSprite;
                         Rotation = 0;
-                        PrevImage = CurrentImage;
                         break;
 
                     #region Horizontals
@@ -108,12 +107,10 @@ namespace Pacman
                     case WallStates.HorizLeftEnd:
                         CurrentImage = SingleWallEnd;
                         Rotation = (float)(Math.PI * 1.5);
-                        PrevImage = CurrentImage;
                         break;
                     case WallStates.HorizRightEnd:
                         CurrentImage = SingleWallEnd;
                         Rotation = (float)(Math.PI * .5);
-                        PrevImage = CurrentImage;
                         break;
                     #endregion
 
@@ -121,17 +118,14 @@ namespace Pacman
                     case WallStates.Verti:
                         CurrentImage = MiddleWallSprite;
                         Rotation = 0;
-                        PrevImage = CurrentImage;
                         break;
                     case WallStates.VertiTopEnd:
                         CurrentImage = SingleWallEnd;
                         Rotation = 0;
-                        PrevImage = CurrentImage;
                         break;
                     case WallStates.VertiBottomEnd:
                         CurrentImage = SingleWallEnd;
                         Rotation = (float)(Math.PI * 1);
-                        PrevImage = CurrentImage;
                         break;
                     #endregion
 
@@ -139,22 +133,18 @@ namespace Pacman
                     case WallStates.TopLeftCorner:
                         CurrentImage = CornerWallTile;
                         Rotation = 0;
-                        PrevImage = CurrentImage;
                         break;
                     case WallStates.TopRightCorner:
                         CurrentImage = CornerWallTile;
                         Rotation = (float)(Math.PI * .5);
-                        PrevImage = CurrentImage;
                         break;
                     case WallStates.BottomRightCorner:
                         CurrentImage = CornerWallTile;
                         Rotation = (float)(Math.PI * 1);
-                        PrevImage = CurrentImage;
                         break;
                     case WallStates.BottomLeftCorner:
                         CurrentImage = CornerWallTile;
                         Rotation = (float)(Math.PI * 1.5);
-                        PrevImage = CurrentImage;
                         break;
                     #endregion
 
@@ -162,29 +152,24 @@ namespace Pacman
                     case WallStates.TopEdge:
                         CurrentImage = EdgeSprite;
                         Rotation = 0;
-                        PrevImage = CurrentImage;
                         break;
                     case WallStates.RightEdge:
                         CurrentImage = EdgeSprite;
                         Rotation = (float)(Math.PI * .5);
-                        PrevImage = CurrentImage;
                         break;
                     case WallStates.BottomEdge:
                         CurrentImage = EdgeSprite;
                         Rotation = (float)(Math.PI * 1);
-                        PrevImage = CurrentImage;
                         break;
                     case WallStates.LeftEdge:
                         CurrentImage = EdgeSprite;
                         Rotation = (float)(Math.PI * 1.5);
-                        PrevImage = CurrentImage;
                         break;
                     #endregion
 
                     case WallStates.Interior:
                         CurrentImage = InteriorWallSprite;
                         Rotation = 0;
-                        PrevImage = CurrentImage;
                         break;
 
                     #region Outer Walls
@@ -317,6 +302,11 @@ namespace Pacman
 
                         #endregion
                 }
+            }
+
+            if (PrevImage == null)
+            {
+                PrevImage = CurrentImage;
             }
 
             if (!setDefault)
