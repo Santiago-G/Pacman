@@ -18,6 +18,7 @@ namespace LePacman.Pathfinding
         public Vertex Founder;
         public bool Visited;
 
+        public bool isOuterWall = false;
         public bool inBinaryHeap;
 
         //Dijkstra

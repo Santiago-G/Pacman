@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
-using Pacman.Dummies;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Pacman
 {
@@ -325,7 +323,7 @@ namespace Pacman
 
                     if (index != new Point(-1) && index.X < wallGridSize.X - 6 && index.Y < wallGridSize.Y - 3)
                     {
-                        ghostChamberMS.Position = new Vector2(WallGrid.Tiles[index.Y, index.X].Position.X - pixelVisual.EmptySprite.Width / 2, WallGrid.Tiles[index.Y, index.X].Position.Y - pixelVisual.EmptySprite.Height / 2);
+                        ghostChamberMS.Position = new Vector2(WallGrid.Tiles[index.X, index.Y].Position.X - pixelVisual.EmptySprite.Width / 2, WallGrid.Tiles[index.X, index.Y].Position.Y - pixelVisual.EmptySprite.Height / 2);
                         concord = 1;
                     }
                     else
@@ -342,7 +340,7 @@ namespace Pacman
                         {
                             //check if theres things inside it.
                             ghostChamberPlaced = true;
-                            WallGrid.PlaceGhostChamber(new Point(index.Y, index.X));
+                            WallGrid.PlaceGhostChamber(new Point(index.X, index.Y));
                         }
                         else
                         {
@@ -423,9 +421,9 @@ namespace Pacman
                         if (index != new Point(-1))
                         {
                             //make a small pacman image, and have it follow "lock" the mouse
-                            pacmanTileIcon.Position = new Vector2(WallGrid.Tiles[index.Y, index.X].Position.X - pixelVisual.EmptySprite.Width / 2, WallGrid.Tiles[index.Y, index.X].Position.Y - pixelVisual.EmptySprite.Height / 2);
+                            pacmanTileIcon.Position = new Vector2(WallGrid.Tiles[index.X, index.Y].Position.X - pixelVisual.EmptySprite.Width / 2, WallGrid.Tiles[index.X, index.Y].Position.Y - pixelVisual.EmptySprite.Height / 2);
 
-                            if (ms.LeftButton == ButtonState.Pressed && WallGrid.Tiles[index.Y, index.X].TileStates == States.Empty && WallGrid.Tiles[index.Y, index.X + 1].TileStates == States.Empty && WallGrid.Tiles[index.Y + 1, index.X].TileStates == States.Empty)
+                            if (ms.LeftButton == ButtonState.Pressed && WallGrid.Tiles[index.X, index.Y].TileStates == States.Empty && WallGrid.Tiles[index.X + 1, index.Y].TileStates == States.Empty && WallGrid.Tiles[index.X, index.Y + 1].TileStates == States.Empty)
                             {
                                 WallGrid.AddPacman(index);
                             }
@@ -449,7 +447,11 @@ namespace Pacman
 
                     if (generatePortalButton.IsClicked(ms))
                     {
-                        WallGrid.OuterWallsValidity();
+                        bool pleaseWork = WallGrid.OuterWallsValidity();
+                        if (!pleaseWork)
+                        {
+                            throw new Exception("Airbag");
+                        }
                     }
                 }
             }
@@ -497,12 +499,12 @@ namespace Pacman
 
                     if (index != new Point(-1))
                     {
-                        pacmanTileIcon.Position = new Vector2(PelletGrid.Tiles[index.Y, index.X].Position.X - pacmanTileIcon.Image.Width / 4, PelletGrid.Tiles[index.Y, index.X].Position.Y - pacmanTileIcon.Image.Height / 2);
+                        pacmanTileIcon.Position = new Vector2(PelletGrid.Tiles[index.X, index.Y].Position.X - pacmanTileIcon.Image.Width / 4, PelletGrid.Tiles[index.X, index.Y].Position.Y - pacmanTileIcon.Image.Height / 2);
 
-                        if (ms.LeftButton == ButtonState.Pressed && PelletGrid.Tiles[index.Y, index.X].TileStates == States.Empty)
+                        if (ms.LeftButton == ButtonState.Pressed && PelletGrid.Tiles[index.X, index.Y].TileStates == States.Empty)
                         {
 
-                            if (PelletGrid.Tiles[index.Y, index.X + 1].TileStates == States.Empty)
+                            if (PelletGrid.Tiles[index.X + 1, index.Y].TileStates == States.Empty)
                             {
                                 PelletGrid.AddPacman(index);
                             }
@@ -560,8 +562,6 @@ namespace Pacman
             }
 
             prevms = ms;
-
-            //Game1.WindowText = $"{WallGrid.PosToIndex(new Vector2(ms.Position.X, ms.Position.Y))}, Raw MS {ms.Position}";
 
             base.Update(gameTime);
             if (currentGridState == GridStates.WallGrid)

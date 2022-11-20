@@ -25,18 +25,18 @@ namespace Pacman
         {
             Position = position + new Vector2(pixelVisual.EmptySprite.Width / 2, pixelVisual.EmptySprite.Height / 2);
 
-            Tiles = new pixelVisual[gridSize.Y, gridSize.X];
+            Tiles = new pixelVisual[gridSize.X, gridSize.Y];
 
-            for (int y = 0; y < gridSize.Y; y++)
+            for (int x = 0; x < gridSize.X; x++)
             {
-                for (int x = 0; x < gridSize.X; x++)
+                for (int y = 0; y < gridSize.Y; y++)
                 {
                     //new Vector2(MapEditorVisualTile.NormalSprite.Width /2, MapEditorVisualTile.NormalSprite.Height/2)
-                    Tiles[y, x] = new pixelVisual(pixelVisual.EmptySprite, new Point(y, x), Color.White, Position, Vector2.One, new Vector2(pixelVisual.EmptySprite.Width / 2f, pixelVisual.EmptySprite.Height / 2f), 0f, SpriteEffects.None);
+                    Tiles[x, y] = new pixelVisual(pixelVisual.EmptySprite, new Point(x, y), Color.White, Position, Vector2.One, new Vector2(pixelVisual.EmptySprite.Width / 2f, pixelVisual.EmptySprite.Height / 2f), 0f, SpriteEffects.None);
 
                     for (int i = 0; i < offsets.Length; i++)
                     {
-                        Tiles[y, x].Data.Neighbors[i] = new Point(y + offsets[i].Y, x + offsets[i].X);
+                        Tiles[x, y].Data.Neighbors[i] = new Point(x + offsets[i].X, y + offsets[i].Y);
                     }
                 }
             }
@@ -81,11 +81,11 @@ namespace Pacman
             MapEditor.pacmanPlaced = true;
             Point[] offsets = new Point[] { new Point(1, 1), new Point(0, 1), new Point(0, -1), new Point(1, -1) };
 
-            Tiles[index.Y, index.X].TileStates = States.Pacman;
-            Tiles[index.Y, index.X + 1].TileStates = States.Pacman;
+            Tiles[index.X, index.Y].TileStates = States.Pacman;
+            Tiles[index.X, index.Y + 1].TileStates = States.Pacman;
 
-            Tiles[index.Y, index.X].UpdateStates();
-            Tiles[index.Y, index.X + 1].UpdateStates();
+            Tiles[index.X, index.Y].UpdateStates();
+            Tiles[index.X, index.Y + 1].UpdateStates();
 
             pacmanTileIndex.Add(index);
             pacmanTileIndex.Add(new Point(index.X + 1, index.Y));
@@ -94,10 +94,10 @@ namespace Pacman
 
             foreach (var offset in offsets)
             {
-                if (Tiles[index.Y + offset.Y, index.X + offset.X].TileStates == States.Empty)
+                if (Tiles[index.X + offset.X, index.Y + offset.Y].TileStates == States.Empty)
                 {
-                    Tiles[index.Y + offset.Y, index.X + offset.X].TileStates = States.Pacman;
-                    Tiles[index.Y + offset.Y, index.X + offset.X].UpdateStates();
+                    Tiles[index.X + offset.X, index.Y + offset.Y].TileStates = States.Pacman;
+                    Tiles[index.X + offset.X, index.Y + offset.Y].UpdateStates();
 
                     pacmanTileIndex.Add(new Point(index.X + offset.X, index.Y + offset.Y));
                 }
@@ -110,10 +110,10 @@ namespace Pacman
         {
             foreach (var index in pacmanTileIndex)
             {
-                if (Tiles[index.Y, index.X].TileStates == States.Pacman)
+                if (Tiles[index.X, index.Y].TileStates == States.Pacman)
                 {
-                    Tiles[index.Y, index.X].TileStates = States.Empty;
-                    Tiles[index.Y, index.X].UpdateStates();
+                    Tiles[index.X, index.Y].TileStates = States.Empty;
+                    Tiles[index.X, index.Y].UpdateStates();
                 }
             }
 
@@ -160,13 +160,13 @@ namespace Pacman
                         FilledTiles.Add(tile);
                         break;
                     case States.Pacman:
-                        if (Tiles[pacmanOrigin.Y, pacmanOrigin.X] == tile)
+                        if (Tiles[pacmanOrigin.X, pacmanOrigin.Y] == tile)
                         {
                             tile.CurrentImage = pixelVisual.NBemptySprite;
                             FilledTiles.Add(tile);
 
-                            Tiles[pacmanOrigin.Y, pacmanOrigin.X + 1].CurrentImage = pixelVisual.NBemptySprite;
-                            FilledTiles.Add(Tiles[pacmanOrigin.Y, pacmanOrigin.X + 1]);
+                            Tiles[pacmanOrigin.X, pacmanOrigin.Y + 1].CurrentImage = pixelVisual.NBemptySprite;
+                            FilledTiles.Add(Tiles[pacmanOrigin.X, pacmanOrigin.Y + 1]);
                         }
                         break;
                 }
@@ -189,8 +189,8 @@ namespace Pacman
             {
                 int leftX = Math.Max(tile.Cord.X - 1, 0);
                 int topY = Math.Max(tile.Cord.Y - 1, 0);
-                int y = Math.Min(tile.Cord.Y, 27);
-                int x = Math.Min(tile.Cord.X, 30);
+                int y = Math.Min(tile.Cord.Y, 30);
+                int x = Math.Min(tile.Cord.X, 27);
 
                 Tiles[leftX, topY].TileStates = States.Occupied;
                 Tiles[leftX, y].TileStates = States.Occupied;

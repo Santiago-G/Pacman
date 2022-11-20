@@ -34,9 +34,9 @@ namespace Pacman
 
             Point index = PosToIndex(MousePosition);
 
-            if (index == new Point(-1) || Tiles[index.Y, index.X].TileStates == States.Occupied || Tiles[index.Y, index.X].TileStates == States.GhostChamber || Tiles[index.Y, index.X].TileStates == States.Pacman) return;
+            if (index == new Point(-1) || Tiles[index.X, index.Y].TileStates == States.Occupied || Tiles[index.X, index.Y].TileStates == States.GhostChamber || Tiles[index.X, index.Y].TileStates == States.Pacman) return;
 
-            recursiveAddWall(Tiles[index.Y, index.X]);
+            recursiveAddWall(Tiles[index.X, index.Y]);
         }
         public void removeWall(Vector2 MousePosition)
         {
@@ -44,14 +44,14 @@ namespace Pacman
 
             if (index == new Point(-1)) return;
 
-            if (Tiles[index.Y, index.X].TileStates != States.Wall)
+            if (Tiles[index.X, index.Y].TileStates != States.Wall)
             {
-                if (Tiles[index.Y, index.X].TileStates == States.GhostChamber)
+                if (Tiles[index.X, index.Y].TileStates == States.GhostChamber)
                 {
                     removeGhostChamber();
                 }
 
-                else if (Tiles[index.Y, index.X].TileStates == States.Pacman)
+                else if (Tiles[index.X, index.Y].TileStates == States.Pacman)
                 {
                     RemovePacman(index);
                 }
@@ -59,10 +59,10 @@ namespace Pacman
                 return;
             }
 
-            Tiles[index.Y, index.X].TileStates = States.Empty;
-            Tiles[index.Y, index.X].WallState = WallStates.Empty;
+            Tiles[index.X, index.Y].TileStates = States.Empty;
+            Tiles[index.X, index.Y].WallState = WallStates.Empty;
 
-            recursiveAddWall(Tiles[index.Y, index.X], true);
+            recursiveAddWall(Tiles[index.X, index.Y], true);
         }
         private void recursiveAddWall(wallVisual currentTile, bool remove = false)
         {
@@ -78,9 +78,9 @@ namespace Pacman
 
             foreach (var neighbor in currentTile.Neighbors)
             {
-                if (IsValid(neighbor) && Tiles[neighbor.Y, neighbor.X].TileStates == States.Wall)
+                if (IsValid(neighbor) && Tiles[neighbor.X, neighbor.Y].TileStates == States.Wall)
                 {
-                    recursiveAddWall(Tiles[neighbor.Y, neighbor.X]);
+                    recursiveAddWall(Tiles[neighbor.X, neighbor.Y]);
                 }
             }
         }
@@ -97,7 +97,7 @@ namespace Pacman
             }
             //y, x
 
-            wallVisual currentTile = Tiles[tileIndex.Y, tileIndex.X];
+            wallVisual currentTile = Tiles[tileIndex.X, tileIndex.Y];
             WallStates oldState = currentTile.WallState;
 
             if (MapEditor.selectedTileType == SelectedType.OuterWall || oldState.HasFlag(WallStates.OuterWall))
@@ -116,7 +116,7 @@ namespace Pacman
 
                 currentTile.Neighbors[i] = newPosition;
 
-                if (IsValid(newPosition) && Tiles[newPosition.Y, newPosition.X].TileStates == States.Wall)
+                if (IsValid(newPosition) && Tiles[newPosition.X, newPosition.Y].TileStates == States.Wall)
                 {
                     currentTile.WallState |= (WallStates)Math.Pow(2, i + 1);
                 }
@@ -130,7 +130,7 @@ namespace Pacman
 
                     currentTile.Neighbors[i] = newPosition;
 
-                    if (IsValid(newPosition) && Tiles[newPosition.Y, newPosition.X].TileStates == States.Wall)
+                    if (IsValid(newPosition) && Tiles[newPosition.X, newPosition.Y].TileStates == States.Wall)
                     {
                         currentTile.WallState |= (WallStates)Math.Pow(2, i + 1);
                     }
@@ -153,8 +153,8 @@ namespace Pacman
         {
             if (index != new Point(-1))
             {
-                int x = index.Y;
-                int y = index.X;
+                int x = index.X;
+                int y = index.Y;
 
                 for (int i = 0; i < 4; i++)
                 {
@@ -178,9 +178,9 @@ namespace Pacman
                 int x = index.X;
                 int y = index.Y;
 
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < 7; i++)
                 {
-                    for (int j = 0; j < 7; j++)
+                    for (int j = 0; j < 4; j++)
                     {
                         Tiles[x + i, y + j].TileStates = States.GhostChamber;
                         Tiles[x + i, y + j].UpdateStates();
@@ -214,17 +214,17 @@ namespace Pacman
         {
             MapEditor.selectedPacman = false;
             MapEditor.pacmanPlaced = true;
-            Tiles[index.Y, index.X].TileStates = States.Pacman;
+            Tiles[index.X, index.Y].TileStates = States.Pacman;
             pacmanTileIndex.Add(index);
             pacmanOrigin = index;
 
-            Tiles[index.Y, index.X + 1].TileStates = States.Pacman;
+            Tiles[index.X, index.Y + 1].TileStates = States.Pacman;
             pacmanTileIndex.Add(new Point(index.X + 1, index.Y));
 
-            Tiles[index.Y + 1, index.X + 1].TileStates = States.Pacman;
+            Tiles[index.X + 1, index.Y + 1].TileStates = States.Pacman;
             pacmanTileIndex.Add(new Point(index.X + 1, index.Y + 1));
 
-            Tiles[index.Y + 1, index.X].TileStates = States.Pacman;
+            Tiles[index.X + 1, index.Y].TileStates = States.Pacman;
             pacmanTileIndex.Add(new Point(index.X, index.Y + 1));
         }
 
@@ -232,8 +232,8 @@ namespace Pacman
         {
             foreach (var Index in pacmanTileIndex)
             {
-                Tiles[Index.Y, Index.X].TileStates = States.Empty;
-                Tiles[Index.Y, Index.X].UpdateStates();
+                Tiles[Index.X, Index.Y].TileStates = States.Empty;
+                Tiles[Index.X, Index.Y].UpdateStates();
             }
 
             pacmanOrigin = new Point(-1);
@@ -278,12 +278,12 @@ namespace Pacman
 
         private bool IsValid(Point gridIndex)
         {
-            return gridIndex.X >= 0 && gridIndex.X < Tiles.GetLength(1) && gridIndex.Y >= 0 && gridIndex.Y < Tiles.GetLength(0);
+            return gridIndex.X >= 0 && gridIndex.X < Tiles.GetLength(0) && gridIndex.Y >= 0 && gridIndex.Y < Tiles.GetLength(1);
         }
 
         public void LoadGrid(List<wallData> TileList)
         {
-            Tiles = TileList.Select(x => new wallVisual(x, Position)).Expand(new Point(Tiles.GetLength(1), Tiles.GetLength(0)));
+            Tiles = TileList.Select(x => new wallVisual(x, Position)).Expand(new Point(Tiles.GetLength(0), Tiles.GetLength(1)));
             bool foundGhostChamber = false;
 
             foreach (var tile in Tiles)
@@ -301,11 +301,9 @@ namespace Pacman
         {
             graph.Clear();
 
-            //load graph
-
             HashSet<Vertex> outsideWalls = new HashSet<Vertex>();
-
             HashSet<Vertex> foundWalls = new HashSet<Vertex>();
+            HashSet<Vertex> possiblePortals = new HashSet<Vertex>();
 
             foreach (var tile in Tiles)
             {
@@ -313,63 +311,91 @@ namespace Pacman
                 graph.AddVertex(newVert);
                 if (tile.WallState.HasFlag(WallStates.OuterWall))
                 {
+                    newVert.isOuterWall = true;
                     outsideWalls.Add(newVert);
                 }
             }
 
-
             int j;
-            for (int y = 0; y < Tiles.GetLength(0); y++)
+            for (int x = 0; x < Tiles.GetLength(0); x++)
             {
-                for (int x = 0; x < Tiles.GetLength(1); x++)
+                for (int y = 0; y < Tiles.GetLength(1); y++)
                 {
-                    int i = y * Tiles.GetLength(1) + x;
+                    int i = x * Tiles.GetLength(1) + y;
 
                     if (x != 0)
                     {
                         //no left
-                        graph.AddEdge(graph.vertices[i], graph.vertices[i - 1], getWeight(Tiles[y, x], Tiles[y, x - 1]));
+                        graph.AddEdge(graph.vertices[i], graph.vertices[i - Tiles.GetLength(1)], getWeight(Tiles[x, y], Tiles[x - 1, y]));
                     }
-                    if (x != Tiles.GetLength(1) - 1)
+                    if (x != Tiles.GetLength(0) - 1)
                     {
                         //no right
-                        graph.AddEdge(graph.vertices[i], graph.vertices[i + 1], getWeight(Tiles[y, x], Tiles[y, x + 1]));
+                        graph.AddEdge(graph.vertices[i], graph.vertices[i + Tiles.GetLength(1)], getWeight(Tiles[x, y], Tiles[x + 1, y]));
                     }
                     if (y != 0)
                     {
                         //no up
-                        graph.AddEdge(graph.vertices[i], graph.vertices[i - Tiles.GetLength(1)], getWeight(Tiles[y, x], Tiles[y - 1, x]));
+                        graph.AddEdge(graph.vertices[i], graph.vertices[i - 1], getWeight(Tiles[x, y], Tiles[x, y - 1]));
                     }
-                    if (y != Tiles.GetLength(0) - 1)
+                    if (y != Tiles.GetLength(1) - 1)
                     {
                         //no right
-                        graph.AddEdge(graph.vertices[i], graph.vertices[i + Tiles.GetLength(1)], getWeight(Tiles[y, x], Tiles[y + 1, x]));
+                        graph.AddEdge(graph.vertices[i], graph.vertices[i + 1], getWeight(Tiles[x, y], Tiles[x, y + 1]));
                     }
                 }
             }
+            ;
             //the graph should have 3590 edges
-            //Vertex endpoint = Pathfinders.Dijkstra(graph, Pathfinders.Dijkstra(graph, graph.vertices[0], outsideWalls, 1), outsideWalls);
-            //Vertex currVertex = endpoint;
 
             foundWalls = Pathfinders.Dijkstra(graph, (Pathfinders.Dijkstra(graph, graph.vertices[0], outsideWalls, 1)).First(), outsideWalls);
 
-            //while (currVertex.Founder != null)
-            //{
-            //    Tiles[currVertex.Value.X, currVertex.Value.Y].Tint = Color.Red;
-            //    currVertex = currVertex.Founder;
-            //}
 
+            //check if there are gaps of 1 / 3 or more. 
+            int gapNum = 0;
             foreach (var item in foundWalls)
             {
-                if (Tiles[item.Value.X, item.Value.Y].TileStates != States.Wall) 
+                if (!Tiles[item.Value.X, item.Value.Y].WallState.HasFlag(WallStates.OuterWall))
                 {
-                    ;
+                    gapNum++;
+                    possiblePortals.Add(item);
+                    Tiles[item.Value.X, item.Value.Y].Tint = Color.Green;
+                }
+                else 
+                {
+                    Tiles[item.Value.X, item.Value.Y].Tint = Color.Red;
+                    if (gapNum != 0 && gapNum != 2) 
+                        return false;
+                    gapNum = 0;
                 }
 
-                Tiles[item.Value.X, item.Value.Y].Tint = Color.Red;
+                
             }
 
-            return false;
+            if (gapNum != 0 && gapNum != 2) 
+                return false;
+
+            foreach (var item in possiblePortals)
+            {
+                Point endPos = new Point((item.Value.X == 0) ? Tiles.GetLength(0) - 1 : 0, item.Value.Y);
+
+                wallVisual currTile = Tiles[item.Value.X, item.Value.Y];
+                while (currTile.Cord != endPos)
+                {
+                    if (currTile.WallState.HasFlag(WallStates.OuterWall))
+                    {
+                        return false;
+                    }
+                    currTile = Tiles[currTile.Cord.X - 1, currTile.Cord.Y];
+                }
+                ;
+                if (!(Tiles[currTile.Cord.X, currTile.Cord.Y - 1].WallState.HasFlag(WallStates.OuterWall)) && !(Tiles[currTile.Cord.X, currTile.Cord.Y + 1].WallState.HasFlag(WallStates.OuterWall)))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public int getWeight(wallVisual ab, wallVisual ba)
@@ -448,17 +474,17 @@ namespace Pacman
         {
             Position = position + new Vector2(wallVisual.EmptySprite.Width / 2, wallVisual.EmptySprite.Height / 2);
 
-            Tiles = new wallVisual[gridSize.Y, gridSize.X];
+            Tiles = new wallVisual[gridSize.X, gridSize.Y];
 
-            for (int y = 0; y < gridSize.Y; y++)
+            for (int x = 0; x < gridSize.X; x++)
             {
-                for (int x = 0; x < gridSize.X; x++)
+                for (int y = 0; y < gridSize.Y; y++)
                 {
-                    Tiles[y, x] = new wallVisual(wallVisual.EmptySprite, new Point(y, x), Color.White, Position, Vector2.One, new Vector2(wallVisual.EmptySprite.Width / 2f, wallVisual.EmptySprite.Height / 2f), 0f, SpriteEffects.None);
+                    Tiles[x, y] = new wallVisual(wallVisual.EmptySprite, new Point(x, y), Color.White, Position, Vector2.One, new Vector2(wallVisual.EmptySprite.Width / 2f, wallVisual.EmptySprite.Height / 2f), 0f, SpriteEffects.None);
 
                     for (int i = 0; i < offsets.Length; i++)
                     {
-                        Tiles[y, x].Data.Neighbors[i] = new Point(y + offsets[i].Y, x + offsets[i].X);
+                        Tiles[x, y].Data.Neighbors[i] = new Point(x + offsets[i].X, y + offsets[i].Y);
                     }
                 }
             }

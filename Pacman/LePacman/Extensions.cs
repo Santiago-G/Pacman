@@ -11,32 +11,32 @@ namespace Pacman
     {
         public static IEnumerable<T> Flatten<T>(this T[,] tiles)
         {
-            for (int y = 0; y < tiles.GetLength(0); y++)
+            for (int x = 0; x < tiles.GetLength(0); x++)
             {
-                for (int x = 0; x < tiles.GetLength(1); x++)
+                for (int y = 0; y < tiles.GetLength(1); y++)
                 {
-                    yield return tiles[y, x];
+                    yield return tiles[x, y];
                 }
             }
         }
 
         public static T[,] Expand<T>(this IEnumerable<T> items, Point size)
         {
-            T[,] expandedItems = new T[size.Y, size.X];
+            T[,] expandedItems = new T[size.X, size.Y];
 
             int x = 0;
             int y = 0;
 
             foreach (var item in items)
             {
-                if (x >= size.X)
+                if (y >= size.Y)
                 {
-                    x = 0;
-                    y++;
+                    y = 0;
+                    x++;
                 }
 
-                expandedItems[y, x] = item;
-                x++;
+                expandedItems[x, y] = item;
+                y++;
             }
 
             return expandedItems;
