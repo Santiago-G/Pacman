@@ -71,7 +71,7 @@ namespace Pacman
 
         private bool IsValid(Point gridIndex)
         {
-            return gridIndex.X >= 0 && gridIndex.X < Tiles.GetLength(1) && gridIndex.Y >= 0 && gridIndex.Y < Tiles.GetLength(0);
+            return gridIndex.X >= 0 && gridIndex.X < Tiles.GetLength(0) && gridIndex.Y >= 0 && gridIndex.Y < Tiles.GetLength(1);
         }
 
         #region Pacman
@@ -92,16 +92,16 @@ namespace Pacman
 
             pacmanOrigin = index;
 
-            foreach (var offset in offsets)
-            {
-                if (Tiles[index.X + offset.X, index.Y + offset.Y].TileStates == States.Empty)
-                {
-                    Tiles[index.X + offset.X, index.Y + offset.Y].TileStates = States.Pacman;
-                    Tiles[index.X + offset.X, index.Y + offset.Y].UpdateStates();
+            //foreach (var offset in offsets)
+            //{
+            //    if (Tiles[index.X + offset.X, index.Y + offset.Y].TileStates == States.Empty)
+            //    {
+            //        Tiles[index.X + offset.X, index.Y + offset.Y].TileStates = States.Pacman;
+            //        Tiles[index.X + offset.X, index.Y + offset.Y].UpdateStates();
 
-                    pacmanTileIndex.Add(new Point(index.X + offset.X, index.Y + offset.Y));
-                }
-            }
+            //        pacmanTileIndex.Add(new Point(index.X + offset.X, index.Y + offset.Y));
+            //    }
+            //}
         }
 
         #endregion
@@ -129,7 +129,7 @@ namespace Pacman
 
         public void LoadGrid(List<pixelData> TileList)
         {
-            Tiles = TileList.Select(x => new pixelVisual(x, Position)).Expand(new Point(Tiles.GetLength(1), Tiles.GetLength(0)));
+            Tiles = TileList.Select(x => new pixelVisual(x, Position)).Expand(new Point(Tiles.GetLength(0), Tiles.GetLength(1)));
 
             foreach (var tile in Tiles)
             {

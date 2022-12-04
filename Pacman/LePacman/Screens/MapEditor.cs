@@ -237,7 +237,6 @@ namespace Pacman
                 }
 
                 currentGridState = prevCurrGridState;
-                ;
             }
 
             if (kb.IsKeyDown(Keys.M))
@@ -313,7 +312,7 @@ namespace Pacman
                     pelletButton.Tint = Color.White;
                 }
             }
-
+            
             if (currentGridState == GridStates.WallGrid)
             {
                 if (selectedGhostChamber)
@@ -420,10 +419,19 @@ namespace Pacman
 
                         if (index != new Point(-1))
                         {
+                            if (index.X == wallGridSize.X - 1)
+                            {
+                                index.X--;
+                            }
+                            if (index.Y == wallGridSize.Y - 1)
+                            {
+                                index.Y--;
+                            }
+
                             //make a small pacman image, and have it follow "lock" the mouse
                             pacmanTileIcon.Position = new Vector2(WallGrid.Tiles[index.X, index.Y].Position.X - pixelVisual.EmptySprite.Width / 2, WallGrid.Tiles[index.X, index.Y].Position.Y - pixelVisual.EmptySprite.Height / 2);
 
-                            if (ms.LeftButton == ButtonState.Pressed && WallGrid.Tiles[index.X, index.Y].TileStates == States.Empty && WallGrid.Tiles[index.X + 1, index.Y].TileStates == States.Empty && WallGrid.Tiles[index.X, index.Y + 1].TileStates == States.Empty)
+                            if (ms.LeftButton == ButtonState.Pressed && WallGrid.Tiles[index.X, index.Y].TileStates == States.Empty && WallGrid.Tiles[index.X, index.Y + 1].TileStates == States.Empty && WallGrid.Tiles[index.X + 1, index.Y].TileStates == States.Empty)
                             {
                                 WallGrid.AddPacman(index);
                             }
@@ -499,11 +507,21 @@ namespace Pacman
 
                     if (index != new Point(-1))
                     {
+                        if (index.X == wallGridSize.X - 2)
+                        {
+                            index.X--;
+                        }
+                        if (index.Y == wallGridSize.Y - 2)
+                        {
+                            index.Y--;
+                        }
+
                         pacmanTileIcon.Position = new Vector2(PelletGrid.Tiles[index.X, index.Y].Position.X - pacmanTileIcon.Image.Width / 4, PelletGrid.Tiles[index.X, index.Y].Position.Y - pacmanTileIcon.Image.Height / 2);
+                         // pacmanTileIcon.Position = new Vector2(PelletGrid.Tiles[index.X, index.Y].Position.X - pixelVisual.EmptySprite.Width / 2, PelletGrid.Tiles[index.X, index.Y].Position.Y - pixelVisual.EmptySprite.Height / 2);
+
 
                         if (ms.LeftButton == ButtonState.Pressed && PelletGrid.Tiles[index.X, index.Y].TileStates == States.Empty)
                         {
-
                             if (PelletGrid.Tiles[index.X + 1, index.Y].TileStates == States.Empty)
                             {
                                 PelletGrid.AddPacman(index);

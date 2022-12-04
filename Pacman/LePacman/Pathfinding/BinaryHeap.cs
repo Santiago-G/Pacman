@@ -79,6 +79,11 @@ namespace LePacman.Pathfinding
             return rootVal;
         }
 
+        public T Peek()
+        {
+            return array[0];
+        }
+
         void HeapifyUp(int index)
         {
             //index * 2 

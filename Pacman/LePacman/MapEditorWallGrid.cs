@@ -156,9 +156,9 @@ namespace Pacman
                 int x = index.X;
                 int y = index.Y;
 
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < 7; i++)
                 {
-                    for (int j = 0; j < 7; j++)
+                    for (int j = 0; j < 4; j++)
                     {
                         if (Tiles[x + i, y + j].TileStates != States.Empty)
                         {
@@ -292,6 +292,7 @@ namespace Pacman
                 {
                     MapEditor.ghostChamberMS.Position = new Vector2(tile.Position.X - 13, tile.Position.Y - 13);
                     foundGhostChamber = true;
+                    MapEditor.ghostChamberPlaced = true;
                 }
                 tile.UpdateStates(true);
             }
@@ -316,7 +317,7 @@ namespace Pacman
                 }
             }
 
-            int j;
+            #region Creating Edges
             for (int x = 0; x < Tiles.GetLength(0); x++)
             {
                 for (int y = 0; y < Tiles.GetLength(1); y++)
@@ -345,8 +346,9 @@ namespace Pacman
                     }
                 }
             }
-            ;
+
             //the graph should have 3590 edges
+            #endregion
 
             foundWalls = Pathfinders.Dijkstra(graph, (Pathfinders.Dijkstra(graph, graph.vertices[0], outsideWalls, 1)).First(), outsideWalls);
 
@@ -377,22 +379,39 @@ namespace Pacman
 
             foreach (var item in possiblePortals)
             {
-                Point endPos = new Point((item.Value.X == 0) ? Tiles.GetLength(0) - 1 : 0, item.Value.Y);
+                int direction = -1;
+                int targetX;
+
+                //if (item.Value.X == Tiles.GetLength(0) - 1)
+                //{
+                //    targetX = 0;
+                //}
+                //else
+                //{
+                //    direction = 1;
+                //    targetX = Tiles.GetLength(0) - 1;
+                //}                
+                
+                targetX = item.Value.X == Tiles.GetLength(0) - 1 ? 0 : (direction = 1) * Tiles.GetLength(0) - 1;
+                ;
 
                 wallVisual currTile = Tiles[item.Value.X, item.Value.Y];
-                while (currTile.Cord != endPos)
+                while (currTile.Cord.X != targetX)
                 {
                     if (currTile.WallState.HasFlag(WallStates.OuterWall))
                     {
                         return false;
                     }
-                    currTile = Tiles[currTile.Cord.X - 1, currTile.Cord.Y];
+
+                    currTile = Tiles[currTile.Cord.X + direction, currTile.Cord.Y];
                 }
                 ;
                 if (!(Tiles[currTile.Cord.X, currTile.Cord.Y - 1].WallState.HasFlag(WallStates.OuterWall)) && !(Tiles[currTile.Cord.X, currTile.Cord.Y + 1].WallState.HasFlag(WallStates.OuterWall)))
                 {
                     return false;
                 }
+
+
             }
 
             return true;

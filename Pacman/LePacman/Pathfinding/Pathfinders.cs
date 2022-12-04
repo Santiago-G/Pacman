@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -32,6 +34,8 @@ namespace LePacman.Pathfinding
 
         public static HashSet<Vertex> Dijkstra(Graph graph, Vertex Start, HashSet<Vertex> End, int length = -1)
         {
+            int numOfJumps = 0;
+
             if (length == -1)
             {
                 length = End.Count;
@@ -57,6 +61,11 @@ namespace LePacman.Pathfinding
 
             while (endsFound < length)
             {
+                if (currVertex != null && (MathHelper.Distance(currVertex.Value.X, PriorityQueue.Peek().Value.X) > 1.1 || MathHelper.Distance(currVertex.Value.Y, PriorityQueue.Peek().Value.Y) > 1.1))
+                {
+                    numOfJumps++;
+                }
+
                 currVertex = PriorityQueue.Pop();
                 if (currVertex.Visited) 
                 {
@@ -110,6 +119,13 @@ namespace LePacman.Pathfinding
                     currVer = currVer.Founder;
                 }
             }
+
+            if (numOfJumps == 1)
+            {
+                throw new Exception("Airbag 2");
+            }
+            //fix the gap next to start thing
+
 
             return foundVertices;
         }

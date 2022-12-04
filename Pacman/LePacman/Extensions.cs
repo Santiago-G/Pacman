@@ -11,9 +11,10 @@ namespace Pacman
     {
         public static IEnumerable<T> Flatten<T>(this T[,] tiles)
         {
-            for (int x = 0; x < tiles.GetLength(0); x++)
+
+            for (int y = 0; y < tiles.GetLength(1); y++)
             {
-                for (int y = 0; y < tiles.GetLength(1); y++)
+                for (int x = 0; x < tiles.GetLength(0); x++)
                 {
                     yield return tiles[x, y];
                 }
@@ -29,14 +30,14 @@ namespace Pacman
 
             foreach (var item in items)
             {
-                if (y >= size.Y)
+                if (x >= size.X)
                 {
-                    y = 0;
-                    x++;
+                    x = 0;
+                    y++;
                 }
 
                 expandedItems[x, y] = item;
-                y++;
+                x++;
             }
 
             return expandedItems;
