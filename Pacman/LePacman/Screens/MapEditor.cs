@@ -188,6 +188,8 @@ namespace Pacman
              * IMPORTANT
              * ---------
              * 
+             * BAN DOUBLE OUTER WALLS
+             * 
              * Fix saving and loading
              * Do Delete Keybind
              * 

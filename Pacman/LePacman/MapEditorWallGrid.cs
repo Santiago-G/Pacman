@@ -110,6 +110,7 @@ namespace Pacman
             }
             else currentTile.WallState = WallStates.isWall;
 
+
             for (int i = 0; i < offsets.Length / 2; i++)
             {
                 var newPosition = new Point(tileIndex.X + offsets[i].X, tileIndex.Y + offsets[i].Y);
@@ -119,6 +120,32 @@ namespace Pacman
                 if (IsValid(newPosition) && Tiles[newPosition.X, newPosition.Y].TileStates == States.Wall)
                 {
                     currentTile.WallState |= (WallStates)Math.Pow(2, i + 1);
+                }
+            }
+
+            if (currentTile.WallState.HasFlag(WallStates.OuterWall))
+            {
+                int numOfOuterWalls = 0;
+                foreach (var neighbor in currentTile.Neighbors)
+                {
+                    numOfOuterWalls = 0;
+                    if (Tiles[neighbor.X, neighbor.Y].WallState.HasFlag(WallStates.OuterWall))
+                    {
+                        foreach (var item in Tiles[neighbor.X, neighbor.Y].Neighbors)
+                        {
+                            if (Tiles[item.X, item.Y].WallState.HasFlag(WallStates.OuterWall))
+                            {
+                                numOfOuterWalls++;
+                            }
+                        }
+
+                        if (numOfOuterWalls > 3)
+                        {
+                            fix this
+                            currentTile.WallState = WallStates.Empty;
+                            return false;
+                        }
+                    }
                 }
             }
 
@@ -303,7 +330,7 @@ namespace Pacman
             graph.Clear();
 
             HashSet<Vertex> outsideWalls = new HashSet<Vertex>();
-            HashSet<Vertex> foundWalls = new HashSet<Vertex>();
+            List<Vertex> foundWalls = new List<Vertex>();
             HashSet<Vertex> possiblePortals = new HashSet<Vertex>();
 
             foreach (var tile in Tiles)
@@ -350,8 +377,32 @@ namespace Pacman
             //the graph should have 3590 edges
             #endregion
 
-            foundWalls = Pathfinders.Dijkstra(graph, (Pathfinders.Dijkstra(graph, graph.vertices[0], outsideWalls, 1)).First(), outsideWalls);
+            foundWalls = Pathfinders.Dijkstra(graph, (Pathfinders.Dijkstra(graph, graph.vertices[0], outsideWalls, out _, out _, 1)).First(), outsideWalls, out int numOfJumps, out Vertex lastVertex);
 
+            
+            if (numOfJumps == 1)
+            {
+                return false;
+            }
+            else if (numOfJumps == 0)
+            {
+                bool noGapNearStart = false;
+                foreach (var neighbor in lastVertex.Neighbors)
+                {
+                    //7 is the min amount for a loop
+                    if (neighbor.End.DistanceFromStart < lastVertex.DistanceFromStart - 7)
+                    {
+                        noGapNearStart = true;
+                        break;
+                    }
+                }
+
+                if (!noGapNearStart)
+                {
+                    return false;
+                }
+            }
+            
 
             //check if there are gaps of 1 / 3 or more. 
             int gapNum = 0;
@@ -380,17 +431,7 @@ namespace Pacman
             foreach (var item in possiblePortals)
             {
                 int direction = -1;
-                int targetX;
-
-                //if (item.Value.X == Tiles.GetLength(0) - 1)
-                //{
-                //    targetX = 0;
-                //}
-                //else
-                //{
-                //    direction = 1;
-                //    targetX = Tiles.GetLength(0) - 1;
-                //}                
+                int targetX;            
                 
                 targetX = item.Value.X == Tiles.GetLength(0) - 1 ? 0 : (direction = 1) * Tiles.GetLength(0) - 1;
                 ;
@@ -398,20 +439,18 @@ namespace Pacman
                 wallVisual currTile = Tiles[item.Value.X, item.Value.Y];
                 while (currTile.Cord.X != targetX)
                 {
+                    currTile = Tiles[currTile.Cord.X + direction, currTile.Cord.Y];
+
                     if (currTile.WallState.HasFlag(WallStates.OuterWall))
                     {
                         return false;
                     }
-
-                    currTile = Tiles[currTile.Cord.X + direction, currTile.Cord.Y];
                 }
                 ;
                 if (!(Tiles[currTile.Cord.X, currTile.Cord.Y - 1].WallState.HasFlag(WallStates.OuterWall)) && !(Tiles[currTile.Cord.X, currTile.Cord.Y + 1].WallState.HasFlag(WallStates.OuterWall)))
                 {
                     return false;
                 }
-
-
             }
 
             return true;

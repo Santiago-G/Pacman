@@ -32,15 +32,16 @@ namespace LePacman.Pathfinding
 
         });
 
-        public static HashSet<Vertex> Dijkstra(Graph graph, Vertex Start, HashSet<Vertex> End, int length = -1)
+        public static List<Vertex> Dijkstra(Graph graph, Vertex Start, HashSet<Vertex> End, out int numOfJumps, out Vertex lastIndex, int length = -1)
         {
-            int numOfJumps = 0;
+            numOfJumps = 0;
 
             if (length == -1)
             {
                 length = End.Count;
             }
             HashSet<Vertex> foundVertices = new HashSet<Vertex>();
+            List<Vertex> orderedVertices = new List<Vertex>();
             int endsFound = 0;
 
             BinaryHeap<Vertex> PriorityQueue = new BinaryHeap<Vertex>(DijkstraComparer);
@@ -98,36 +99,30 @@ namespace LePacman.Pathfinding
                 }
             }
 
-            /* WHATS WRONG WITH THE PATHFINDING
+            lastIndex = currVertex;
 
-                Distances from start are the same when they should not be, causing multiple paths across the portals/gaps
-                likely reasons: incorrectly getting reset/set                
-            */
-
-            //loop through every outer wall
-            //go up their founders (adding them to found as you do) until you reach a known point
-            //at the beginning known point is start
-            //after the first time, every vertex you've already visited as you go up the founders is known (because they already led back to start)
-            int i = 0;
-            foreach (var wall in End)
+            if (length > 1)
             {
-                i++;
-                Vertex currVer = wall;
-                while (currVer != null && !foundVertices.Contains(currVer))
+                int i = 0;
+                foreach (var wall in End)
                 {
-                    foundVertices.Add(currVer);
-                    currVer = currVer.Founder;
+                    i++;
+                    Vertex currVer = wall;
+                    while (currVer != null && !foundVertices.Contains(currVer))
+                    {
+                        foundVertices.Add(currVer);
+                        orderedVertices.Add(currVer);
+                        currVer = currVer.Founder;
+                    }
                 }
             }
-
-            if (numOfJumps == 1)
+            else
             {
-                throw new Exception("Airbag 2");
+                orderedVertices.Add(currVertex);
+                return orderedVertices;
             }
-            //fix the gap next to start thing
 
-
-            return foundVertices;
+            return orderedVertices;
         }
     }
 }
