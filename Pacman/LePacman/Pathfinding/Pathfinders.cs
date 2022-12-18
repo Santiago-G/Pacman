@@ -32,9 +32,9 @@ namespace LePacman.Pathfinding
 
         });
 
-        public static List<Vertex> Dijkstra(Graph graph, Vertex Start, HashSet<Vertex> End, out int numOfJumps, out Vertex lastIndex, int length = -1)
+        public static List<Vertex> Dijkstra(Graph graph, Vertex Start, HashSet<Vertex> End, out List<Point> jumps, out Vertex lastIndex, int length = -1)
         {
-            numOfJumps = 0;
+            jumps = new List<Point>();
 
             if (length == -1)
             {
@@ -64,7 +64,7 @@ namespace LePacman.Pathfinding
             {
                 if (currVertex != null && (MathHelper.Distance(currVertex.Value.X, PriorityQueue.Peek().Value.X) > 1.1 || MathHelper.Distance(currVertex.Value.Y, PriorityQueue.Peek().Value.Y) > 1.1))
                 {
-                    numOfJumps++;
+                    jumps.Add(new Point(currVertex.Value.X, currVertex.Value.Y));
                 }
 
                 currVertex = PriorityQueue.Pop();

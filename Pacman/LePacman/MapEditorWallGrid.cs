@@ -312,16 +312,19 @@ namespace Pacman
             }
         }
 
-        public bool OuterWallsValidity()
+        public List<wallVisual> FindInvalidOuterWalls()
         {
+            #region Set Up
             graph.Clear();
 
+            List<wallVisual> result = new List<wallVisual>();
             HashSet<Vertex> outsideWalls = new HashSet<Vertex>();
             List<Vertex> foundWalls = new List<Vertex>();
             HashSet<Vertex> possiblePortals = new HashSet<Vertex>();
 
             foreach (var tile in Tiles)
             {
+                tile.Tint = Color.White;
                 Vertex newVert = new Vertex(tile.Cord);
                 graph.AddVertex(newVert);
                 if (tile.WallState.HasFlag(WallStates.OuterWall))
@@ -364,64 +367,81 @@ namespace Pacman
             //the graph should have 3590 edges
             #endregion
 
-            foundWalls = Pathfinders.Dijkstra(graph, (Pathfinders.Dijkstra(graph, graph.vertices[0], outsideWalls, out _, out _, 1)).First(), outsideWalls, out int numOfJumps, out Vertex lastVertex);
+            #endregion
 
-            
-            if (numOfJumps == 1)
+            Vertex startingVertex = (Pathfinders.Dijkstra(graph, graph.vertices[0], outsideWalls, out _, out _, 1)).First();
+
+            foundWalls = Pathfinders.Dijkstra(graph, startingVertex, outsideWalls, out List<Point> jumps, out Vertex lastVertex);
+
+            if (jumps.Count == 1)
             {
-                return false;
+                result.Add(Tiles[jumps.First().X, jumps.First().Y]);
             }
-            else if (numOfJumps == 0)
+            else if (jumps.Count == 0)
             {
-                bool noGapNearStart = false;
+                bool normalConnections = true;
                 foreach (var neighbor in lastVertex.Neighbors)
                 {
                     //7 is the min amount for a loop
-                    if (neighbor.End.DistanceFromStart < lastVertex.DistanceFromStart - 7)
-                    {
-                        noGapNearStart = true;
-                        break;
-                    }
+                    normalConnections &= (float.IsInfinity(neighbor.End.DistanceFromStart) || 7 <= Math.Abs(lastVertex.DistanceFromStart - Math.Abs(neighbor.End.DistanceFromStart)));
                 }
 
-                if (!noGapNearStart)
+                if (normalConnections) 
                 {
-                    return false;
+                    float increment, s = increment = 1/ Vector2.Distance(lastVertex.Value.ToVector2(), startingVertex.Value.ToVector2());
+
+                    Vector2 lastVertexV2 = lastVertex.Value.ToVector2();
+                    Vector2 startingVertexV2 = startingVertex.Value.ToVector2();
+
+                    while (s < 1)
+                    {
+                        int x = (int)Vector2.Lerp(lastVertexV2, startingVertexV2, s).X;
+                        int y = (int)Vector2.Lerp(lastVertexV2, startingVertexV2, s).Y;
+
+                        if (!Tiles[x, y].WallState.HasFlag(WallStates.OuterWall))
+                        {
+                            result.Add(Tiles[x, y]);
+                        }
+                        s += increment;
+                    }
                 }
             }
             
-
             //check if there are gaps of 1 / 3 or more. 
             int gapNum = 0;
+            Point gapPosition = new Point();
             foreach (var item in foundWalls)
             {
                 if (!Tiles[item.Value.X, item.Value.Y].WallState.HasFlag(WallStates.OuterWall))
                 {
                     gapNum++;
+                    gapPosition = item.Value;
                     possiblePortals.Add(item);
-                    Tiles[item.Value.X, item.Value.Y].Tint = Color.Green;
                 }
                 else 
                 {
-                    Tiles[item.Value.X, item.Value.Y].Tint = Color.Green;
-                    if (gapNum != 0 && gapNum != 2) 
-                        return false;
-                    Tiles[item.Value.X, item.Value.Y].Tint = Color.Red;
+                    if (gapNum != 0 && gapNum != 2)
+                    {
+                        result.Add(Tiles[item.Value.X, item.Value.Y]);
+                    }
+                        
                     gapNum = 0;
                 }
-
-                
             }
 
-            if (gapNum != 0 && gapNum != 2) 
-                return false;
+            if (gapNum != 0 && gapNum != 2)
+            {
+                result.Add(Tiles[gapPosition.X, gapPosition.Y]);
+            }
 
+            bool validPortal = false; 
             foreach (var item in possiblePortals)
             {
                 int direction = -1;
                 
                 if (item.Value.X == 0 || item.Value.X == Tiles.GetLength(0) - 1)
                 {
+                    validPortal = true;
                     int targetX;
                     targetX = item.Value.X == Tiles.GetLength(0) - 1 ? 0 : (direction = 1) * Tiles.GetLength(0) - 1;
 
@@ -432,17 +452,20 @@ namespace Pacman
 
                         if (currTile.WallState.HasFlag(WallStates.OuterWall))
                         {
-                            return false;
+                            result.Add(Tiles[currTile.Cord.X, currTile.Cord.Y]);
                         }
                     }
                     ;
                     if (!(Tiles[currTile.Cord.X, currTile.Cord.Y - 1].WallState.HasFlag(WallStates.OuterWall)) && !(Tiles[currTile.Cord.X, currTile.Cord.Y + 1].WallState.HasFlag(WallStates.OuterWall)))
                     {
-                        return false;
+                        result.Add(Tiles[currTile.Cord.X, currTile.Cord.Y]);
+                        result.Add(Tiles[currTile.Cord.X, currTile.Cord.Y - 1]);
+                        result.Add(Tiles[currTile.Cord.X, currTile.Cord.Y + 1]);
                     }
                 }
-                else
+                else if(item.Value.Y == 0 || item.Value.Y == Tiles.GetLength(1) - 1)
                 {
+                    validPortal = true;
                     int targetY;
                     targetY = item.Value.Y == Tiles.GetLength(1) - 1 ? 0 : (direction = 1) * Tiles.GetLength(1) - 1;
 
@@ -453,18 +476,35 @@ namespace Pacman
 
                         if (currTile.WallState.HasFlag(WallStates.OuterWall))
                         {
-                            return false;
+                            result.Add(Tiles[currTile.Cord.X, currTile.Cord.Y]);
                         }
                     }
                     ;
                     if (!(Tiles[currTile.Cord.X - 1, currTile.Cord.Y].WallState.HasFlag(WallStates.OuterWall)) && !(Tiles[currTile.Cord.X + 1, currTile.Cord.Y].WallState.HasFlag(WallStates.OuterWall)))
                     {
-                        return false;
+                        result.Add(Tiles[currTile.Cord.X, currTile.Cord.Y]);
+                        result.Add(Tiles[currTile.Cord.X - 1, currTile.Cord.Y]); 
+                        result.Add(Tiles[currTile.Cord.X + 1, currTile.Cord.Y]);
+                    }
+                }
+
+                if (!validPortal) 
+                {
+                    bool test = false;
+                    foreach (var wall in possiblePortals)
+                    {
+                        result.Add(Tiles[wall.Value.X, wall.Value.Y]);
+                        test = true;
+                    }
+
+                    if (test)
+                    {
+                        ;
                     }
                 }
             }
 
-            return true;
+            return result;
         }
 
         public int getWeight(wallVisual ab, wallVisual ba)

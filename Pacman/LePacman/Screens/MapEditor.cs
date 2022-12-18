@@ -185,7 +185,7 @@ namespace Pacman
             KeyboardState kb = Keyboard.GetState();
 
 
-            CircleF outer wall breaks
+            //CircleF outer wall breaks
 
             /* TO DO LIST
              * 
@@ -462,10 +462,16 @@ namespace Pacman
 
                     if (generatePortalButton.IsClicked(ms))
                     {
-                        bool pleaseWork = WallGrid.OuterWallsValidity();
-                        if (!pleaseWork)
+                        List<wallVisual> invalidOuterWalls = WallGrid.FindInvalidOuterWalls();
+
+                        if (invalidOuterWalls.Count > 0)
                         {
-                            throw new Exception("Airbag");
+                            foreach (var outerWall in invalidOuterWalls)
+                            {
+                                outerWall.Tint = Color.Red;
+                            }
+
+                            //throw new Exception("Airbag");
                         }
                     }
                 }
