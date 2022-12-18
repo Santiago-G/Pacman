@@ -53,6 +53,38 @@ namespace Pacman
 
         public wallData Data { get; set; } = new wallData();
 
+        public int OuterWallNeighborCount(wallVisual[,] Tiles, bool countDiaganals)
+        {
+            int numOfNeighboringOWs = 0;
+            int maxCount = Neighbors.Length;
+
+            if (!countDiaganals) maxCount = 4;
+
+            if (/*isValidPostion(Cord, Tiles) &&*/ WallState.HasFlag(WallStates.OuterWall))
+            {
+                for (int i = 0; i < maxCount; i++)
+                {
+                    if (!isValidPostion(Neighbors[i], Tiles)) continue;
+                    
+                    if (Tiles[Neighbors[i].X, Neighbors[i].Y].WallState.HasFlag(WallStates.OuterWall))
+                    { 
+                        numOfNeighboringOWs += 1;
+                    }
+                }
+            }
+
+            return numOfNeighboringOWs;
+        }
+
+        private bool isValidPostion(Point Cord, wallVisual[,] Tiles)
+        {
+            return isValidPostion(Cord.ToVector2(), Tiles);
+        }
+        private bool isValidPostion(Vector2 Cord, wallVisual[,] Tiles)
+        {
+            return !(Cord.X < 0 || Cord.Y < 0 || Cord.X >= Tiles.GetLength(0) || Cord.Y >= Tiles.GetLength(1));
+        }
+
         protected override AbstractData data { get => Data; set { Data = (wallData)value; } }
 
         public WallStates WallState
@@ -245,7 +277,7 @@ namespace Pacman
                         Rotation = 0;
                         break;
 
-                    
+
                     case WallStates.TopLeftIntersectingOW:
                         CurrentImage = EdgeIntersectingOuterWall;
                         Rotation = (float)(Math.PI * .5);

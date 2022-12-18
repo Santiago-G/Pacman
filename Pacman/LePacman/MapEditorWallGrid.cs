@@ -9,6 +9,7 @@ using System.Net.NetworkInformation;
 using System.Diagnostics.SymbolStore;
 using System.Runtime.ExceptionServices;
 using LePacman.Pathfinding;
+using System.Diagnostics.Metrics;
 
 namespace Pacman
 {
@@ -125,26 +126,12 @@ namespace Pacman
 
             if (currentTile.WallState.HasFlag(WallStates.OuterWall))
             {
-                int numOfOuterWalls = 0;
                 foreach (var neighbor in currentTile.Neighbors)
                 {
-                    numOfOuterWalls = 0;
-                    if (Tiles[neighbor.X, neighbor.Y].WallState.HasFlag(WallStates.OuterWall))
+                    if (IsValid(neighbor) && Tiles[neighbor.X, neighbor.Y].OuterWallNeighborCount(Tiles, false) > 2)
                     {
-                        foreach (var item in Tiles[neighbor.X, neighbor.Y].Neighbors)
-                        {
-                            if (Tiles[item.X, item.Y].WallState.HasFlag(WallStates.OuterWall))
-                            {
-                                numOfOuterWalls++;
-                            }
-                        }
-
-                        if (numOfOuterWalls > 3)
-                        {
-                            fix this
-                            currentTile.WallState = WallStates.Empty;
-                            return false;
-                        }
+                        currentTile.WallState = WallStates.Empty;
+                        return false;
                     }
                 }
             }
@@ -416,9 +403,10 @@ namespace Pacman
                 }
                 else 
                 {
-                    Tiles[item.Value.X, item.Value.Y].Tint = Color.Red;
+                    Tiles[item.Value.X, item.Value.Y].Tint = Color.Green;
                     if (gapNum != 0 && gapNum != 2) 
                         return false;
+                    Tiles[item.Value.X, item.Value.Y].Tint = Color.Red;
                     gapNum = 0;
                 }
 
@@ -431,25 +419,48 @@ namespace Pacman
             foreach (var item in possiblePortals)
             {
                 int direction = -1;
-                int targetX;            
                 
-                targetX = item.Value.X == Tiles.GetLength(0) - 1 ? 0 : (direction = 1) * Tiles.GetLength(0) - 1;
-                ;
-
-                wallVisual currTile = Tiles[item.Value.X, item.Value.Y];
-                while (currTile.Cord.X != targetX)
+                if (item.Value.X == 0 || item.Value.X == Tiles.GetLength(0) - 1)
                 {
-                    currTile = Tiles[currTile.Cord.X + direction, currTile.Cord.Y];
+                    int targetX;
+                    targetX = item.Value.X == Tiles.GetLength(0) - 1 ? 0 : (direction = 1) * Tiles.GetLength(0) - 1;
 
-                    if (currTile.WallState.HasFlag(WallStates.OuterWall))
+                    wallVisual currTile = Tiles[item.Value.X, item.Value.Y];
+                    while (currTile.Cord.X != targetX)
+                    {
+                        currTile = Tiles[currTile.Cord.X + direction, currTile.Cord.Y];
+
+                        if (currTile.WallState.HasFlag(WallStates.OuterWall))
+                        {
+                            return false;
+                        }
+                    }
+                    ;
+                    if (!(Tiles[currTile.Cord.X, currTile.Cord.Y - 1].WallState.HasFlag(WallStates.OuterWall)) && !(Tiles[currTile.Cord.X, currTile.Cord.Y + 1].WallState.HasFlag(WallStates.OuterWall)))
                     {
                         return false;
                     }
                 }
-                ;
-                if (!(Tiles[currTile.Cord.X, currTile.Cord.Y - 1].WallState.HasFlag(WallStates.OuterWall)) && !(Tiles[currTile.Cord.X, currTile.Cord.Y + 1].WallState.HasFlag(WallStates.OuterWall)))
+                else
                 {
-                    return false;
+                    int targetY;
+                    targetY = item.Value.Y == Tiles.GetLength(1) - 1 ? 0 : (direction = 1) * Tiles.GetLength(1) - 1;
+
+                    wallVisual currTile = Tiles[item.Value.X, item.Value.Y];
+                    while (currTile.Cord.Y != targetY)
+                    {
+                        currTile = Tiles[currTile.Cord.X, currTile.Cord.Y + direction];
+
+                        if (currTile.WallState.HasFlag(WallStates.OuterWall))
+                        {
+                            return false;
+                        }
+                    }
+                    ;
+                    if (!(Tiles[currTile.Cord.X - 1, currTile.Cord.Y].WallState.HasFlag(WallStates.OuterWall)) && !(Tiles[currTile.Cord.X + 1, currTile.Cord.Y].WallState.HasFlag(WallStates.OuterWall)))
+                    {
+                        return false;
+                    }
                 }
             }
 

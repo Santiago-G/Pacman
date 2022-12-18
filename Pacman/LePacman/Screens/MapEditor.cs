@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using MonoGame.Extended;
 
 namespace Pacman
 {
@@ -183,12 +184,16 @@ namespace Pacman
             MouseState ms = Mouse.GetState();
             KeyboardState kb = Keyboard.GetState();
 
+
+            CircleF outer wall breaks
+
             /* TO DO LIST
              * 
              * IMPORTANT
              * ---------
              * 
-             * BAN DOUBLE OUTER WALLS
+             * CIRCLE OUTER WALL BREAKS
+             * 
              * 
              * Fix saving and loading
              * Do Delete Keybind
