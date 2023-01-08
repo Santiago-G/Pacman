@@ -205,6 +205,20 @@
 /processorParam:TextureFormat=Color
 /build:eraserButton.png
 
+#begin ErrorBodyText.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ErrorBodyText.spritefont
+
+#begin ErrorHeaderFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ErrorHeaderFont.spritefont
+
 #begin examplesong.mp3
 /importer:Mp3Importer
 /processor:SongProcessor
@@ -432,6 +446,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:outerWallButton.png
+
+#begin outerWallErrorMSGBG.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:outerWallErrorMSGBG.png
 
 #begin pacManButton.png
 /importer:TextureImporter

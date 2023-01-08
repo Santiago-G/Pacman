@@ -66,6 +66,10 @@ namespace Pacman
         Texture2D portalButtonSprite;
         Button generatePortalButton;
 
+        Texture2D OuterWallErrorBackground;
+        SpriteFont errorHeaderFont;
+        SpriteFont errorBodyFont;
+        PopUp OWErrorMessage;
 
         public MapEditor((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
@@ -124,6 +128,12 @@ namespace Pacman
             generatePortalButton = new Button(portalButtonSprite, new Vector2(1000, 900), Color.White);
             objects.Add(generatePortalButton);
 
+            OuterWallErrorBackground = Content.Load<Texture2D>("outerWallErrorMSGBG");
+            errorHeaderFont = Content.Load<SpriteFont>("ErrorHeaderFont");
+            errorBodyFont = Content.Load<SpriteFont>("ErrorBodyText");
+            OWErrorMessage = new PopUp(OuterWallErrorBackground, new Vector2(500), Color.White, errorHeaderFont, errorBodyFont, "15 Step", "Fraust Arp", new Vector2(10, 30), new Vector2(40, 30));
+            OWErrorMessage.setVisable(true);
+            objects.Add(OWErrorMessage);
             //ADD THING THAT IF SELECTED ONLY DRAWS OVER BLANK TILES
 
             pixelVisual.EmptySprite = Content.Load<Texture2D>("emptyPelletTile");

@@ -373,9 +373,22 @@ namespace Pacman
 
             foundWalls = Pathfinders.Dijkstra(graph, startingVertex, outsideWalls, out List<Point> jumps, out Vertex lastVertex);
 
+
+            //There is only 1 gap (that's not near the top left of the map)
             if (jumps.Count == 1)
             {
-                result.Add(Tiles[jumps.First().X, jumps.First().Y]);
+                //ERROR: only one hole, either cover it or make another hole on the other side
+                ;
+                if (Tiles[jumps.First().X, jumps.First().Y - 3].WallState.HasFlag(WallStates.OuterWall))
+                {
+                    result.Add(Tiles[jumps.First().X, jumps.First().Y - 1]);
+                    result.Add(Tiles[jumps.First().X, jumps.First().Y - 2]);
+                }
+                else 
+                {
+                    result.Add(Tiles[jumps.First().X, jumps.First().Y + 1]);
+                    result.Add(Tiles[jumps.First().X, jumps.First().Y + 2]);
+                }
             }
             else if (jumps.Count == 0)
             {
@@ -386,8 +399,11 @@ namespace Pacman
                     normalConnections &= (float.IsInfinity(neighbor.End.DistanceFromStart) || 7 <= Math.Abs(lastVertex.DistanceFromStart - Math.Abs(neighbor.End.DistanceFromStart)));
                 }
 
+                //There is a gap near spawn that has no countepart.
                 if (normalConnections) 
                 {
+                    //ERROR: same as the one above
+                    ;
                     float increment, s = increment = 1/ Vector2.Distance(lastVertex.Value.ToVector2(), startingVertex.Value.ToVector2());
 
                     Vector2 lastVertexV2 = lastVertex.Value.ToVector2();
@@ -407,30 +423,32 @@ namespace Pacman
                 }
             }
             
-            //check if there are gaps of 1 / 3 or more. 
-            int gapNum = 0;
+            //Checking is there are any invalid gaps (Sizes other than 2)
+            int gapCounter = 0;
             Point gapPosition = new Point();
             foreach (var item in foundWalls)
             {
                 if (!Tiles[item.Value.X, item.Value.Y].WallState.HasFlag(WallStates.OuterWall))
                 {
-                    gapNum++;
+                    gapCounter++;
                     gapPosition = item.Value;
                     possiblePortals.Add(item);
                 }
                 else 
                 {
-                    if (gapNum != 0 && gapNum != 2)
+                    if (gapCounter != 0 && gapCounter != 2)
                     {
+                        //ERROR: There is an invalid portal! (Portals have to be a size of 2)
                         result.Add(Tiles[item.Value.X, item.Value.Y]);
                     }
-                        
-                    gapNum = 0;
+
+                    gapCounter = 0;
                 }
             }
 
-            if (gapNum != 0 && gapNum != 2)
+            if (gapCounter != 0 && gapCounter != 2)
             {
+                //ERROR: There is an invalid portal! (Portals have to be a size of 2)
                 result.Add(Tiles[gapPosition.X, gapPosition.Y]);
             }
 
