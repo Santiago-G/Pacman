@@ -65,9 +65,9 @@ namespace Pacman
                 for (int i = 0; i < maxCount; i++)
                 {
                     if (!isValidPostion(Neighbors[i], Tiles)) continue;
-                    
+
                     if (Tiles[Neighbors[i].X, Neighbors[i].Y].WallState.HasFlag(WallStates.OuterWall))
-                    { 
+                    {
                         numOfNeighboringOWs += 1;
                     }
                 }
@@ -109,6 +109,10 @@ namespace Pacman
             {
                 CurrentImage = EmptySprite;
                 PrevImage = HLEmptySprite;
+            }
+            else if (Data.TileStates == States.Error)
+            {
+                //me when i
             }
             else if (Data.TileStates == States.Occupied || Data.TileStates == States.GhostChamber || Data.TileStates == States.Pacman)
             {
@@ -331,7 +335,6 @@ namespace Pacman
                         Rotation = 0;
                         break;
                         #endregion
-
                         #endregion
                 }
             }

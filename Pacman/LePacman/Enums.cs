@@ -104,6 +104,7 @@ namespace Pacman
         Wall,
         GhostChamber,
         Pacman,
+        Error
     }
 
     public enum GridStates

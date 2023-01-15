@@ -312,15 +312,18 @@ namespace Pacman
             }
         }
 
-        public List<wallVisual> FindInvalidOuterWalls()
+        public List<(string ErrorMsg, List<wallVisual> InvalidTiles)> FindInvalidOuterWalls()
         {
             #region Set Up
             graph.Clear();
 
-            List<wallVisual> result = new List<wallVisual>();
+            List<(string, List<wallVisual>)> result = new List<(string, List<wallVisual>)>();
             HashSet<Vertex> outsideWalls = new HashSet<Vertex>();
             List<Vertex> foundWalls = new List<Vertex>();
             HashSet<Vertex> possiblePortals = new HashSet<Vertex>();
+            bool containsOuterWalls = false;
+            string currErrorMsg = "";
+
 
             foreach (var tile in Tiles)
             {
@@ -329,9 +332,15 @@ namespace Pacman
                 graph.AddVertex(newVert);
                 if (tile.WallState.HasFlag(WallStates.OuterWall))
                 {
+                    containsOuterWalls = true;
                     newVert.isOuterWall = true;
                     outsideWalls.Add(newVert);
                 }
+            }
+
+            if (!containsOuterWalls)
+            {
+                return result;
             }
 
             #region Creating Edges
@@ -377,17 +386,16 @@ namespace Pacman
             //There is only 1 gap (that's not near the top left of the map)
             if (jumps.Count == 1)
             {
+                currErrorMsg = "Invalid! No counterpart found";
                 //ERROR: only one hole, either cover it or make another hole on the other side
                 ;
                 if (Tiles[jumps.First().X, jumps.First().Y - 3].WallState.HasFlag(WallStates.OuterWall))
                 {
-                    result.Add(Tiles[jumps.First().X, jumps.First().Y - 1]);
-                    result.Add(Tiles[jumps.First().X, jumps.First().Y - 2]);
+                    result.Add((currErrorMsg, new List<wallVisual>() { Tiles[jumps.First().X, jumps.First().Y - 1], Tiles[jumps.First().X, jumps.First().Y - 2] }));
                 }
-                else 
+                else
                 {
-                    result.Add(Tiles[jumps.First().X, jumps.First().Y + 1]);
-                    result.Add(Tiles[jumps.First().X, jumps.First().Y + 2]);
+                    result.Add((currErrorMsg, new List<wallVisual>() { Tiles[jumps.First().X, jumps.First().Y + 1], Tiles[jumps.First().X, jumps.First().Y + 2] }));
                 }
             }
             else if (jumps.Count == 0)
@@ -400,11 +408,10 @@ namespace Pacman
                 }
 
                 //There is a gap near spawn that has no countepart.
-                if (normalConnections) 
+                if (normalConnections)
                 {
-                    //ERROR: same as the one above
                     ;
-                    float increment, s = increment = 1/ Vector2.Distance(lastVertex.Value.ToVector2(), startingVertex.Value.ToVector2());
+                    float increment, s = increment = 1 / Vector2.Distance(lastVertex.Value.ToVector2(), startingVertex.Value.ToVector2());
 
                     Vector2 lastVertexV2 = lastVertex.Value.ToVector2();
                     Vector2 startingVertexV2 = startingVertex.Value.ToVector2();
@@ -416,16 +423,17 @@ namespace Pacman
 
                         if (!Tiles[x, y].WallState.HasFlag(WallStates.OuterWall))
                         {
-                            result.Add(Tiles[x, y]);
+                            result.Add(("Invalid! No counterpart found", new List<wallVisual>() { Tiles[x, y] }));
                         }
                         s += increment;
                     }
                 }
             }
-            
+
             //Checking is there are any invalid gaps (Sizes other than 2)
             int gapCounter = 0;
             Point gapPosition = new Point();
+            currErrorMsg = "There is an invalid portal! (Portals have to be a size of 2)";
             foreach (var item in foundWalls)
             {
                 if (!Tiles[item.Value.X, item.Value.Y].WallState.HasFlag(WallStates.OuterWall))
@@ -434,12 +442,20 @@ namespace Pacman
                     gapPosition = item.Value;
                     possiblePortals.Add(item);
                 }
-                else 
+                else
                 {
                     if (gapCounter != 0 && gapCounter != 2)
                     {
                         //ERROR: There is an invalid portal! (Portals have to be a size of 2)
-                        result.Add(Tiles[item.Value.X, item.Value.Y]);
+                        if (Tiles[item.Value.X, item.Value.Y - 2].WallState.HasFlag(WallStates.OuterWall))
+                        {
+                            result.Add((currErrorMsg, new List<wallVisual>() { Tiles[item.Value.X, item.Value.Y - 1] }));
+                        }
+                        else
+                        {
+                            result.Add((currErrorMsg, new List<wallVisual>() { Tiles[item.Value.X, item.Value.Y + 1] }));
+                        }
+                        
                     }
 
                     gapCounter = 0;
@@ -449,14 +465,15 @@ namespace Pacman
             if (gapCounter != 0 && gapCounter != 2)
             {
                 //ERROR: There is an invalid portal! (Portals have to be a size of 2)
-                result.Add(Tiles[gapPosition.X, gapPosition.Y]);
+                result.Add((currErrorMsg, new List<wallVisual>() { Tiles[gapPosition.X, gapPosition.Y] }));
             }
 
-            bool validPortal = false; 
+            bool validPortal = false;
+
             foreach (var item in possiblePortals)
             {
                 int direction = -1;
-                
+
                 if (item.Value.X == 0 || item.Value.X == Tiles.GetLength(0) - 1)
                 {
                     validPortal = true;
@@ -464,60 +481,54 @@ namespace Pacman
                     targetX = item.Value.X == Tiles.GetLength(0) - 1 ? 0 : (direction = 1) * Tiles.GetLength(0) - 1;
 
                     wallVisual currTile = Tiles[item.Value.X, item.Value.Y];
+                    currErrorMsg = "Invalid outer wall found!";
                     while (currTile.Cord.X != targetX)
                     {
                         currTile = Tiles[currTile.Cord.X + direction, currTile.Cord.Y];
 
                         if (currTile.WallState.HasFlag(WallStates.OuterWall))
                         {
-                            result.Add(Tiles[currTile.Cord.X, currTile.Cord.Y]);
+                            result.Add((currErrorMsg, new List<wallVisual>() { Tiles[currTile.Cord.X, currTile.Cord.Y] }));
                         }
                     }
-                    ;
+
+                    currErrorMsg = "There is an invalid portal! (Portals have to be a slize of 2)";
                     if (!(Tiles[currTile.Cord.X, currTile.Cord.Y - 1].WallState.HasFlag(WallStates.OuterWall)) && !(Tiles[currTile.Cord.X, currTile.Cord.Y + 1].WallState.HasFlag(WallStates.OuterWall)))
                     {
-                        result.Add(Tiles[currTile.Cord.X, currTile.Cord.Y]);
-                        result.Add(Tiles[currTile.Cord.X, currTile.Cord.Y - 1]);
-                        result.Add(Tiles[currTile.Cord.X, currTile.Cord.Y + 1]);
+                        result.Add((currErrorMsg, new List<wallVisual>() { Tiles[currTile.Cord.X, currTile.Cord.Y], Tiles[currTile.Cord.X, currTile.Cord.Y - 1], Tiles[currTile.Cord.X, currTile.Cord.Y + 1] }));
                     }
                 }
-                else if(item.Value.Y == 0 || item.Value.Y == Tiles.GetLength(1) - 1)
+                else if (item.Value.Y == 0 || item.Value.Y == Tiles.GetLength(1) - 1)
                 {
                     validPortal = true;
                     int targetY;
                     targetY = item.Value.Y == Tiles.GetLength(1) - 1 ? 0 : (direction = 1) * Tiles.GetLength(1) - 1;
 
                     wallVisual currTile = Tiles[item.Value.X, item.Value.Y];
+                    currErrorMsg = "Invalid outer wall found!";
                     while (currTile.Cord.Y != targetY)
                     {
                         currTile = Tiles[currTile.Cord.X, currTile.Cord.Y + direction];
 
                         if (currTile.WallState.HasFlag(WallStates.OuterWall))
                         {
-                            result.Add(Tiles[currTile.Cord.X, currTile.Cord.Y]);
+                            result.Add((currErrorMsg, new List<wallVisual>() { Tiles[currTile.Cord.X, currTile.Cord.Y] }));
                         }
                     }
                     ;
                     if (!(Tiles[currTile.Cord.X - 1, currTile.Cord.Y].WallState.HasFlag(WallStates.OuterWall)) && !(Tiles[currTile.Cord.X + 1, currTile.Cord.Y].WallState.HasFlag(WallStates.OuterWall)))
                     {
-                        result.Add(Tiles[currTile.Cord.X, currTile.Cord.Y]);
-                        result.Add(Tiles[currTile.Cord.X - 1, currTile.Cord.Y]); 
-                        result.Add(Tiles[currTile.Cord.X + 1, currTile.Cord.Y]);
+                        result.Add((currErrorMsg, new List<wallVisual>() { Tiles[currTile.Cord.X, currTile.Cord.Y], Tiles[currTile.Cord.X - 1, currTile.Cord.Y], Tiles[currTile.Cord.X + 1, currTile.Cord.Y] }));
                     }
                 }
 
-                if (!validPortal) 
+                if (!validPortal)
                 {
                     bool test = false;
                     foreach (var wall in possiblePortals)
                     {
-                        result.Add(Tiles[wall.Value.X, wall.Value.Y]);
+                        //result.Add(Tiles[wall.Value.X, wall.Value.Y]);
                         test = true;
-                    }
-
-                    if (test)
-                    {
-                        ;
                     }
                 }
             }

@@ -70,6 +70,11 @@ namespace Pacman
         SpriteFont errorHeaderFont;
         SpriteFont errorBodyFont;
         PopUp OWErrorMessage;
+        List<wallVisual> invalidTiles = new List<wallVisual>();
+
+        Texture2D emptyWallError;
+        Texture2D singleOWError;
+
 
         public MapEditor((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
@@ -131,9 +136,14 @@ namespace Pacman
             OuterWallErrorBackground = Content.Load<Texture2D>("outerWallErrorMSGBG");
             errorHeaderFont = Content.Load<SpriteFont>("ErrorHeaderFont");
             errorBodyFont = Content.Load<SpriteFont>("ErrorBodyText");
-            OWErrorMessage = new PopUp(OuterWallErrorBackground, new Vector2(500), Color.White, errorHeaderFont, errorBodyFont, "15 Step", "Fraust Arp", new Vector2(10, 30), new Vector2(40, 30));
-            OWErrorMessage.setVisable(true);
+            OWErrorMessage = new PopUp(OuterWallErrorBackground, new Vector2(500), Color.White, errorHeaderFont, errorBodyFont, "15 Step", "Fraust Arp");
+            OWErrorMessage.setVisable(false);
+            OWErrorMessage.setHeaderText("Error");
             objects.Add(OWErrorMessage);
+
+            emptyWallError = Content.Load<Texture2D>("errorEmptyTile");
+            singleOWError = Content.Load<Texture2D>("middleOWError");
+
             //ADD THING THAT IF SELECTED ONLY DRAWS OVER BLANK TILES
 
             pixelVisual.EmptySprite = Content.Load<Texture2D>("emptyPelletTile");
@@ -189,6 +199,36 @@ namespace Pacman
         }
 
         MouseState prevms;
+
+        private void deselectWallButtons()
+        {
+            selectedTileType = SelectedType.Default;
+
+            wallButton.Image = wallButtonSprite;
+            pelletButton.Image = pelletButtonSprite;
+            eraserButton.Image = eraserButtonSprite;
+            powerPelletButton.Image = powerPelletButtonSprite;
+            outerWallButton.Image = outerWallButtonSprite;
+
+            if (selectedPacman)
+            {
+                pacmanPlacementButton.Image = pmPlacementSprite;
+                pacmanPlacementButton.Tint = Color.White;
+                pacmanTileIcon.Position = new Vector2(-200);
+                selectedPacman = false;
+            }
+        }
+
+        private void deselectPelletButtons()
+        {
+            selectedTileType = SelectedType.Default;
+
+            pelletButton.Image = pelletButtonSprite;
+            eraserButton.Image = eraserButtonSprite;
+            powerPelletButton.Image = powerPelletButtonSprite;
+            wallButton.Image = wallButtonSprite;
+        }
+
         public override void Update(GameTime gameTime)
         {
             MouseState ms = Mouse.GetState();
@@ -228,6 +268,27 @@ namespace Pacman
              * Maybe have a finished view? (without grayed out tiles and borders)
              * 
              */
+
+            if (OWErrorMessage.isVisable())
+            {
+                OWErrorMessage.Update(gameTime);
+
+                if (!OWErrorMessage.isVisable())
+                {
+                    foreach (var wall in invalidTiles)
+                    {
+                        if (wall.WallState == WallStates.Empty)
+                        {
+                            wall.TileStates = States.Empty;
+                            wall.UpdateStates();
+                        }
+                    }
+
+                    invalidTiles.Clear();
+                }
+
+                return;
+            }
 
             #region Saving and Loading
 
@@ -329,7 +390,7 @@ namespace Pacman
                     pelletButton.Tint = Color.White;
                 }
             }
-            
+
             if (currentGridState == GridStates.WallGrid)
             {
                 if (selectedGhostChamber)
@@ -371,13 +432,10 @@ namespace Pacman
                     {
                         if (selectedTileType != SelectedType.Wall)
                         {
+                            deselectWallButtons();
+
                             selectedTileType = SelectedType.Wall;
                             wallButton.Image = selectedWallSprite;
-
-                            pelletButton.Image = pelletButtonSprite;
-                            eraserButton.Image = eraserButtonSprite;
-                            powerPelletButton.Image = powerPelletButtonSprite;
-                            outerWallButton.Image = outerWallButtonSprite;
 
                             if (!pacmanPlaced)
                             {
@@ -397,13 +455,10 @@ namespace Pacman
                     {
                         if (selectedTileType != SelectedType.OuterWall)
                         {
+                            deselectWallButtons();
+
                             selectedTileType = SelectedType.OuterWall;
                             outerWallButton.Image = selectedOuterWallSprite;
-
-                            wallButton.Image = wallButtonSprite;
-                            pelletButton.Image = pelletButtonSprite;
-                            eraserButton.Image = eraserButtonSprite;
-                            powerPelletButton.Image = powerPelletButtonSprite;
 
                             if (!pacmanPlaced)
                             {
@@ -412,7 +467,7 @@ namespace Pacman
                                 pacmanTileIcon.Position = new Vector2(-200);
                             }
                         }
-                        else 
+                        else
                         {
                             selectedTileType = SelectedType.Default;
                             outerWallButton.Image = outerWallButtonSprite;
@@ -421,10 +476,7 @@ namespace Pacman
 
                     if (!ghostChamberPlaced && ghostChamberButton.IsClicked(ms))
                     {
-                        selectedTileType = SelectedType.Default;
-                        wallButton.Image = wallButtonSprite;
-                        eraserButton.Image = eraserButtonSprite;
-                        outerWallButton.Image = outerWallButtonSprite;
+                        deselectWallButtons();
 
                         selectedGhostChamber = true;
                         ghostChamberButton.Tint = Color.Gray;
@@ -472,17 +524,43 @@ namespace Pacman
 
                     if (generatePortalButton.IsClicked(ms))
                     {
-                        List<wallVisual> invalidOuterWalls = WallGrid.FindInvalidOuterWalls();
+                        var result = WallGrid.FindInvalidOuterWalls();
 
-                        if (invalidOuterWalls.Count > 0)
+                        if (result.Count == 0)
                         {
-                            foreach (var outerWall in invalidOuterWalls)
-                            {
-                                outerWall.Tint = Color.Red;
-                            }
-
-                            //throw new Exception("Airbag");
+                            //print msg that says everything is valid
+                            return;
                         }
+
+                        deselectWallButtons();
+                        OWErrorMessage.setVisable(true);
+
+                        foreach (var error in result)
+                        {
+                            OWErrorMessage.setBodyText(error.ErrorMsg);
+                            OWErrorMessage.setPosition(error.InvalidTiles.First().Position);
+
+                            foreach (var invalidTile in error.InvalidTiles)
+                            {
+                                invalidTiles.Add(invalidTile);
+                                
+                                if (invalidTile.WallState.HasFlag(WallStates.Empty))
+                                {
+                                    invalidTile.CurrentImage = emptyWallError;
+                                    invalidTile.TileStates = States.Error;
+                                    invalidTile.UpdateStates();
+                                }
+                                else if(invalidTile.WallState == WallStates.OuterHoriz || invalidTile.WallState == WallStates.OuterWall)
+                                {
+                                    invalidTile.CurrentImage = singleOWError;
+                                    invalidTile.TileStates = States.Error;
+                                    invalidTile.UpdateStates();
+                                }
+
+                                Update other textures for broken walls
+                            }
+                        }
+
                     }
                 }
             }
@@ -492,12 +570,10 @@ namespace Pacman
                 {
                     if (selectedTileType != SelectedType.Pellet)
                     {
+                        deselectPelletButtons();
+
                         selectedTileType = SelectedType.Pellet;
                         pelletButton.Image = selectedPelletSprite;
-
-                        eraserButton.Image = eraserButtonSprite;
-                        powerPelletButton.Image = powerPelletButtonSprite;
-                        wallButton.Image = wallButtonSprite;
                     }
                     else
                     {
@@ -510,12 +586,10 @@ namespace Pacman
                 {
                     if (selectedTileType != SelectedType.PowerPellet)
                     {
+                        deselectPelletButtons();
+
                         selectedTileType = SelectedType.PowerPellet;
                         powerPelletButton.Image = selectedPowerPelletSprite;
-
-                        pelletButton.Image = pelletButtonSprite;
-                        eraserButton.Image = eraserButtonSprite;
-                        wallButton.Image = wallButtonSprite;
                     }
                     else
                     {
@@ -540,8 +614,7 @@ namespace Pacman
                         }
 
                         pacmanTileIcon.Position = new Vector2(PelletGrid.Tiles[index.X, index.Y].Position.X - pacmanTileIcon.Image.Width / 4, PelletGrid.Tiles[index.X, index.Y].Position.Y - pacmanTileIcon.Image.Height / 2);
-                         // pacmanTileIcon.Position = new Vector2(PelletGrid.Tiles[index.X, index.Y].Position.X - pixelVisual.EmptySprite.Width / 2, PelletGrid.Tiles[index.X, index.Y].Position.Y - pixelVisual.EmptySprite.Height / 2);
-
+                        // pacmanTileIcon.Position = new Vector2(PelletGrid.Tiles[index.X, index.Y].Position.X - pixelVisual.EmptySprite.Width / 2, PelletGrid.Tiles[index.X, index.Y].Position.Y - pixelVisual.EmptySprite.Height / 2);
 
                         if (ms.LeftButton == ButtonState.Pressed && PelletGrid.Tiles[index.X, index.Y].TileStates == States.Empty)
                         {
@@ -560,13 +633,11 @@ namespace Pacman
                 {
                     if (selectedTileType != SelectedType.Eraser)
                     {
+                        deselectPelletButtons();
+                        deselectWallButtons();
+
                         selectedTileType = SelectedType.Eraser;
                         eraserButton.Image = selectedEraserSprite;
-
-                        pelletButton.Image = pelletButtonSprite;
-                        powerPelletButton.Image = powerPelletButtonSprite;
-                        wallButton.Image = wallButtonSprite;
-                        outerWallButton.Image = outerWallButtonSprite;
 
                         if (!pacmanPlaced)
                         {
