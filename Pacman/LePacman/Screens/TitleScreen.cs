@@ -12,8 +12,6 @@ namespace Pacman
 {
     public class TitleScreen : Screen
     {
-        GraphicsDeviceManager graphics;
-
         Image titleImage;
         Texture2D titleSprite;
 
@@ -25,7 +23,7 @@ namespace Pacman
 
         Texture2D optionsSprite;
         Button optionsButton;
-        public TitleScreen((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
+        public TitleScreen(Point Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
             graphics = Graphics;
         }

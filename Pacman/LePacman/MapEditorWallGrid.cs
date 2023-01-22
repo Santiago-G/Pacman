@@ -387,16 +387,12 @@ namespace Pacman
             if (jumps.Count == 1)
             {
                 currErrorMsg = "Invalid! No counterpart found";
+
                 //ERROR: only one hole, either cover it or make another hole on the other side
                 ;
-                if (Tiles[jumps.First().X, jumps.First().Y - 3].WallState.HasFlag(WallStates.OuterWall))
-                {
-                    result.Add((currErrorMsg, new List<wallVisual>() { Tiles[jumps.First().X, jumps.First().Y - 1], Tiles[jumps.First().X, jumps.First().Y - 2] }));
-                }
-                else
-                {
-                    result.Add((currErrorMsg, new List<wallVisual>() { Tiles[jumps.First().X, jumps.First().Y + 1], Tiles[jumps.First().X, jumps.First().Y + 2] }));
-                }
+
+                result.Add((currErrorMsg, new List<wallVisual>() { Tiles[jumps.First().X, jumps.First().Y] }));
+
             }
             else if (jumps.Count == 0)
             {
@@ -455,7 +451,7 @@ namespace Pacman
                         {
                             result.Add((currErrorMsg, new List<wallVisual>() { Tiles[item.Value.X, item.Value.Y + 1] }));
                         }
-                        
+
                     }
 
                     gapCounter = 0;

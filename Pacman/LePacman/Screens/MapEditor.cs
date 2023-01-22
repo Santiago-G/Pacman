@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using MonoGame.Extended;
+using System.Net.Security;
 
 namespace Pacman
 {
@@ -76,7 +77,7 @@ namespace Pacman
         Texture2D singleOWError;
 
 
-        public MapEditor((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
+        public MapEditor(Point Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
             size = Size;
         }
@@ -229,6 +230,8 @@ namespace Pacman
             wallButton.Image = wallButtonSprite;
         }
 
+        
+
         public override void Update(GameTime gameTime)
         {
             MouseState ms = Mouse.GetState();
@@ -280,8 +283,13 @@ namespace Pacman
                         if (wall.WallState == WallStates.Empty)
                         {
                             wall.TileStates = States.Empty;
-                            wall.UpdateStates();
                         }
+                        else if (wall.WallState.HasFlag(WallStates.OuterUp) || wall.WallState.HasFlag(WallStates.OuterRight)|| wall.WallState.HasFlag(WallStates.OuterLeft) || wall.WallState.HasFlag(WallStates.OuterUp))
+                        {
+                            wall.TileStates = States.Wall;
+                        }
+
+                        wall.UpdateStates();
                     }
 
                     invalidTiles.Clear();
@@ -526,11 +534,22 @@ namespace Pacman
                     {
                         var result = WallGrid.FindInvalidOuterWalls();
 
-                        if (result.Count == 0)
+                        if(result.Count == 0)
                         {
-                            //print msg that says everything is valid
+                            //print msg
+
                             return;
                         }
+
+
+                        /*
+                        var result = WallGrid.FindInvalidOuterWalls();
+
+                        if (result.Count == 0) return;
+                        
+                            //print msg that says everything is valid
+                            
+                        
 
                         deselectWallButtons();
                         OWErrorMessage.setVisable(true);
@@ -544,22 +563,26 @@ namespace Pacman
                             {
                                 invalidTiles.Add(invalidTile);
                                 
-                                if (invalidTile.WallState.HasFlag(WallStates.Empty))
+                                if (invalidTile.WallState == WallStates.Empty)
                                 {
                                     invalidTile.CurrentImage = emptyWallError;
                                     invalidTile.TileStates = States.Error;
                                     invalidTile.UpdateStates();
                                 }
-                                else if(invalidTile.WallState == WallStates.OuterHoriz || invalidTile.WallState == WallStates.OuterWall)
+                                else if(invalidTile.WallState.HasFlag(WallStates.OuterWall))// invalidTile.WallState == WallStates.OuterHoriz || invalidTile.WallState == WallStates.OuterWall)
                                 {
-                                    invalidTile.CurrentImage = singleOWError;
-                                    invalidTile.TileStates = States.Error;
-                                    invalidTile.UpdateStates();
+                                    if (invalidTile.WallState.HasFlag(WallStates.OuterLeft) || invalidTile.WallState.HasFlag(WallStates.OuterUp))
+                                    {
+                                        invalidTile.CurrentImage = singleOWError;
+                                        invalidTile.TileStates = States.Error;
+                                        invalidTile.UpdateStates();
+                                    }
                                 }
-
-                                Update other textures for broken walls
                             }
+
+                            //loop though the error msgs outside
                         }
+                        */
 
                     }
                 }

@@ -112,4 +112,17 @@ namespace Pacman
         WallGrid,
         PixelGrid
     }
+
+    public enum GameStates
+    {
+        TitleScreen,
+
+        Options,
+        OptionsAudio,
+        OptionsVisual,
+        OptionsControl,
+
+        MapEditor,
+        MainGame,
+    }
 }

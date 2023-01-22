@@ -35,7 +35,7 @@ namespace Pacman
          * 
          */
 
-        public Options((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
+        public Options(Point Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
             size = Size;
             position = Position;

@@ -10,13 +10,13 @@ namespace Pacman
     {
         public static GraphicsDeviceManager graphics;
 
-        public (int width, int height) size;
+        public Point size;
 
         public Vector2 position;
 
         protected List<Sprite> objects = new List<Sprite>();
 
-        public Screen((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics)
+        public Screen(Point Size, Vector2 Position, GraphicsDeviceManager Graphics)
         {
             size = Size;
             position = Position;
