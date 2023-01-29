@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LePacman;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -53,24 +54,17 @@ namespace Pacman
 
             if (mapEditorButton.IsClicked(ms))
             {
-                Game1.currentScreen = Game1.GameStates.MapEditor;
-
-                graphics.PreferredBackBufferWidth = Game1.screens[Game1.GameStates.MapEditor].size.width;
-                graphics.PreferredBackBufferHeight = Game1.screens[Game1.GameStates.MapEditor].size.height;
-                graphics.ApplyChanges();
-
-                Game1.screens[Game1.GameStates.Options].size = Game1.screens[Game1.GameStates.MapEditor].size;
-                Options.screenOrigin = new Vector2(Game1.screens[Game1.GameStates.MapEditor].size.width - 400, Game1.screens[Game1.GameStates.MapEditor].size.height - 400);
+                ScreenManagerPM.Instance.ChangeScreens(GameStates.MapEditor);
             }
 
             else if(playButton.IsClicked(ms))
             {
-                Game1.currentScreen = Game1.GameStates.MainGame;
+                //Game1.currentScreen = Game1.GameStates.MainGame;
             }
 
             else if (optionsButton.IsClicked(ms))
             {
-                Game1.currentScreen = Game1.GameStates.Options;
+                ScreenManagerPM.Instance.SetUpOptionScreens();//Game1.currentScreen = Game1.GameStates.Options;
             }
 
             base.Update(gameTime);

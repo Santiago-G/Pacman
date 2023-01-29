@@ -70,7 +70,7 @@ namespace Pacman
         Texture2D OuterWallErrorBackground;
         SpriteFont errorHeaderFont;
         SpriteFont errorBodyFont;
-        PopUp OWErrorMessage;
+        ErrorPopUp OWErrorMessage;
         List<wallVisual> invalidTiles = new List<wallVisual>();
 
         Texture2D emptyWallError;
@@ -137,7 +137,7 @@ namespace Pacman
             OuterWallErrorBackground = Content.Load<Texture2D>("outerWallErrorMSGBG");
             errorHeaderFont = Content.Load<SpriteFont>("ErrorHeaderFont");
             errorBodyFont = Content.Load<SpriteFont>("ErrorBodyText");
-            OWErrorMessage = new PopUp(OuterWallErrorBackground, new Vector2(500), Color.White, errorHeaderFont, errorBodyFont, "15 Step", "Fraust Arp");
+            OWErrorMessage = new ErrorPopUp(OuterWallErrorBackground, new Vector2(500), Color.White, errorHeaderFont, errorBodyFont, "15 Step", "Fraust Arp");
             OWErrorMessage.setVisable(false);
             OWErrorMessage.setHeaderText("Error");
             objects.Add(OWErrorMessage);

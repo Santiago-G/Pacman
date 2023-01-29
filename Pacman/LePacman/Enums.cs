@@ -125,4 +125,10 @@ namespace Pacman
         MapEditor,
         MainGame,
     }
+
+    public enum PopUpStates 
+    {
+        PortalError,
+        PortalValid,
+    }
 }

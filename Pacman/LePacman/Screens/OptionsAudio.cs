@@ -12,7 +12,8 @@ namespace Pacman.Screens
 {
     public class OptionsAudio : Screen
     {
-        static Image background;
+        static Image menuBackground => Options.menuBackground;
+        static Texture2D background => Options.background;
         static Button audioText;
         static Image masterVolumeText;
         static Image SFXVolumeText;
@@ -23,15 +24,18 @@ namespace Pacman.Screens
         static Slider SFXVolumeControl;
         static Slider musicVolumeControl;
 
-        public OptionsAudio((int width, int height) Size, Vector2 Position, GraphicsDeviceManager Graphics, Image BackgroundImage) : base(Size, Position, Graphics)
+        public OptionsAudio(Point Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
             size = Size;
             position = Position;
-            background = BackgroundImage;
         }
+
 
         public override void LoadContent(ContentManager Content)
         {
+            //background = new Image(Content.Load<Texture2D>("optionsBackground"), new Vector2(), Color.White);
+            objects.Add(menuBackground);
+
             audioText = new Button(Content.Load<Texture2D>("audioText"), new Vector2(), Color.White);
             objects.Add(audioText);
 
@@ -62,7 +66,7 @@ namespace Pacman.Screens
 
         static public void setUpPositions()
         {
-            audioText.Position = new Vector2(screenOrigin.X + (background.Image.Width / 2 - (audioText.Image.Width / 2)), screenOrigin.Y + 50);
+            audioText.Position = new Vector2(screenOrigin.X + (background.Width / 2 - (audioText.Image.Width / 2)), screenOrigin.Y + 50);
 
             masterVolumeText.Position = new Vector2(screenOrigin.X + 60, screenOrigin.Y + 200);
             SFXVolumeText.Position = new Vector2(screenOrigin.X + 60, screenOrigin.Y + 300);
