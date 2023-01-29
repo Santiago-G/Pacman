@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LePacman;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -9,20 +10,20 @@ using System.Text;
 
 namespace Pacman
 {
-    public class ErrorPopUp : Sprite
+    public class ErrorPopUp : PopUp
     {
         /*
-        private SpriteFont headerFont;
-        private SpriteFont bodyFont;
+        public PopUp(Texture2D Background, Point Size, Vector2 Position, SpriteFont HeaderFont, SpriteFont BodyFont, string HeaderText, string BodyText,
+            Vector2 HeaderPos, Vector2 bodyPos)
+        */
 
-        private string headerText;
-        private string bodyText;
+        //check if i really need an abstract pop up class, and if the old one worked
 
-        private Vector2 headerPos;
-        private Vector2 bodyPos;
-
-        private bool Visable = false;
-
+        public ErrorPopUp(Texture2D Background, Point Size, Vector2 Position, SpriteFont HeaderFont, SpriteFont BodyFont, string HeaderText, string BodyText,
+            Vector2 HeaderPos, Vector2 BodyPos) : base(Background, Size, Position, HeaderFont, BodyFont, HeaderText, BodyText, HeaderPos, BodyPos)
+        {
+            
+        }
 
         public ErrorPopUp(Texture2D Image, Vector2 Pos, Color Tint, SpriteFont HeaderFont, SpriteFont BodyFont, string HeaderText, string BodyText, Vector2 HeaderPos, Vector2 BodyPos)
         : base(Image, Pos, Tint)
@@ -127,6 +128,6 @@ namespace Pacman
                 batch.DrawString(bodyFont, "Click to continue", new Vector2(Position.X + bodyFont.MeasureString("Click to continue").X / 2, Position.Y + (Image.Height - Image.Height / 6)), Tint);
             }
         }
-        */
+        
     }
 }

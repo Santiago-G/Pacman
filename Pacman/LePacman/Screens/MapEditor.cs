@@ -177,7 +177,6 @@ namespace Pacman
 
             wallVisual.InteriorCrossSprite = Content.Load<Texture2D>("Cross");
 
-            //wallVisual.SingleCrossSprite = Content.Load<Texture2D>("SingleCross");
             wallVisual.SingleCrossSprite = wallVisual.EdgeSprite;
 
             wallVisual.InteriorFilledCorner = Content.Load<Texture2D>("InteriorFilledCorner");

@@ -105,7 +105,6 @@ namespace LePacman
             {
                 screen.Value.LoadContent(Content);
             }
-
             currentScreen = screens[GameStates.TitleScreen];
         }
 

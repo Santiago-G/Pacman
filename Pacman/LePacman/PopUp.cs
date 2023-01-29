@@ -26,17 +26,15 @@ namespace LePacman
         private Vector2 bodyPos;
 
         private Texture2D background;
-        private Color tint;
 
         private bool Visable = false;
 
-        public PopUp(Texture2D Background, Point Size, Vector2 Position, Color Tint, SpriteFont HeaderFont, SpriteFont BodyFont, string HeaderText,
-            string BodyText, Vector2 HeaderPos, Vector2 bodyPos)
+        public PopUp(Texture2D Background, Point Size, Vector2 Position, SpriteFont HeaderFont, SpriteFont BodyFont, string HeaderText, string BodyText,
+            Vector2 HeaderPos, Vector2 bodyPos)
         {
             background = Background;
             size = Size;
             position = Position;
-            tint = Tint;
 
             headerFont = HeaderFont;
             bodyFont = BodyFont;
@@ -46,6 +44,21 @@ namespace LePacman
 
             headerPos = HeaderPos;
             bodyFont = BodyFont;
+        }
+
+        public void setVisable(bool newVisable)
+        {
+            Visable = newVisable;
+        }
+
+        public bool isVisable() { return Visable; }
+
+        public abstract void setHeaderText(string newHeaderText);
+        public abstract void setBodyText(string newBodyText);
+
+        public void setPosition(Vector2 newPosition)
+        {
+            position = newPosition;
         }
 
         public abstract void LoadContent(ContentManager Content);

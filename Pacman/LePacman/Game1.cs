@@ -14,6 +14,7 @@ namespace Pacman
     {
         
         ScreenManagerPM screenManager = ScreenManagerPM.Instance;
+        PopUpManager popUpManager = PopUpManager.Instance;
         
         public static float MasterVolume = .5f;
         public static float SFXVolume = .5f;
@@ -56,6 +57,7 @@ namespace Pacman
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             screenManager.LoadContent(Content);
+            popUpManager.LoadContent(Content);
 
             Pixel = new Texture2D(GraphicsDevice, 1, 1);
             Pixel.SetData(new Color[] { Color.White });
@@ -73,7 +75,7 @@ namespace Pacman
             screenManager.Update(gameTime);
 
             //Window.Title = Game1.WindowText; 
-            
+
             base.Update(gameTime);
         }
 
