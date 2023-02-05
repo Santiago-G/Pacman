@@ -8,6 +8,8 @@ using System.Linq;
 using Newtonsoft.Json;
 using MonoGame.Extended;
 using System.Net.Security;
+using LePacman;
+using System.Reflection.Metadata;
 
 namespace Pacman
 {
@@ -67,11 +69,11 @@ namespace Pacman
         Texture2D portalButtonSprite;
         Button generatePortalButton;
 
-        Texture2D OuterWallErrorBackground;
+        List<wallVisual> invalidTiles = new List<wallVisual>();
+        Texture2D errorBackground;
         SpriteFont errorHeaderFont;
         SpriteFont errorBodyFont;
-        ErrorPopUp OWErrorMessage;
-        List<wallVisual> invalidTiles = new List<wallVisual>();
+
 
         Texture2D emptyWallError;
         Texture2D singleOWError;
@@ -134,16 +136,12 @@ namespace Pacman
             generatePortalButton = new Button(portalButtonSprite, new Vector2(1000, 900), Color.White);
             objects.Add(generatePortalButton);
 
-            OuterWallErrorBackground = Content.Load<Texture2D>("outerWallErrorMSGBG");
-            errorHeaderFont = Content.Load<SpriteFont>("ErrorHeaderFont");
-            errorBodyFont = Content.Load<SpriteFont>("ErrorBodyText");
-            OWErrorMessage = new ErrorPopUp(OuterWallErrorBackground, new Vector2(500), Color.White, errorHeaderFont, errorBodyFont, "15 Step", "Fraust Arp");
-            OWErrorMessage.setVisable(false);
-            OWErrorMessage.setHeaderText("Error");
-            objects.Add(OWErrorMessage);
-
             emptyWallError = Content.Load<Texture2D>("errorEmptyTile");
             singleOWError = Content.Load<Texture2D>("middleOWError");
+
+            errorBackground = Content.Load<Texture2D>("outerWallErrorMSGBG");
+            errorHeaderFont = Content.Load<SpriteFont>("ErrorHeaderFont");
+            errorBodyFont = Content.Load<SpriteFont>("ErrorBodyText");
 
             //ADD THING THAT IF SELECTED ONLY DRAWS OVER BLANK TILES
 
@@ -271,30 +269,23 @@ namespace Pacman
              * 
              */
 
-            if (OWErrorMessage.isVisable())
+            if(invalidTiles.Count > 0)
             {
-                OWErrorMessage.Update(gameTime);
-
-                if (!OWErrorMessage.isVisable())
+                foreach (var tile in invalidTiles)
                 {
-                    foreach (var wall in invalidTiles)
+                    if (tile.WallState == WallStates.Empty)
                     {
-                        if (wall.WallState == WallStates.Empty)
-                        {
-                            wall.TileStates = States.Empty;
-                        }
-                        else if (wall.WallState.HasFlag(WallStates.OuterUp) || wall.WallState.HasFlag(WallStates.OuterRight)|| wall.WallState.HasFlag(WallStates.OuterLeft) || wall.WallState.HasFlag(WallStates.OuterUp))
-                        {
-                            wall.TileStates = States.Wall;
-                        }
-
-                        wall.UpdateStates();
+                        tile.TileStates = States.Empty;
+                    }
+                    else if (tile.WallState.HasFlag(WallStates.OuterUp) || tile.WallState.HasFlag(WallStates.OuterRight) || tile.WallState.HasFlag(WallStates.OuterLeft) || tile.WallState.HasFlag(WallStates.OuterUp))
+                    {
+                        tile.TileStates = States.Wall;
                     }
 
-                    invalidTiles.Clear();
+                    tile.UpdateStates();
                 }
 
-                return;
+                invalidTiles.Clear();
             }
 
             #region Saving and Loading
@@ -540,35 +531,22 @@ namespace Pacman
                             return;
                         }
 
-
-                        /*
-                        var result = WallGrid.FindInvalidOuterWalls();
-
-                        if (result.Count == 0) return;
-                        
-                            //print msg that says everything is valid
-                            
-                        
-
-                        deselectWallButtons();
-                        OWErrorMessage.setVisable(true);
-
                         foreach (var error in result)
                         {
-                            OWErrorMessage.setBodyText(error.ErrorMsg);
-                            OWErrorMessage.setPosition(error.InvalidTiles.First().Position);
+                            PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackground, new Point(500), error.InvalidTiles.First().Position, errorHeaderFont,  errorBodyFont, "Error!", error.ErrorMsg));
+                            deselectWallButtons();
 
                             foreach (var invalidTile in error.InvalidTiles)
                             {
                                 invalidTiles.Add(invalidTile);
-                                
+
                                 if (invalidTile.WallState == WallStates.Empty)
                                 {
                                     invalidTile.CurrentImage = emptyWallError;
                                     invalidTile.TileStates = States.Error;
                                     invalidTile.UpdateStates();
                                 }
-                                else if(invalidTile.WallState.HasFlag(WallStates.OuterWall))// invalidTile.WallState == WallStates.OuterHoriz || invalidTile.WallState == WallStates.OuterWall)
+                                else if (invalidTile.WallState.HasFlag(WallStates.OuterWall))// invalidTile.WallState == WallStates.OuterHoriz || invalidTile.WallState == WallStates.OuterWall)
                                 {
                                     if (invalidTile.WallState.HasFlag(WallStates.OuterLeft) || invalidTile.WallState.HasFlag(WallStates.OuterUp))
                                     {
@@ -578,10 +556,7 @@ namespace Pacman
                                     }
                                 }
                             }
-
-                            //loop though the error msgs outside
                         }
-                        */
 
                     }
                 }

@@ -7,34 +7,31 @@ using System.Collections.Generic;
 
 namespace LePacman
 {
-    public abstract class PopUp
+    public abstract class PopUp : Sprite
     {
         //public static GraphicsDeviceManager graphics;
 
         public Point size;
-        public Vector2 position;
+        protected bool pauseScreen;
 
         protected List<Sprite> objects = new List<Sprite>();
 
-        private SpriteFont headerFont;
-        private SpriteFont bodyFont;
+        protected SpriteFont headerFont;
+        protected SpriteFont bodyFont;
 
-        private string headerText;
-        private string bodyText;
+        protected string headerText;
+        protected string bodyText;
 
-        private Vector2 headerPos;
-        private Vector2 bodyPos;
+        protected Vector2 headerPos;
+        protected Vector2 bodyPos;
 
-        private Texture2D background;
 
-        private bool Visable = false;
+        protected bool Visable = false;
 
         public PopUp(Texture2D Background, Point Size, Vector2 Position, SpriteFont HeaderFont, SpriteFont BodyFont, string HeaderText, string BodyText,
-            Vector2 HeaderPos, Vector2 bodyPos)
+            Vector2 HeaderPos, Vector2 bodyPos) : base(Background, Position, Color.White)
         {
-            background = Background;
             size = Size;
-            position = Position;
 
             headerFont = HeaderFont;
             bodyFont = BodyFont;
@@ -54,16 +51,27 @@ namespace LePacman
         public bool isVisable() { return Visable; }
 
         public abstract void setHeaderText(string newHeaderText);
+
+
         public abstract void setBodyText(string newBodyText);
+        public string getBodyText()
+        {
+            return bodyText;
+        }
 
         public void setPosition(Vector2 newPosition)
         {
-            position = newPosition;
+            Position = newPosition;
         }
 
-        public abstract void LoadContent(ContentManager Content);
+        public bool getPauseScreen()
+        {
+            return pauseScreen;
+        }
 
-        public virtual void Update(GameTime gameTime)
+        //public abstract void LoadContent(ContentManager Content);
+
+        public override void Update(GameTime gameTime)
         {
             foreach (var item in objects)
             {
@@ -71,12 +79,22 @@ namespace LePacman
             }
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             foreach (var item in objects)
             {
                 item.Draw(spriteBatch);
             }
         }
+
+        //public virtual void Update(GameTime gameTime)
+        //{
+        //    foreach (var item in objects)
+        //    {
+        //        item.Update(gameTime);
+        //    }
+        //}
+
+
     }
 }

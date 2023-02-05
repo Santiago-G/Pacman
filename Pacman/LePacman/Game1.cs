@@ -72,7 +72,13 @@ namespace Pacman
 
             MouseState ms = Mouse.GetState();
 
-            screenManager.Update(gameTime);
+            if(!popUpManager.pauseScene)
+            {
+                screenManager.Update(gameTime);
+            }
+
+            popUpManager.Update(gameTime);
+            
 
             //Window.Title = Game1.WindowText; 
 
@@ -88,6 +94,7 @@ namespace Pacman
             _spriteBatch.Begin();
 
             screenManager.Draw(_spriteBatch);
+            popUpManager.Draw(_spriteBatch);
 
             _spriteBatch.End();
 

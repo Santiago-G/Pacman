@@ -312,6 +312,61 @@ namespace Pacman
             }
         }
 
+        private List<wallVisual> findInvalidTiles(wallVisual startingTile)
+        {
+            List<wallVisual> invalidTiles = new List<wallVisual>();
+
+            int directionX = 0;
+            int directionY = 0;
+            wallVisual currentTile = null;
+            //Go Down
+
+            if (Tiles[startingTile.Cord.X, startingTile.Cord.Y - 1].WallState.HasFlag(WallStates.OuterWall))
+            {
+                directionY = 1;
+                currentTile = Tiles[startingTile.Cord.X, startingTile.Cord.Y + 1];
+            }
+            else if (Tiles[startingTile.Cord.X, startingTile.Cord.Y + 1].WallState.HasFlag(WallStates.OuterWall))
+            {
+                directionY = -1;
+                currentTile = Tiles[startingTile.Cord.X, startingTile.Cord.Y - 1];
+            }
+            else if (Tiles[startingTile.Cord.X - 1, startingTile.Cord.Y].WallState.HasFlag(WallStates.OuterWall))
+            {
+                directionX = 1;
+                currentTile = Tiles[startingTile.Cord.X + 1, startingTile.Cord.Y];
+            }
+            else if (Tiles[startingTile.Cord.X + 1, startingTile.Cord.Y].WallState.HasFlag(WallStates.OuterWall))
+            {
+                directionX = -1;
+                currentTile = Tiles[startingTile.Cord.X - 1, startingTile.Cord.Y];
+            }
+
+            //check at the end if it hits the border. if it does just return staring tile and say "big gap"
+
+            if (directionX != 0 && directionY != 0)
+            {
+                invalidTiles.Add(startingTile);
+                return invalidTiles;
+            }
+
+            invalidTiles.Add(currentTile);
+            while (!currentTile.WallState.HasFlag(WallStates.OuterWall))
+            {
+                currentTile = Tiles[currentTile.Cord.X + directionX, currentTile.Cord.Y + directionY];
+                invalidTiles.Add(currentTile);
+
+                if ((currentTile.Cord.X == Tiles.GetLength(0) - 1 || currentTile.Cord.X == 0) || (currentTile.Cord.Y == Tiles.GetLength(1) - 1 || currentTile.Cord.Y == 0))
+                {
+                    invalidTiles.Clear();
+                    invalidTiles.Add(startingTile);
+                    return invalidTiles;
+                }
+            }
+
+            return invalidTiles;
+        }
+
         public List<(string ErrorMsg, List<wallVisual> InvalidTiles)> FindInvalidOuterWalls()
         {
             #region Set Up
@@ -388,11 +443,11 @@ namespace Pacman
             {
                 currErrorMsg = "Invalid! No counterpart found";
 
-                //ERROR: only one hole, either cover it or make another hole on the other side
-                ;
 
-                result.Add((currErrorMsg, new List<wallVisual>() { Tiles[jumps.First().X, jumps.First().Y] }));
 
+
+                //result.Add((currErrorMsg, new List<wallVisual>() { Tiles[jumps.First().X, jumps.First().Y] }));
+                result.Add((currErrorMsg, findInvalidTiles(Tiles[jumps.First().X, jumps.First().Y])));
             }
             else if (jumps.Count == 0)
             {
@@ -412,16 +467,23 @@ namespace Pacman
                     Vector2 lastVertexV2 = lastVertex.Value.ToVector2();
                     Vector2 startingVertexV2 = startingVertex.Value.ToVector2();
 
+                    List<wallVisual> invWalls = new List<wallVisual>();
+                    bool isInvalid = false;
                     while (s < 1)
                     {
+                        isInvalid = true;
                         int x = (int)Vector2.Lerp(lastVertexV2, startingVertexV2, s).X;
                         int y = (int)Vector2.Lerp(lastVertexV2, startingVertexV2, s).Y;
 
                         if (!Tiles[x, y].WallState.HasFlag(WallStates.OuterWall))
                         {
-                            result.Add(("Invalid! No counterpart found", new List<wallVisual>() { Tiles[x, y] }));
+                            invWalls.Add(Tiles[x, y]);
                         }
                         s += increment;
+                    }
+                    if (isInvalid)
+                    {
+                        result.Add(("Invalid! No counterpart found", invWalls));
                     }
                 }
             }

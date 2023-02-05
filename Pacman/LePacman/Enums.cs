@@ -128,6 +128,7 @@ namespace Pacman
 
     public enum PopUpStates 
     {
+        None,
         PortalError,
         PortalValid,
     }
