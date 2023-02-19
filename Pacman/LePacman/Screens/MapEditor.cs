@@ -242,8 +242,8 @@ namespace Pacman
              * IMPORTANT
              * ---------
              * 
-             * CIRCLE OUTER WALL BREAKS
-             * 
+             * Fix outer wall error msgs displaying all of the invalid wall instantly.
+             * Seperate them out and make sure they don't close all of them instantyyyy
              * 
              * Fix saving and loading
              * Do Delete Keybind
