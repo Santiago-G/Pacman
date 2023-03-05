@@ -16,6 +16,8 @@ namespace Pacman
     public class MapEditor : Screen
     {
         static public SelectedType selectedTileType = SelectedType.Default;
+        private SelectedType prevSelctedTileType;
+        bool eraserSelected = false;
 
         public static GridStates currentGridState = GridStates.WallGrid;
 
@@ -227,7 +229,25 @@ namespace Pacman
             wallButton.Image = wallButtonSprite;
         }
 
-        
+
+        private void ValidityChecks()
+        {
+            //Check if outer walls are valid*
+            var result = WallGrid.FindInvalidOuterWalls();
+
+            foreach (var error in result)
+            {
+                PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackground, new Point(500), error.InvalidTiles.First().Position, errorHeaderFont, errorBodyFont, "Error!", error.ErrorMsg, error.InvalidTiles));
+                deselectWallButtons();
+            }
+
+            if (result.Count == 0)
+            {
+               //check the portal thing below
+               //check if the ghosts and pacman can go to every pellet
+            }
+        }
+
 
         public override void Update(GameTime gameTime)
         {
@@ -241,6 +261,10 @@ namespace Pacman
              * 
              * IMPORTANT
              * ---------
+             * 
+             * Keep track of the number of portals (and their position you should be doing this anyways)
+             * and do another pathfinder starting in the middle. Make it's target the outer edge the map. If it reaches more outer tiles than
+             * there are portals, give an error
              * 
              * I'm done. Just use try catch for all the other edge cases
              * Find other edge cases, I fixed the UI aspect of things. 
@@ -272,25 +296,6 @@ namespace Pacman
              * Maybe have a finished view? (without grayed out tiles and borders)
              * 
              */
-
-            //if(invalidTiles.Count > 0)
-            //{
-            //    foreach (var tile in invalidTiles)
-            //    {
-            //        if (tile.WallState == WallStates.Empty)
-            //        {
-            //            tile.TileStates = States.Empty;
-            //        }
-            //        else if (tile.WallState.HasFlag(WallStates.OuterUp) || tile.WallState.HasFlag(WallStates.OuterRight) || tile.WallState.HasFlag(WallStates.OuterLeft) || tile.WallState.HasFlag(WallStates.OuterUp))
-            //        {
-            //            tile.TileStates = States.Wall;
-            //        }
-
-            //        tile.UpdateStates();
-            //    }
-
-            //    invalidTiles.Clear();
-            //}
 
             #region Saving and Loading
 
@@ -351,6 +356,21 @@ namespace Pacman
             }
             #endregion
 
+
+            if (ms.RightButton == ButtonState.Pressed && !eraserSelected && !selectedPacman)
+            {
+                eraserSelected = true;
+                prevSelctedTileType = selectedTileType;
+                selectedTileType = SelectedType.AltEraser;
+                eraserButton.Image = selectedEraserSprite;
+            }
+
+            if (eraserSelected && ms.RightButton != ButtonState.Pressed)
+            {
+                eraserSelected = false;
+                selectedTileType = prevSelctedTileType;
+                eraserButton.Image = eraserButtonSprite;
+            }
 
             //Switching Grids
             if (switchGridButton.IsClicked(ms))
@@ -523,48 +543,14 @@ namespace Pacman
                             WallGrid.removeWall(new Vector2(ms.Position.X, ms.Position.Y));
                         }
                     }
+                    else if (selectedTileType == SelectedType.AltEraser)
+                    {
+                        WallGrid.removeWall(new Vector2(ms.Position.X, ms.Position.Y));
+                    }
 
                     if (generatePortalButton.IsClicked(ms))
                     {
-                        var result = WallGrid.FindInvalidOuterWalls();
-
-                        if(result.Count == 0)
-                        {
-                            //print msg
-
-                            return;
-                        }
-
-                        foreach (var error in result)
-                        {
-                            //List<wallVisual> invalidTiles = new List<wallVisual>();
-
-                            //foreach (var invalidTile in error.InvalidTiles)
-                            //{
-                            //    if (invalidTile.WallState == WallStates.Empty)
-                            //    {
-                            //        invalidTile.CurrentImage = emptyWallError;
-                            //        invalidTile.TileStates = States.Error;
-                            //        invalidTile.UpdateStates();
-                            //    }
-                            //    else if (invalidTile.WallState.HasFlag(WallStates.OuterWall))// invalidTile.WallState == WallStates.OuterHoriz || invalidTile.WallState == WallStates.OuterWall)
-                            //    {
-                            //        if (invalidTile.WallState.HasFlag(WallStates.OuterLeft) || invalidTile.WallState.HasFlag(WallStates.OuterUp))
-                            //        {
-                            //            invalidTile.CurrentImage = singleOWError;
-                            //            invalidTile.TileStates = States.Error;
-                            //            invalidTile.UpdateStates();
-                            //        }
-                            //    }
-
-                            //    invalidTiles.Add(invalidTile);
-                            //}
-
-                            PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackground, new Point(500), error.InvalidTiles.First().Position, errorHeaderFont,  errorBodyFont, "Error!", error.ErrorMsg, error.InvalidTiles));
-                            deselectWallButtons();
-
-                        }
-
+                        ValidityChecks();
                     }
                 }
             }

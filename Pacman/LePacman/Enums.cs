@@ -11,6 +11,7 @@ namespace Pacman
         Wall,
         OuterWall,
         Eraser,
+        AltEraser,
     }
 
     [Flags]
