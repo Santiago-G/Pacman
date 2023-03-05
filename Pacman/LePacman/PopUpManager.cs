@@ -21,8 +21,20 @@ namespace LePacman
 
         public static PopUpManager Instance { get; } = new PopUpManager();
 
+        public void ClearQueue()
+        {
+            currentPopUp.dequeuingMisc();
+            PopUps.Clear();
+            pauseScene = false;
+        }
+
         public void EnqueuePopUp(PopUp newPopUp)
         {
+            if (PopUps.Count == 0)
+            {
+                newPopUp.enqueuingMisc();
+            }
+
             newPopUp.setVisable(true);
             newPopUp.setBodyText(newPopUp.getBodyText());
 
@@ -32,7 +44,13 @@ namespace LePacman
 
         public void DequeuePopUp()
         {
+            currentPopUp.dequeuingMisc();
             PopUps.Dequeue();
+
+            if (PopUps.Count != 0)
+            {
+                currentPopUp.enqueuingMisc();
+            }
             pauseScene = false;
         }
 

@@ -50,6 +50,7 @@ namespace Pacman
         BottomRight = 64 | LoneWall,
         BottomLeft = 128 | LoneWall,
         TopLeft = 256 | LoneWall,
+
         //CornerMasker = ~(32 | 64 | 128 | 256),
 
         //////////////
@@ -92,6 +93,17 @@ namespace Pacman
         MiddleRightIntersectingOW = RightIntersectingOW | TopLeft | BottomLeft,
         MiddleBottomIntersectingOW = BottomIntersectingOW | TopLeft | TopRight,
         MiddleLeftIntersectingOW = LeftIntersectingOW | TopRight | BottomRight,
+
+        Error = 1024,
+
+        ErrorOuterUp = Error | OuterUp,
+        ErrorOuterDown = Error | OuterDown,
+        ErrorOuterLeft = Error | OuterLeft,
+        ErrorOuterRight = Error | OuterRight,
+
+        ErrorOuterVerti = Error | OuterVerti,
+        ErrorOuterHoriz = Error | OuterHoriz,
+
     }
 
     public enum States
@@ -104,7 +116,6 @@ namespace Pacman
         Wall,
         GhostChamber,
         Pacman,
-        Error
     }
 
     public enum GridStates

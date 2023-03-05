@@ -22,7 +22,7 @@ namespace Pacman
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        KeyboardState prevKeyboardState = Keyboard.GetState();
+        public static MouseState prevMS = Mouse.GetState();
 
 
         public static string WindowText = "";
@@ -78,10 +78,10 @@ namespace Pacman
             }
 
             popUpManager.Update(gameTime);
-            
+
 
             //Window.Title = Game1.WindowText; 
-
+            prevMS = Mouse.GetState();
             base.Update(gameTime);
         }
 

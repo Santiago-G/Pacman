@@ -48,6 +48,10 @@ namespace LePacman
             Visable = newVisable;
         }
 
+        public abstract void dequeuingMisc();
+
+        public abstract void enqueuingMisc();
+
         public bool isVisable() { return Visable; }
 
         public abstract void setHeaderText(string newHeaderText);

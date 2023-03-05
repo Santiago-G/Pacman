@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.BitmapFonts;
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -17,14 +18,18 @@ namespace Pacman
                 public PopUp(Texture2D Background, Point Size, Vector2 Position, SpriteFont HeaderFont, SpriteFont BodyFont, string HeaderText, string BodyText,
             Vector2 HeaderPos, Vector2 bodyPos)
          */
+
+        List<wallVisual> invalidWalls;
+
         public ErrorPopUp(Texture2D Background, Point Size, Vector2 Position, SpriteFont HeaderFont, SpriteFont BodyFont, string HeaderText, string BodyText,
-            Vector2 HeaderPos, Vector2 BodyPos) : base(Background, Size, Position, HeaderFont, BodyFont, HeaderText, BodyText, HeaderPos, BodyPos)
+            Vector2 HeaderPos, Vector2 BodyPos, List<wallVisual> InvalidWalls) : base(Background, Size, Position, HeaderFont, BodyFont, HeaderText, BodyText, HeaderPos, BodyPos)
         {
             setVisable(false);
             pauseScreen = true;
+            invalidWalls = InvalidWalls;
         }
 
-        public ErrorPopUp(Texture2D Background, Point Size, Vector2 Position, SpriteFont HeaderFont, SpriteFont BodyFont, string HeaderText, string BodyText)
+        public ErrorPopUp(Texture2D Background, Point Size, Vector2 Position, SpriteFont HeaderFont, SpriteFont BodyFont, string HeaderText, string BodyText, List<wallVisual> InvalidWalls)
             : base(Background, Size, Position, HeaderFont, BodyFont, HeaderText, BodyText, Vector2.One, Vector2.One)
         {
             setVisable(false);
@@ -32,6 +37,7 @@ namespace Pacman
 
             headerPos = new Vector2(Image.Width / 2 - (HeaderFont.MeasureString(HeaderText).X / 2), 10);
             bodyPos = new Vector2(20, 40);
+            invalidWalls = InvalidWalls;
         }
 
         #region Functions
@@ -72,14 +78,39 @@ namespace Pacman
         {
             MouseState ms = Mouse.GetState();
 
-            if (ms.LeftButton == ButtonState.Pressed && Hitbox.Contains(ms.Position))
+            if (Hitbox.Contains(ms.Position))
             {
-                PopUpManager.Instance.DequeuePopUp();
-                Visable = false;
+                if (Game1.prevMS.RightButton != ms.RightButton && ms.RightButton == ButtonState.Pressed) 
+                {
+                    PopUpManager.Instance.ClearQueue();
+                    Visable = false;
+                }
+                else if (Game1.prevMS.LeftButton != ms.LeftButton && ms.LeftButton == ButtonState.Pressed)
+                {
+                    PopUpManager.Instance.DequeuePopUp();
+                    Visable = false;
+                }
             }
         }
 
-        
+        public override void enqueuingMisc()
+        {
+            foreach (var tile in invalidWalls)
+            {
+                tile.WallState |= (WallStates)Math.Pow(2, 10);
+                tile.UpdateStates();
+            }
+        }
+
+        public override void dequeuingMisc()
+        {
+            foreach (var wall in invalidWalls)
+            {
+                wall.WallState &= ~(WallStates)Math.Pow(2, 10);
+                wall.UpdateStates();
+            }
+        }
+
         public override void Draw(SpriteBatch batch)
         {
             if (Visable)

@@ -69,14 +69,12 @@ namespace Pacman
         Texture2D portalButtonSprite;
         Button generatePortalButton;
 
-        List<wallVisual> invalidTiles = new List<wallVisual>();
         Texture2D errorBackground;
         SpriteFont errorHeaderFont;
         SpriteFont errorBodyFont;
 
 
-        Texture2D emptyWallError;
-        Texture2D singleOWError;
+
 
 
         public MapEditor(Point Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
@@ -136,8 +134,7 @@ namespace Pacman
             generatePortalButton = new Button(portalButtonSprite, new Vector2(1000, 900), Color.White);
             objects.Add(generatePortalButton);
 
-            emptyWallError = Content.Load<Texture2D>("errorEmptyTile");
-            singleOWError = Content.Load<Texture2D>("middleOWError");
+
 
             errorBackground = Content.Load<Texture2D>("outerWallErrorMSGBG");
             errorHeaderFont = Content.Load<SpriteFont>("ErrorHeaderFont");
@@ -185,6 +182,9 @@ namespace Pacman
             wallVisual.MiddleIntersectingOuterWall = Content.Load<Texture2D>("middleIntersectingOuterWall");
             wallVisual.EdgeIntersectingOuterWall = Content.Load<Texture2D>("edgeIntersectingOuterWall");
             wallVisual.Edge2IntersectingOuterWall = Content.Load<Texture2D>("edge2IntersectingOuterWall");
+
+            wallVisual.emptyWallError = Content.Load<Texture2D>("errorEmptyTile");
+            wallVisual.singleOWError = Content.Load<Texture2D>("middleOWError");
 
             pixelGridSize = new Point(wallGridSize.X - 1, wallGridSize.Y - 1);
             pixelGridOffest = new Vector2(wallGridOffest.X + pixelVisual.EmptySprite.Width / 2, wallGridOffest.Y + pixelVisual.EmptySprite.Height / 2);
@@ -242,8 +242,12 @@ namespace Pacman
              * IMPORTANT
              * ---------
              * 
-             * Fix outer wall error msgs displaying all of the invalid wall instantly.
-             * Seperate them out and make sure they don't close all of them instantyyyy
+             * I'm done. Just use try catch for all the other edge cases
+             * Find other edge cases, I fixed the UI aspect of things. 
+             * 
+             * FIX certain chars from not appearing in the font
+             * 
+             * 
              * 
              * Fix saving and loading
              * Do Delete Keybind
@@ -269,24 +273,24 @@ namespace Pacman
              * 
              */
 
-            if(invalidTiles.Count > 0)
-            {
-                foreach (var tile in invalidTiles)
-                {
-                    if (tile.WallState == WallStates.Empty)
-                    {
-                        tile.TileStates = States.Empty;
-                    }
-                    else if (tile.WallState.HasFlag(WallStates.OuterUp) || tile.WallState.HasFlag(WallStates.OuterRight) || tile.WallState.HasFlag(WallStates.OuterLeft) || tile.WallState.HasFlag(WallStates.OuterUp))
-                    {
-                        tile.TileStates = States.Wall;
-                    }
+            //if(invalidTiles.Count > 0)
+            //{
+            //    foreach (var tile in invalidTiles)
+            //    {
+            //        if (tile.WallState == WallStates.Empty)
+            //        {
+            //            tile.TileStates = States.Empty;
+            //        }
+            //        else if (tile.WallState.HasFlag(WallStates.OuterUp) || tile.WallState.HasFlag(WallStates.OuterRight) || tile.WallState.HasFlag(WallStates.OuterLeft) || tile.WallState.HasFlag(WallStates.OuterUp))
+            //        {
+            //            tile.TileStates = States.Wall;
+            //        }
 
-                    tile.UpdateStates();
-                }
+            //        tile.UpdateStates();
+            //    }
 
-                invalidTiles.Clear();
-            }
+            //    invalidTiles.Clear();
+            //}
 
             #region Saving and Loading
 
@@ -533,29 +537,32 @@ namespace Pacman
 
                         foreach (var error in result)
                         {
-                            PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackground, new Point(500), error.InvalidTiles.First().Position, errorHeaderFont,  errorBodyFont, "Error!", error.ErrorMsg));
+                            //List<wallVisual> invalidTiles = new List<wallVisual>();
+
+                            //foreach (var invalidTile in error.InvalidTiles)
+                            //{
+                            //    if (invalidTile.WallState == WallStates.Empty)
+                            //    {
+                            //        invalidTile.CurrentImage = emptyWallError;
+                            //        invalidTile.TileStates = States.Error;
+                            //        invalidTile.UpdateStates();
+                            //    }
+                            //    else if (invalidTile.WallState.HasFlag(WallStates.OuterWall))// invalidTile.WallState == WallStates.OuterHoriz || invalidTile.WallState == WallStates.OuterWall)
+                            //    {
+                            //        if (invalidTile.WallState.HasFlag(WallStates.OuterLeft) || invalidTile.WallState.HasFlag(WallStates.OuterUp))
+                            //        {
+                            //            invalidTile.CurrentImage = singleOWError;
+                            //            invalidTile.TileStates = States.Error;
+                            //            invalidTile.UpdateStates();
+                            //        }
+                            //    }
+
+                            //    invalidTiles.Add(invalidTile);
+                            //}
+
+                            PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackground, new Point(500), error.InvalidTiles.First().Position, errorHeaderFont,  errorBodyFont, "Error!", error.ErrorMsg, error.InvalidTiles));
                             deselectWallButtons();
 
-                            foreach (var invalidTile in error.InvalidTiles)
-                            {
-                                invalidTiles.Add(invalidTile);
-
-                                if (invalidTile.WallState == WallStates.Empty)
-                                {
-                                    invalidTile.CurrentImage = emptyWallError;
-                                    invalidTile.TileStates = States.Error;
-                                    invalidTile.UpdateStates();
-                                }
-                                else if (invalidTile.WallState.HasFlag(WallStates.OuterWall))// invalidTile.WallState == WallStates.OuterHoriz || invalidTile.WallState == WallStates.OuterWall)
-                                {
-                                    if (invalidTile.WallState.HasFlag(WallStates.OuterLeft) || invalidTile.WallState.HasFlag(WallStates.OuterUp))
-                                    {
-                                        invalidTile.CurrentImage = singleOWError;
-                                        invalidTile.TileStates = States.Error;
-                                        invalidTile.UpdateStates();
-                                    }
-                                }
-                            }
                         }
 
                     }

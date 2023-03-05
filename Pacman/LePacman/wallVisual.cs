@@ -49,7 +49,10 @@ namespace Pacman
         public static Texture2D MiddleIntersectingOuterWall;
         public static Texture2D EdgeIntersectingOuterWall;
         public static Texture2D Edge2IntersectingOuterWall;
-        #endregion        
+
+        public static Texture2D emptyWallError;
+        public static Texture2D singleOWError;
+        #endregion
 
         public wallData Data { get; set; } = new wallData();
 
@@ -105,14 +108,10 @@ namespace Pacman
 
         public override void UpdateStates(bool setDefault = false)
         {
-            if (Data.TileStates == States.Empty)
+            if (!Data.WallState.HasFlag(WallStates.Error) && Data.TileStates == States.Empty)
             {
                 CurrentImage = EmptySprite;
                 PrevImage = HLEmptySprite;
-            }
-            else if (Data.TileStates == States.Error)
-            {
-                //me when i
             }
             else if (Data.TileStates == States.Occupied || Data.TileStates == States.GhostChamber || Data.TileStates == States.Pacman)
             {
@@ -334,8 +333,27 @@ namespace Pacman
                         CurrentImage = MiddleIntersectingOuterWall;
                         Rotation = 0;
                         break;
-                        #endregion
-                        #endregion
+                    #endregion
+                    #endregion
+
+                    case WallStates.Error:
+                        CurrentImage = emptyWallError;
+                        break;
+                    case WallStates.ErrorOuterDown:
+                        CurrentImage = singleOWError;
+                        break;
+                    case WallStates.ErrorOuterHoriz:
+                        CurrentImage = singleOWError;
+                        break;
+                    case WallStates.ErrorOuterLeft:
+                        CurrentImage = singleOWError;
+                        break;
+                    case WallStates.ErrorOuterRight:
+                        CurrentImage = singleOWError;
+                        break;
+                    case WallStates.ErrorOuterUp:
+                        CurrentImage = singleOWError;
+                        break;
                 }
             }
 
