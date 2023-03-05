@@ -262,6 +262,8 @@ namespace Pacman
              * IMPORTANT
              * ---------
              * 
+             * Alt Eraser for pellets
+             * 
              * Keep track of the number of portals (and their position you should be doing this anyways)
              * and do another pathfinder starting in the middle. Make it's target the outer edge the map. If it reaches more outer tiles than
              * there are portals, give an error
