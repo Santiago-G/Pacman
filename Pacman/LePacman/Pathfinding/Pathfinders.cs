@@ -73,11 +73,6 @@ namespace LePacman.Pathfinding
                     continue;
                 }
 
-                if (currVertex.isOuterWall || currVertex.Value.X == 15 || currVertex.Value.X == 16) 
-                {
-                    Console.WriteLine($"Position: {currVertex.Value}, Distance from start: {currVertex.DistanceFromStart}");
-                }
-
                 foreach (var Neighbor in currVertex.Neighbors)
                 {
                     float tentativeDistance = currVertex.DistanceFromStart + Neighbor.Weight;
@@ -124,5 +119,10 @@ namespace LePacman.Pathfinding
 
             return orderedVertices;
         }
+
+        //public static List<Vertex> Dijks(List<Vertex> vertices)
+        //{
+
+        //}
     }
 }

@@ -56,6 +56,8 @@ namespace Pacman
         Texture2D switchButtonSprite;
         Button switchGridButton;
 
+        //Left one
+        wallVisual ghostChamberEntrance;
         Texture2D ghostChamberTexture;
         public static Button ghostChamberButton;
         public static Image ghostChamberMS;
@@ -239,14 +241,60 @@ namespace Pacman
             {
                 PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackground, new Point(500), error.InvalidTiles.First().Position, errorHeaderFont, errorBodyFont, "Error!", error.ErrorMsg, error.InvalidTiles));
                 deselectWallButtons();
+                return;
             }
 
-            if (result.Count == 0)
+            foreach (var portals in WallGrid.Portals)
             {
-               //check the portal thing below
-               //check if the ghosts and pacman can go to every pellet
+                foreach (var portal in portals)
+                {
+                    foreach (var tile in portal)
+                    {
+                        tile.Tint = Color.Red;
+                    }
+                }
             }
+
+            if (!ghostChamberValidityCheck())
+            {
+                ;
+                return;
+            }
+
+            WallGrid.longJacket();
+
+            //start the PF at 3,0
+            //Pathfind for the ghost, and check if they can reach every pellet.
+            //Also keep track if they encounter Pacman
+            //If everything above is true, everything is valid.
+            //Make sure ghosts can use portals.
+
+            //Pellet tiles are occupied tiles.
+            
         }
+
+        private bool ghostChamberValidityCheck()
+        {
+            ghostChamberMS.Position = new Vector2(-1000);
+
+            if (WallGrid.ghostChamberTiles[3, 0].Cord.Y - 1 < 0) { return false; }
+
+            Point ghostChamberEntrance = new Point(WallGrid.ghostChamberTiles[3,0].Cord.X, WallGrid.ghostChamberTiles[3, 0].Cord.Y - 1);
+
+            for (int x = -1; x < 2; x++)
+            {
+                for (int y = 0; y < 2; y++)
+                {
+                    if (WallGrid.Tiles[x + ghostChamberEntrance.X, -y + ghostChamberEntrance.Y].TileStates != States.Empty)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
 
 
         public override void Update(GameTime gameTime)
@@ -262,10 +310,10 @@ namespace Pacman
              * IMPORTANT
              * ---------
              * 
-             * Alt Eraser for pellets
+             * Fix pacman, its broken
              * 
              * Keep track of the number of portals (and their position you should be doing this anyways)
-             * and do another pathfinder starting in the middle. Make it's target the outer edge the map. If it reaches more outer tiles than
+             * and do another pathfinder starting in the middle. Make it targets the outer edge the map. If it reaches more outer tiles than
              * there are portals, give an error
              * 
              * I'm done. Just use try catch for all the other edge cases

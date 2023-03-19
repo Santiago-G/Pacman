@@ -108,6 +108,11 @@ namespace Pacman
                     }
                 }
 
+                if (MapEditor.selectedTileType == SelectedType.AltEraser)
+                {
+                    TileStates = States.Empty;
+                }
+
                 UpdateStates();
             }
             else

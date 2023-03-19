@@ -12,6 +12,7 @@ using LePacman.Pathfinding;
 using System.Diagnostics.Metrics;
 using System.Runtime.Serialization.Formatters;
 using Microsoft.Xna.Framework.Input;
+using System.IO;
 
 namespace Pacman
 {
@@ -21,7 +22,9 @@ namespace Pacman
 
         public wallVisual[,] Tiles;
         public List<wallVisual> FilledTiles = new List<wallVisual>();
-        public List<wallVisual[]> Portals= new List<wallVisual[]>();
+        public List<wallVisual[][]> Portals = new List<wallVisual[][]>();
+        public wallVisual[,] ghostChamberTiles = new wallVisual[7,4];
+        //1 Portal Pair = 2 Portals = 4 Tiles
         private List<Point> pacmanTileIndex = new List<Point>();
         private Graph graph = new Graph();
 
@@ -200,6 +203,7 @@ namespace Pacman
                     for (int j = 0; j < 4; j++)
                     {
                         Tiles[x + i, y + j].TileStates = States.GhostChamber;
+                        ghostChamberTiles[i, j] = Tiles[x + i, y + j];
                         Tiles[x + i, y + j].UpdateStates();
                     }
                 }
@@ -208,6 +212,8 @@ namespace Pacman
 
         private void removeGhostChamber()
         {
+            ghostChamberTiles = new wallVisual[7,4];
+
             foreach (var tile in Tiles)
             {
                 if (tile.TileStates == States.GhostChamber)
@@ -310,6 +316,14 @@ namespace Pacman
                     MapEditor.ghostChamberMS.Position = new Vector2(tile.Position.X - 13, tile.Position.Y - 13);
                     foundGhostChamber = true;
                     MapEditor.ghostChamberPlaced = true;
+
+                    for (int x = 0; x < 7; x++)
+                    {
+                        for (int y = 0; y < 4; y++)
+                        {
+                            ghostChamberTiles[x, y] = Tiles[tile.Cord.X + x, tile.Cord.Y + y];
+                        }
+                    }
                 }
                 tile.UpdateStates(true);
             }
@@ -459,6 +473,55 @@ namespace Pacman
             list.Add(item);
         }
 
+        public bool longJacket()
+        {
+            graph.Clear();
+            Point startingPoint = new Point(ghostChamberTiles[0, 3].Cord.X, ghostChamberTiles[0, 3].Cord.Y - 1);
+
+            foreach (var tile in Tiles)
+            {
+                graph.AddVertex(new Vertex(tile.Cord));
+            }
+
+            #region Creating Edges
+            for (int x = 0; x < Tiles.GetLength(0); x++)
+            {
+                for (int y = 0; y < Tiles.GetLength(1); y++)
+                {
+                    int i = x * Tiles.GetLength(1) + y;
+
+                    if (x != 0)
+                    {
+                        //no left
+                        graph.AddEdge(graph.vertices[i], graph.vertices[i - Tiles.GetLength(1)], getWeight(Tiles[x, y], Tiles[x - 1, y]));
+                    }
+                    if (x != Tiles.GetLength(0) - 1)
+                    {
+                        //no right
+                        graph.AddEdge(graph.vertices[i], graph.vertices[i + Tiles.GetLength(1)], getWeight(Tiles[x, y], Tiles[x + 1, y]));
+                    }
+                    if (y != 0)
+                    {
+                        //no up
+                        graph.AddEdge(graph.vertices[i], graph.vertices[i - 1], getWeight(Tiles[x, y], Tiles[x, y - 1]));
+                    }
+                    if (y != Tiles.GetLength(1) - 1)
+                    {
+                        //no right
+                        graph.AddEdge(graph.vertices[i], graph.vertices[i + 1], getWeight(Tiles[x, y], Tiles[x, y + 1]));
+                    }
+                }
+            }
+
+            //the graph should have 3590 edges
+            #endregion
+
+            Vertex startingVertex = graph.vertices[startingPoint.Y * Tiles.GetLength(0) + startingPoint.X];//Tiles above the entrance to the ghost chamber;
+            Tiles[startingVertex.Value.X, startingVertex.Value.Y].Tint = Color.Red;
+
+            return false;
+        }
+
         public List<(string ErrorMsg, List<wallVisual> InvalidTiles)> FindInvalidOuterWalls()
         {
             Portals.Clear();
@@ -579,17 +642,48 @@ namespace Pacman
                 }
             }
 
-            if (result.Count == 0) 
+            if (result.Count == 0)
             {
                 foreach (var portal in possiblePortals)
                 {
-                    Portals.Add(new wallVisual[] { portal[0], portal[1] });
+                    Point newPortalPos = new Point(1);
+                    Point newPortalPos2 = new Point(1);
+
+                    if (portal[0].Cord.X == 0)
+                    {
+                        newPortalPos.X = Tiles.GetLength(0) - 1;
+                        newPortalPos.Y = portal[0].Cord.Y;
+                        newPortalPos2 = new Point(newPortalPos.X, portal[1].Cord.Y);
+                    }
+                    else if (portal[0].Cord.X == Tiles.GetLength(0) - 1)
+                    {
+                        newPortalPos.X = 0;
+                        newPortalPos.Y = portal[0].Cord.Y;
+                        newPortalPos2 = new Point(newPortalPos.X, portal[1].Cord.Y);
+                    }
+                    else if (portal[0].Cord.Y == 0)
+                    {
+                        newPortalPos.X = portal[0].Cord.X;
+                        newPortalPos.Y = Tiles.GetLength(1) - 1;
+                        newPortalPos2 = new Point(portal[1].Cord.X, newPortalPos.Y);
+                    }
+                    else
+                    {
+                        newPortalPos.X = portal[0].Cord.X;
+                        newPortalPos.Y = 0;
+                        newPortalPos2 = new Point(portal[1].Cord.X, newPortalPos.Y);
+                    }
+
+                    Portals.Add(new wallVisual[][] { new wallVisual[] { portal[0], portal[1] },
+                                                     new wallVisual[] {Tiles[newPortalPos.X, newPortalPos.Y], Tiles[newPortalPos2.X, newPortalPos2.Y] } });
                 }
             }
 
             return result;
         }
         #endregion
+
+ 
 
         public int getWeight(wallVisual ab, wallVisual ba)
         {
