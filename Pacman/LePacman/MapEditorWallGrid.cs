@@ -515,7 +515,8 @@ namespace Pacman
 
             //the graph should have 3590 edges
             #endregion
-
+            //Graph is Y, X
+            feafeaf;
             Vertex startingVertex = graph.vertices[startingPoint.Y * Tiles.GetLength(0) + startingPoint.X];//Tiles above the entrance to the ghost chamber;
             Tiles[startingVertex.Value.X, startingVertex.Value.Y].Tint = Color.Red;
 
