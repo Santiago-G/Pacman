@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Pacman
 {
-    public class wallVisual : abstractVisual
+    public class WallVisual : abstractVisual
     {
         public static MapEditorWallGrid Grid;
 
@@ -56,7 +56,7 @@ namespace Pacman
 
         public wallData Data { get; set; } = new wallData();
 
-        public int OuterWallNeighborCount(wallVisual[,] Tiles, bool countDiaganals)
+        public int OuterWallNeighborCount(WallVisual[,] Tiles, bool countDiaganals)
         {
             int numOfNeighboringOWs = 0;
             int maxCount = Neighbors.Length;
@@ -79,11 +79,11 @@ namespace Pacman
             return numOfNeighboringOWs;
         }
 
-        private bool isValidPostion(Point Cord, wallVisual[,] Tiles)
+        private bool isValidPostion(Point Cord, WallVisual[,] Tiles)
         {
             return isValidPostion(Cord.ToVector2(), Tiles);
         }
-        private bool isValidPostion(Vector2 Cord, wallVisual[,] Tiles)
+        private bool isValidPostion(Vector2 Cord, WallVisual[,] Tiles)
         {
             return !(Cord.X < 0 || Cord.Y < 0 || Cord.X >= Tiles.GetLength(0) || Cord.Y >= Tiles.GetLength(1));
         }
@@ -96,12 +96,12 @@ namespace Pacman
             set { Data.WallState = value; }
         }
 
-        public wallVisual(Texture2D Image, Point Cord, Color Tint, Vector2 Offset, Vector2 Scale, Vector2 Origin, float Rotation, SpriteEffects spriteEffects) : base(Image, Cord, Tint, Offset, Scale, Origin, Rotation, spriteEffects)
+        public WallVisual(Texture2D Image, Point Cord, Color Tint, Vector2 Offset, Vector2 Scale, Vector2 Origin, float Rotation, SpriteEffects spriteEffects) : base(Image, Cord, Tint, Offset, Scale, Origin, Rotation, spriteEffects)
         {
             ;
         }
 
-        public wallVisual(wallData dataTile, Vector2 offset) : base(dataTile, offset)
+        public WallVisual(wallData dataTile, Vector2 offset) : base(dataTile, offset)
         {
 
         }

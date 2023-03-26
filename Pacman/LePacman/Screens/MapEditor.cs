@@ -10,6 +10,7 @@ using MonoGame.Extended;
 using System.Net.Security;
 using LePacman;
 using System.Reflection.Metadata;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Pacman
 {
@@ -57,7 +58,7 @@ namespace Pacman
         Button switchGridButton;
 
         //Left one
-        wallVisual ghostChamberEntrance;
+        WallVisual ghostChamberEntrance;
         Texture2D ghostChamberTexture;
         public static Button ghostChamberButton;
         public static Image ghostChamberMS;
@@ -157,44 +158,44 @@ namespace Pacman
             pixelVisual.NBpelletSprite = Content.Load<Texture2D>("NBpixelTile");
             pixelVisual.NBpowerPelletSprite = Content.Load<Texture2D>("NBpowerPelletTile");
 
-            wallVisual.NBemptySprite = pixelVisual.NBemptySprite;
+            WallVisual.NBemptySprite = pixelVisual.NBemptySprite;
 
-            wallVisual.EmptySprite = Content.Load<Texture2D>("mapEditorTile");
-            wallVisual.HLEmptySprite = Content.Load<Texture2D>("EnlargeBorderTile");
+            WallVisual.EmptySprite = Content.Load<Texture2D>("mapEditorTile");
+            WallVisual.HLEmptySprite = Content.Load<Texture2D>("EnlargeBorderTile");
 
-            wallVisual.LoneWallSprite = Content.Load<Texture2D>("loneWall");
-            wallVisual.InteriorWallSprite = Content.Load<Texture2D>("InteriorWall");
+            WallVisual.LoneWallSprite = Content.Load<Texture2D>("loneWall");
+            WallVisual.InteriorWallSprite = Content.Load<Texture2D>("InteriorWall");
 
-            wallVisual.MiddleWallSprite = Content.Load<Texture2D>("singleMiddleWall");
-            wallVisual.SingleWallEnd = Content.Load<Texture2D>("singleWallEnd");
+            WallVisual.MiddleWallSprite = Content.Load<Texture2D>("singleMiddleWall");
+            WallVisual.SingleWallEnd = Content.Load<Texture2D>("singleWallEnd");
 
-            wallVisual.CornerWallFilledTile = Content.Load<Texture2D>("CornerWallsFilled");
+            WallVisual.CornerWallFilledTile = Content.Load<Texture2D>("CornerWallsFilled");
 
-            wallVisual.CornerWallTile = wallVisual.CornerWallFilledTile;
+            WallVisual.CornerWallTile = WallVisual.CornerWallFilledTile;
 
-            wallVisual.EdgeSprite = Content.Load<Texture2D>("EdgeTile");
+            WallVisual.EdgeSprite = Content.Load<Texture2D>("EdgeTile");
 
-            wallVisual.InteriorCrossSprite = Content.Load<Texture2D>("Cross");
+            WallVisual.InteriorCrossSprite = Content.Load<Texture2D>("Cross");
 
-            wallVisual.SingleCrossSprite = wallVisual.EdgeSprite;
+            WallVisual.SingleCrossSprite = WallVisual.EdgeSprite;
 
-            wallVisual.InteriorFilledCorner = Content.Load<Texture2D>("InteriorFilledCorner");
+            WallVisual.InteriorFilledCorner = Content.Load<Texture2D>("InteriorFilledCorner");
 
-            wallVisual.MiddleOuterWall = Content.Load<Texture2D>("singleMiddleOuterWall");
-            wallVisual.CornerOuterWall = Content.Load<Texture2D>("cornerOuterWall");
-            wallVisual.SingleIntersectingOuterWall = Content.Load<Texture2D>("singleIntersectingOuterWall");
-            wallVisual.MiddleIntersectingOuterWall = Content.Load<Texture2D>("middleIntersectingOuterWall");
-            wallVisual.EdgeIntersectingOuterWall = Content.Load<Texture2D>("edgeIntersectingOuterWall");
-            wallVisual.Edge2IntersectingOuterWall = Content.Load<Texture2D>("edge2IntersectingOuterWall");
+            WallVisual.MiddleOuterWall = Content.Load<Texture2D>("singleMiddleOuterWall");
+            WallVisual.CornerOuterWall = Content.Load<Texture2D>("cornerOuterWall");
+            WallVisual.SingleIntersectingOuterWall = Content.Load<Texture2D>("singleIntersectingOuterWall");
+            WallVisual.MiddleIntersectingOuterWall = Content.Load<Texture2D>("middleIntersectingOuterWall");
+            WallVisual.EdgeIntersectingOuterWall = Content.Load<Texture2D>("edgeIntersectingOuterWall");
+            WallVisual.Edge2IntersectingOuterWall = Content.Load<Texture2D>("edge2IntersectingOuterWall");
 
-            wallVisual.emptyWallError = Content.Load<Texture2D>("errorEmptyTile");
-            wallVisual.singleOWError = Content.Load<Texture2D>("middleOWError");
+            WallVisual.emptyWallError = Content.Load<Texture2D>("errorEmptyTile");
+            WallVisual.singleOWError = Content.Load<Texture2D>("middleOWError");
 
             pixelGridSize = new Point(wallGridSize.X - 1, wallGridSize.Y - 1);
             pixelGridOffest = new Vector2(wallGridOffest.X + pixelVisual.EmptySprite.Width / 2, wallGridOffest.Y + pixelVisual.EmptySprite.Height / 2);
 
-            WallGrid = new MapEditorWallGrid(wallGridSize, new Point(wallVisual.EmptySprite.Width, wallVisual.EmptySprite.Height), wallGridOffest);
-            wallVisual.Grid = WallGrid;
+            WallGrid = new MapEditorWallGrid(wallGridSize, new Point(WallVisual.EmptySprite.Width, WallVisual.EmptySprite.Height), wallGridOffest);
+            WallVisual.Grid = WallGrid;
 
             PelletGrid = new MapEditorPixelGrid(pixelGridSize, new Point(pixelVisual.EmptySprite.Width, pixelVisual.EmptySprite.Height), pixelGridOffest);
             pixelVisual.Grid = PelletGrid;
@@ -246,22 +247,16 @@ namespace Pacman
 
             foreach (var portals in WallGrid.Portals)
             {
-                foreach (var portal in portals)
-                {
-                    foreach (var tile in portal)
-                    {
-                        tile.Tint = Color.Red;
-                    }
-                }
+                portals.firstPortal.firstTile.Tint = Color.Red;
+                portals.firstPortal.secondTile.Tint = Color.Red;
+                portals.secondPortal.firstTile.Tint = Color.Red;
+                portals.secondPortal.secondTile.Tint = Color.Red;
             }
+            //WallGrid.Tiles[WallGrid.ghostChamberTiles[3, 0].Cord.X, WallGrid.ghostChamberTiles[3, 0].Cord.Y - 1].Tint = Color.Red;
+            switchGrids();
+            switchGrids();
 
-            if (!ghostChamberValidityCheck())
-            {
-                ;
-                return;
-            }
-
-            WallGrid.longJacket();
+            PelletGrid.longJacket(WallGrid);
 
             //start the PF at 3,0
             //Pathfind for the ghost, and check if they can reach every pellet.
@@ -271,31 +266,48 @@ namespace Pacman
 
             //Pellet tiles are occupied tiles.
             
+            
         }
 
-        private bool ghostChamberValidityCheck()
+        public void switchGrids()
         {
-            ghostChamberMS.Position = new Vector2(-1000);
-
-            if (WallGrid.ghostChamberTiles[3, 0].Cord.Y - 1 < 0) { return false; }
-
-            Point ghostChamberEntrance = new Point(WallGrid.ghostChamberTiles[3,0].Cord.X, WallGrid.ghostChamberTiles[3, 0].Cord.Y - 1);
-
-            for (int x = -1; x < 2; x++)
+            if (!pacmanPlaced)
             {
-                for (int y = 0; y < 2; y++)
-                {
-                    if (WallGrid.Tiles[x + ghostChamberEntrance.X, -y + ghostChamberEntrance.Y].TileStates != States.Empty)
-                    {
-                        return false;
-                    }
-                }
+                selectedPacman = false;
+                pacmanPlacementButton.Tint = Color.White;
+                pacmanTileIcon.Position = new Vector2(-200);
+            }
+            if (!ghostChamberPlaced)
+            {
+                selectedGhostChamber = false;
+                ghostChamberMS.Position = new Vector2(-300);
             }
 
-            return true;
+            if (currentGridState == GridStates.PixelGrid)
+            {
+                currentGridState = GridStates.WallGrid;
+                PelletGrid.GoTransparent();
+                WallGrid.GoInFocus(PelletGrid.FilledTiles);
+
+                pelletButton.Tint = Color.Gray;
+                powerPelletButton.Tint = Color.Gray;
+                wallButton.Tint = Color.White;
+                outerWallButton.Tint = Color.White;
+                ghostChamberButton.Tint = Color.White;
+            }
+            else
+            {
+                currentGridState = GridStates.PixelGrid;
+                WallGrid.GoTransparent();
+                PelletGrid.GoInFocus(WallGrid.FilledTiles);
+
+                wallButton.Tint = Color.Gray;
+                ghostChamberButton.Tint = Color.Gray;
+                outerWallButton.Tint = Color.Gray;
+                powerPelletButton.Tint = Color.White;
+                pelletButton.Tint = Color.White;
+            }
         }
-
-
 
         public override void Update(GameTime gameTime)
         {
@@ -425,42 +437,7 @@ namespace Pacman
             //Switching Grids
             if (switchGridButton.IsClicked(ms))
             {
-                if (!pacmanPlaced)
-                {
-                    selectedPacman = false;
-                    pacmanPlacementButton.Tint = Color.White;
-                    pacmanTileIcon.Position = new Vector2(-200);
-                }
-                if (!ghostChamberPlaced)
-                {
-                    selectedGhostChamber = false;
-                    ghostChamberMS.Position = new Vector2(-300);
-                }
-
-                if (currentGridState == GridStates.PixelGrid)
-                {
-                    currentGridState = GridStates.WallGrid;
-                    PelletGrid.GoTransparent();
-                    WallGrid.GoInFocus(PelletGrid.FilledTiles);
-
-                    pelletButton.Tint = Color.Gray;
-                    powerPelletButton.Tint = Color.Gray;
-                    wallButton.Tint = Color.White;
-                    outerWallButton.Tint = Color.White;
-                    ghostChamberButton.Tint = Color.White;
-                }
-                else
-                {
-                    currentGridState = GridStates.PixelGrid;
-                    WallGrid.GoTransparent();
-                    PelletGrid.GoInFocus(WallGrid.FilledTiles);
-
-                    wallButton.Tint = Color.Gray;
-                    ghostChamberButton.Tint = Color.Gray;
-                    outerWallButton.Tint = Color.Gray;
-                    powerPelletButton.Tint = Color.White;
-                    pelletButton.Tint = Color.White;
-                }
+                switchGrids();
             }
 
             if (currentGridState == GridStates.WallGrid)

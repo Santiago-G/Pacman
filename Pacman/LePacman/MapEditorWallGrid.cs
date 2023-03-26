@@ -16,15 +16,21 @@ using System.IO;
 
 namespace Pacman
 {
+    //record class Animal<T> (string name, int age, T coffee);
+    public record struct PortalPair(Portal firstPortal, Portal secondPortal);
+
+    public record struct Portal(WallVisual firstTile, WallVisual secondTile);
+
     public class MapEditorWallGrid
     {
         Vector2 Position;
-
-        public wallVisual[,] Tiles;
-        public List<wallVisual> FilledTiles = new List<wallVisual>();
-        public List<wallVisual[][]> Portals = new List<wallVisual[][]>();
-        public wallVisual[,] ghostChamberTiles = new wallVisual[7,4];
+        
+        public WallVisual[,] Tiles;
+        public List<WallVisual> FilledTiles = new List<WallVisual>();
+        public List<PortalPair> Portals = new List<PortalPair>();
         //1 Portal Pair = 2 Portals = 4 Tiles
+        public WallVisual[,] ghostChamberTiles = new WallVisual[7,4];
+        
         private List<Point> pacmanTileIndex = new List<Point>();
         private Graph graph = new Graph();
 
@@ -71,7 +77,7 @@ namespace Pacman
 
             recursiveAddWall(Tiles[index.X, index.Y], true);
         }
-        private void recursiveAddWall(wallVisual currentTile, bool remove = false)
+        private void recursiveAddWall(WallVisual currentTile, bool remove = false)
         {
             if (!remove)
             {
@@ -104,7 +110,7 @@ namespace Pacman
             }
             //y, x
 
-            wallVisual currentTile = Tiles[tileIndex.X, tileIndex.Y];
+            WallVisual currentTile = Tiles[tileIndex.X, tileIndex.Y];
             WallStates oldState = currentTile.WallState;
 
             if (MapEditor.selectedTileType == SelectedType.OuterWall || oldState.HasFlag(WallStates.OuterWall))
@@ -212,7 +218,7 @@ namespace Pacman
 
         private void removeGhostChamber()
         {
-            ghostChamberTiles = new wallVisual[7,4];
+            ghostChamberTiles = new WallVisual[7,4];
 
             foreach (var tile in Tiles)
             {
@@ -306,7 +312,7 @@ namespace Pacman
 
         public void LoadGrid(List<wallData> TileList)
         {
-            Tiles = TileList.Select(x => new wallVisual(x, Position)).Expand(new Point(Tiles.GetLength(0), Tiles.GetLength(1)));
+            Tiles = TileList.Select(x => new WallVisual(x, Position)).Expand(new Point(Tiles.GetLength(0), Tiles.GetLength(1)));
             bool foundGhostChamber = false;
 
             foreach (var tile in Tiles)
@@ -330,13 +336,13 @@ namespace Pacman
         }
 
         #region OuterWall/Portal functions
-        private List<wallVisual> findInvalidTiles(wallVisual startingTile)
+        private List<WallVisual> findInvalidTiles(WallVisual startingTile)
         {
-            List<wallVisual> invalidTiles = new List<wallVisual>();
+            List<WallVisual> invalidTiles = new List<WallVisual>();
 
             int directionX = 0;
             int directionY = 0;
-            wallVisual currentTile = startingTile;
+            WallVisual currentTile = startingTile;
             //Go Down
 
             if (startingTile.Cord.Y != 0 && Tiles[startingTile.Cord.X, startingTile.Cord.Y - 1].WallState.HasFlag(WallStates.OuterWall))
@@ -394,14 +400,14 @@ namespace Pacman
             return position.X == 0 || position.Y == 0 || position.X == Tiles.GetLength(0) - 1 || position.Y == Tiles.GetLength(1) - 1;
         }
 
-        private (string, List<wallVisual>) PortalValityCheck(wallVisual startingTile, bool isHoriz)
+        private (string, List<WallVisual>) PortalValityCheck(WallVisual startingTile, bool isHoriz)
         {
             int directionX = 0;
             int directionY = 0;
 
             string errorMSG = "Portals must extend to the edge of the map";
-            List<wallVisual> invalidTiles = new List<wallVisual>();
-            wallVisual currTile = startingTile;
+            List<WallVisual> invalidTiles = new List<WallVisual>();
+            WallVisual currTile = startingTile;
             int gapsFound = 0;
             bool inGap = false;
 
@@ -455,9 +461,9 @@ namespace Pacman
             return ("Lazing On A Sunday Afteroon", null);
         }
 
-        private void DuplicatePortalCheck(List<List<wallVisual>> list, List<wallVisual> item)
+        private void DuplicatePortalCheck(List<List<WallVisual>> list, List<WallVisual> item)
         {
-            wallVisual temp = item[0];
+            WallVisual temp = item[0];
 
             foreach (var portal in list)
             {
@@ -473,64 +479,14 @@ namespace Pacman
             list.Add(item);
         }
 
-        public bool longJacket()
-        {
-            graph.Clear();
-            Point startingPoint = new Point(ghostChamberTiles[0, 3].Cord.X, ghostChamberTiles[0, 3].Cord.Y - 1);
-
-            foreach (var tile in Tiles)
-            {
-                graph.AddVertex(new Vertex(tile.Cord));
-            }
-
-            #region Creating Edges
-            for (int x = 0; x < Tiles.GetLength(0); x++)
-            {
-                for (int y = 0; y < Tiles.GetLength(1); y++)
-                {
-                    int i = x * Tiles.GetLength(1) + y;
-
-                    if (x != 0)
-                    {
-                        //no left
-                        graph.AddEdge(graph.vertices[i], graph.vertices[i - Tiles.GetLength(1)], getWeight(Tiles[x, y], Tiles[x - 1, y]));
-                    }
-                    if (x != Tiles.GetLength(0) - 1)
-                    {
-                        //no right
-                        graph.AddEdge(graph.vertices[i], graph.vertices[i + Tiles.GetLength(1)], getWeight(Tiles[x, y], Tiles[x + 1, y]));
-                    }
-                    if (y != 0)
-                    {
-                        //no up
-                        graph.AddEdge(graph.vertices[i], graph.vertices[i - 1], getWeight(Tiles[x, y], Tiles[x, y - 1]));
-                    }
-                    if (y != Tiles.GetLength(1) - 1)
-                    {
-                        //no right
-                        graph.AddEdge(graph.vertices[i], graph.vertices[i + 1], getWeight(Tiles[x, y], Tiles[x, y + 1]));
-                    }
-                }
-            }
-
-            //the graph should have 3590 edges
-            #endregion
-            //Graph is Y, X
-            feafeaf;
-            Vertex startingVertex = graph.vertices[startingPoint.Y * Tiles.GetLength(0) + startingPoint.X];//Tiles above the entrance to the ghost chamber;
-            Tiles[startingVertex.Value.X, startingVertex.Value.Y].Tint = Color.Red;
-
-            return false;
-        }
-
-        public List<(string ErrorMsg, List<wallVisual> InvalidTiles)> FindInvalidOuterWalls()
+        public List<(string ErrorMsg, List<WallVisual> InvalidTiles)> FindInvalidOuterWalls()
         {
             Portals.Clear();
 
             #region Set Up
             graph.Clear();
 
-            List<(string, List<wallVisual>)> result = new List<(string, List<wallVisual>)>();
+            List<(string, List<WallVisual>)> result = new List<(string, List<WallVisual>)>();
             HashSet<Vertex> outsideWalls = new HashSet<Vertex>();
             List<Vertex> foundWalls = new List<Vertex>();
             //HashSet<Vertex> possiblePortals = new HashSet<Vertex>();
@@ -595,7 +551,7 @@ namespace Pacman
 
             foundWalls = Pathfinders.Dijkstra(graph, startingVertex, outsideWalls, out List<Point> jumps, out Vertex lastVertex);
 
-            List<List<wallVisual>> possiblePortals = new List<List<wallVisual>>();
+            List<List<WallVisual>> possiblePortals = new List<List<WallVisual>>();
 
             if (jumps.Count == 1)
             {
@@ -609,7 +565,7 @@ namespace Pacman
             {
                 if (!Tiles[item.Value.X, item.Value.Y].WallState.HasFlag(WallStates.OuterWall))
                 {
-                    List<wallVisual> portal = findInvalidTiles(Tiles[item.Value.X, item.Value.Y]);
+                    List<WallVisual> portal = findInvalidTiles(Tiles[item.Value.X, item.Value.Y]);
 
                     if (portal.Count != 0)
                     {
@@ -635,7 +591,7 @@ namespace Pacman
                     continue;
                 }
 
-                (string ErrorMSG, List<wallVisual>) portalValidity = PortalValityCheck(portal[0], portal[0].Cord.Y == portal[1].Cord.Y);
+                (string ErrorMSG, List<WallVisual>) portalValidity = PortalValityCheck(portal[0], portal[0].Cord.Y == portal[1].Cord.Y);
 
                 if (portalValidity.ErrorMSG != "Lazing On A Sunday Afteroon")
                 {
@@ -675,8 +631,10 @@ namespace Pacman
                         newPortalPos2 = new Point(portal[1].Cord.X, newPortalPos.Y);
                     }
 
-                    Portals.Add(new wallVisual[][] { new wallVisual[] { portal[0], portal[1] },
-                                                     new wallVisual[] {Tiles[newPortalPos.X, newPortalPos.Y], Tiles[newPortalPos2.X, newPortalPos2.Y] } });
+
+                    Portals.Add(new (new (portal[0], portal[1]), new (Tiles[newPortalPos.X, newPortalPos.Y], Tiles[newPortalPos2.X, newPortalPos2.Y])));
+                    //Portals.Add(new WallVisual[][] { new WallVisual[] { portal[0], portal[1] },
+                    //                                 new WallVisual[] {Tiles[newPortalPos.X, newPortalPos.Y], Tiles[newPortalPos2.X, newPortalPos2.Y] } });
                 }
             }
 
@@ -684,9 +642,7 @@ namespace Pacman
         }
         #endregion
 
- 
-
-        public int getWeight(wallVisual ab, wallVisual ba)
+        public int getWeight(WallVisual ab, WallVisual ba)
         {
             if (ab.WallState.HasFlag(WallStates.OuterWall) && ba.WallState.HasFlag(WallStates.OuterWall))
             {
@@ -714,7 +670,7 @@ namespace Pacman
             }
         }
 
-        public List<wallVisual> GetFilledTiles()
+        public List<WallVisual> GetFilledTiles()
         {
             FilledTiles.Clear();
 
@@ -760,15 +716,15 @@ namespace Pacman
 
         public MapEditorWallGrid(Point gridSize, Point tileSize, Vector2 position)
         {
-            Position = position + new Vector2(wallVisual.EmptySprite.Width / 2, wallVisual.EmptySprite.Height / 2);
+            Position = position + new Vector2(WallVisual.EmptySprite.Width / 2, WallVisual.EmptySprite.Height / 2);
 
-            Tiles = new wallVisual[gridSize.X, gridSize.Y];
+            Tiles = new WallVisual[gridSize.X, gridSize.Y];
 
             for (int x = 0; x < gridSize.X; x++)
             {
                 for (int y = 0; y < gridSize.Y; y++)
                 {
-                    Tiles[x, y] = new wallVisual(wallVisual.EmptySprite, new Point(x, y), Color.White, Position, Vector2.One, new Vector2(wallVisual.EmptySprite.Width / 2f, wallVisual.EmptySprite.Height / 2f), 0f, SpriteEffects.None);
+                    Tiles[x, y] = new WallVisual(WallVisual.EmptySprite, new Point(x, y), Color.White, Position, Vector2.One, new Vector2(WallVisual.EmptySprite.Width / 2f, WallVisual.EmptySprite.Height / 2f), 0f, SpriteEffects.None);
 
                     for (int i = 0; i < offsets.Length; i++)
                     {

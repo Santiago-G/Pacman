@@ -120,9 +120,10 @@ namespace LePacman.Pathfinding
             return orderedVertices;
         }
 
-        //public static List<Vertex> Dijks(List<Vertex> vertices)
-        //{
+        public static void BreadthFirstSearch(Graph graph, Vertex Start, HashSet<Vertex> End)
+        {
 
-        //}
+        }
+
     }
 }

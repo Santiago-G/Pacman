@@ -110,10 +110,10 @@ namespace Pacman
     public enum States
     {
         Empty,
-        Occupied,
         Pellet,
         PowerPellet,
         Fruit,
+        Occupied,
         Wall,
         GhostChamber,
         Pacman,

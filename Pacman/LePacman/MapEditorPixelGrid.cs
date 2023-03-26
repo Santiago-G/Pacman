@@ -5,7 +5,15 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
+using System.Net.NetworkInformation;
+using System.Diagnostics.SymbolStore;
+using System.Runtime.ExceptionServices;
+using LePacman.Pathfinding;
+using System.Diagnostics.Metrics;
+using System.Runtime.Serialization.Formatters;
+using Microsoft.Xna.Framework.Input;
+using System.IO;
+using static Microsoft.Xna.Framework.Graphics.SpriteFont;
 
 namespace Pacman
 {
@@ -106,6 +114,125 @@ namespace Pacman
 
         #endregion
 
+        private bool ghostChamberExitCheck(Point position)
+        {
+            if ((int)Tiles[position.X, position.Y].TileStates > 3 || (int)Tiles[position.X + 1, position.Y].TileStates > 3)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public int getWeight(pixelVisual ab, pixelVisual ba)
+        {
+            if ((int)ab.TileStates < 4 && (int)ba.TileStates < 4)
+            {
+                return -1;
+            }
+
+            return short.MaxValue;
+        }
+
+
+        public bool longJacket(MapEditorWallGrid wallGrid)
+        {
+            Graph graph = new Graph();
+
+
+
+            Point startingPoint = new Point(wallGrid.ghostChamberTiles[3, 0].Cord.X - 1, wallGrid.ghostChamberTiles[3, 0].Cord.Y - 2);
+            Tiles[startingPoint.X, startingPoint.Y].Tint = Color.Red;
+
+            //Tiles[].Tint = Color.Red;
+
+            if (!ghostChamberExitCheck(startingPoint))
+            {
+                return false;
+            }
+
+            for (int y = 0; y < Tiles.GetLength(1); y++)
+            {
+                for (int x = 0; x < Tiles.GetLength(0); x++)
+                {
+                    graph.AddVertex(new Vertex(Tiles[x, y].Cord));
+                }
+            }
+            ;
+            #region Creating Edges
+            for (int x = 0; x < Tiles.GetLength(0); x++)
+            {
+                for (int y = 0; y < Tiles.GetLength(1); y++)
+                {
+
+
+                    int i = x * Tiles.GetLength(1) + y;
+
+                    if (x != 0 && !invalidConnect(Tiles[x, y], Tiles[x - 1, y]))
+                    {
+                        //no left
+                        graph.AddEdge(graph.vertices[i], graph.vertices[i - Tiles.GetLength(1)], getWeight(Tiles[x, y], Tiles[x - 1, y]));
+                    }
+                    if (x != Tiles.GetLength(0) - 1 && !invalidConnect(Tiles[x, y], Tiles[x + 1, y]))
+                    {
+                        //no right
+                        graph.AddEdge(graph.vertices[i], graph.vertices[i + Tiles.GetLength(1)], getWeight(Tiles[x, y], Tiles[x + 1, y]));
+                    }
+                    if (y != 0 && !invalidConnect(Tiles[x, y], Tiles[x, y - 1]))
+                    {
+                        //no up
+                        graph.AddEdge(graph.vertices[i], graph.vertices[i - 1], getWeight(Tiles[x, y], Tiles[x, y - 1]));
+                    }
+                    if (y != Tiles.GetLength(1) - 1 && !invalidConnect(Tiles[x, y], Tiles[x, y + 1]))
+                    {
+                        //no right
+                        graph.AddEdge(graph.vertices[i], graph.vertices[i + 1], getWeight(Tiles[x, y], Tiles[x, y + 1]));
+                    }
+                }
+            }
+            ;
+            //the graph should have 3590 edges
+            #endregion
+
+
+            //Graph is Y, X
+
+            Vertex startingVertex = graph.vertices[startingPoint.Y * Tiles.GetLength(0) + startingPoint.X];
+            Tiles[startingVertex.Value.X, startingVertex.Value.Y].Tint = Color.Red;
+            var currentTile = wallGrid.Portals[0].firstPortal.secondTile;
+            Tiles[Math.Clamp(currentTile.Cord.X, 0, Tiles.GetLength(0) - 1), Math.Clamp(currentTile.Cord.Y, 0, Tiles.GetLength(1) - 1)].Tint = Color.Red;
+
+
+            return false;
+        }
+
+        private bool invalidConnect(pixelVisual ab, pixelVisual ba)
+        {
+            return ((int)ab.TileStates > 4 || (int)ba.TileStates > 4);
+        } 
+        
+        private void portalEdge(Point Position, MapEditorWallGrid wallGrid)
+        {
+            //if (!(Position.X == 0 || Position.X == Tiles.GetLength(0) || Position.Y == 0 || Position.Y == Tiles.GetLength(1))) return;
+
+            //foreach (var portalPair in wallGrid.Portals)
+            //{
+            //    foreach (var portal in portalPair)
+            //    {
+            //        foreach (var tile in portal)
+            //        {
+            //            if (Position == new Point(Math.Clamp(tile.Cord.X - 1, 0, 1977), Math.Clamp(tile.Cord.Y - 1, 0, 1977)))
+            //            {
+
+            //            }
+            //        }
+            //    }
+            //}
+        }
+
+        
+
+
+
         public void RemovePacman(Point gridIndex)
         {
             foreach (var index in pacmanTileIndex)
@@ -173,7 +300,7 @@ namespace Pacman
             }
         }
 
-        public void GoInFocus(List<wallVisual> wallTiles)
+        public void GoInFocus(List<WallVisual> wallTiles)
         {
             foreach (var tile in Tiles)
             {
