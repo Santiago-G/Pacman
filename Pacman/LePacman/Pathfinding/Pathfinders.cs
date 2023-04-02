@@ -120,9 +120,64 @@ namespace LePacman.Pathfinding
             return orderedVertices;
         }
 
-        public static void BreadthFirstSearch(Graph graph, Vertex Start, HashSet<Vertex> End)
+        public static List<Vertex> otherDijkstra(Graph graph, Vertex Start, HashSet<Vertex> End)
         {
+            #region Setup
+            List<Vertex> invalidTiles = new List<Vertex>();
+            BinaryHeap<Vertex> PriorityQueue = new BinaryHeap<Vertex>(DijkstraComparer);
+            int pointTilesFound = 0;
+            bool invalid = false;
 
+            foreach (var vertex in graph.vertices)
+            {
+                vertex.Visited = false;
+                vertex.DistanceFromStart = float.PositiveInfinity;
+                vertex.Founder = null;
+                vertex.inBinaryHeap = false;
+            }
+
+            Start.DistanceFromStart = 0;
+            PriorityQueue.Insert(Start);
+            Vertex currVertex;
+            #endregion
+
+            while (pointTilesFound < End.Count)
+            {
+                currVertex = PriorityQueue.Pop();
+
+                if (currVertex.isWall) 
+                {
+                    invalid = true;
+                }
+
+                if (currVertex.Visited) { continue; }
+
+                foreach (var neighbor in currVertex.Neighbors)
+                {
+                    float tentativeDistance = currVertex.DistanceFromStart + neighbor.Weight;
+
+                    if (!neighbor.End.Visited && tentativeDistance < neighbor.End.DistanceFromStart)
+                    {
+                        neighbor.End.DistanceFromStart = tentativeDistance;
+                        neighbor.End.Founder = currVertex;
+                        PriorityQueue.Insert(neighbor.End);
+                        neighbor.End.inBinaryHeap = true;
+                    }
+                }
+
+                currVertex.Visited = true;
+
+                if (End.Contains(currVertex))
+                {
+                    if (invalid)
+                    {
+                        invalidTiles.Add(currVertex);
+                    }
+                    pointTilesFound++;
+                }
+            }
+
+            return invalidTiles;
         }
 
     }

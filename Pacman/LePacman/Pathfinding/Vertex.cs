@@ -19,6 +19,7 @@ namespace LePacman.Pathfinding
         public bool Visited;
 
         public bool isOuterWall = false;
+        public bool isWall = false;
         public bool inBinaryHeap;
 
         //Dijkstra

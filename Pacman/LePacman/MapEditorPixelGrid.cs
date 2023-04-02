@@ -138,12 +138,10 @@ namespace Pacman
         {
             Graph graph = new Graph();
 
-
+            HashSet<Vertex> targets = new HashSet<Vertex>();
 
             Point startingPoint = new Point(wallGrid.ghostChamberTiles[3, 0].Cord.X - 1, wallGrid.ghostChamberTiles[3, 0].Cord.Y - 2);
             Tiles[startingPoint.X, startingPoint.Y].Tint = Color.Red;
-
-            //Tiles[].Tint = Color.Red;
 
             if (!ghostChamberExitCheck(startingPoint))
             {
@@ -154,17 +152,26 @@ namespace Pacman
             {
                 for (int x = 0; x < Tiles.GetLength(0); x++)
                 {
-                    graph.AddVertex(new Vertex(Tiles[x, y].Cord));
+                    Vertex vertex = new Vertex(Tiles[x, y].Cord);
+
+                    if (Tiles[x, y].TileStates < States.Occupied && Tiles[x, y].TileStates != States.Empty)
+                    {
+                        targets.Add(vertex);
+                    }
+                    else if(Tiles[x, y].TileStates >= States.Occupied)
+                    {
+                        vertex.isWall = true;
+                    }
+
+                    graph.AddVertex(vertex);
                 }
             }
-            ;
+            
             #region Creating Edges
             for (int x = 0; x < Tiles.GetLength(0); x++)
             {
                 for (int y = 0; y < Tiles.GetLength(1); y++)
-                {
-
-
+                { 
                     int i = x * Tiles.GetLength(1) + y;
 
                     if (x != 0 && !invalidConnect(Tiles[x, y], Tiles[x - 1, y]))
@@ -189,18 +196,28 @@ namespace Pacman
                     }
                 }
             }
-            ;
+
+            addPortalEdge(wallGrid, graph);
+
             //the graph should have 3590 edges
             #endregion
-
 
             //Graph is Y, X
 
             Vertex startingVertex = graph.vertices[startingPoint.Y * Tiles.GetLength(0) + startingPoint.X];
             Tiles[startingVertex.Value.X, startingVertex.Value.Y].Tint = Color.Red;
-            var currentTile = wallGrid.Portals[0].firstPortal.secondTile;
-            Tiles[Math.Clamp(currentTile.Cord.X, 0, Tiles.GetLength(0) - 1), Math.Clamp(currentTile.Cord.Y, 0, Tiles.GetLength(1) - 1)].Tint = Color.Red;
 
+            List<Vertex> invalidPelletTiles = Pathfinders.otherDijkstra(graph, startingVertex, targets);
+
+            if (invalidPelletTiles.Count == 0) 
+            {
+                return true;
+            }
+
+            foreach (var invalidTiles in invalidPelletTiles)
+            {
+                Tiles[invalidTiles.Value.X, invalidTiles.Value.Y].Tint = Color.Red;
+            }
 
             return false;
         }
@@ -208,28 +225,23 @@ namespace Pacman
         private bool invalidConnect(pixelVisual ab, pixelVisual ba)
         {
             return ((int)ab.TileStates > 4 || (int)ba.TileStates > 4);
-        } 
-        
-        private void portalEdge(Point Position, MapEditorWallGrid wallGrid)
-        {
-            //if (!(Position.X == 0 || Position.X == Tiles.GetLength(0) || Position.Y == 0 || Position.Y == Tiles.GetLength(1))) return;
-
-            //foreach (var portalPair in wallGrid.Portals)
-            //{
-            //    foreach (var portal in portalPair)
-            //    {
-            //        foreach (var tile in portal)
-            //        {
-            //            if (Position == new Point(Math.Clamp(tile.Cord.X - 1, 0, 1977), Math.Clamp(tile.Cord.Y - 1, 0, 1977)))
-            //            {
-
-            //            }
-            //        }
-            //    }
-            //}
         }
 
-        
+        private void addPortalEdge(MapEditorWallGrid wallGrid, Graph graph)
+        {
+            foreach (var portalPair in wallGrid.Portals)
+            {
+                Point firstPortalTile = Tiles[Math.Clamp(portalPair.firstPortal.secondTile.Cord.X, 0, Tiles.GetLength(0) - 1), Math.Clamp(portalPair.firstPortal.secondTile.Cord.Y, 0, Tiles.GetLength(1) - 1)].Cord;
+                Point secondPortalTile = Tiles[Math.Clamp(portalPair.secondPortal.secondTile.Cord.X, 0, Tiles.GetLength(0) - 1), Math.Clamp(portalPair.secondPortal.secondTile.Cord.Y, 0, Tiles.GetLength(1) - 1)].Cord;
+
+                int firstPortalVertexIndex = firstPortalTile.Y * Tiles.GetLength(0) + firstPortalTile.X;
+                int secondPortalVertexIndex = secondPortalTile.Y * Tiles.GetLength(0) + secondPortalTile.X;
+
+                graph.AddEdge(graph.vertices[firstPortalVertexIndex], graph.vertices[secondPortalVertexIndex], -1);
+                graph.AddEdge(graph.vertices[secondPortalVertexIndex], graph.vertices[firstPortalVertexIndex], -1);
+            }
+        }
+
 
 
 

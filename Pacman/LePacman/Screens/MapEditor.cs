@@ -245,13 +245,13 @@ namespace Pacman
                 return;
             }
 
-            foreach (var portals in WallGrid.Portals)
-            {
-                portals.firstPortal.firstTile.Tint = Color.Red;
-                portals.firstPortal.secondTile.Tint = Color.Red;
-                portals.secondPortal.firstTile.Tint = Color.Red;
-                portals.secondPortal.secondTile.Tint = Color.Red;
-            }
+            //foreach (var portals in WallGrid.Portals)
+            //{
+            //    portals.firstPortal.firstTile.Tint = Color.Red;
+            //    portals.firstPortal.secondTile.Tint = Color.Red;
+            //    portals.secondPortal.firstTile.Tint = Color.Red;
+            //    portals.secondPortal.secondTile.Tint = Color.Red;
+            //}
             //WallGrid.Tiles[WallGrid.ghostChamberTiles[3, 0].Cord.X, WallGrid.ghostChamberTiles[3, 0].Cord.Y - 1].Tint = Color.Red;
             switchGrids();
             switchGrids();
