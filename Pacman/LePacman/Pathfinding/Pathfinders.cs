@@ -145,7 +145,7 @@ namespace LePacman.Pathfinding
             {
                 currVertex = PriorityQueue.Pop();
 
-                if (currVertex.isWall) 
+                if (currVertex.isWall)
                 {
                     invalid = true;
                 }
@@ -161,6 +161,7 @@ namespace LePacman.Pathfinding
                         neighbor.End.DistanceFromStart = tentativeDistance;
                         neighbor.End.Founder = currVertex;
                         PriorityQueue.Insert(neighbor.End);
+                        neighbor.End.Visited = false;
                         neighbor.End.inBinaryHeap = true;
                     }
                 }

@@ -113,10 +113,10 @@ namespace Pacman
         Pellet,
         PowerPellet,
         Fruit,
+        Pacman,
         Occupied,
         Wall,
         GhostChamber,
-        Pacman,
     }
 
     public enum GridStates

@@ -125,7 +125,7 @@ namespace Pacman
 
         public int getWeight(pixelVisual ab, pixelVisual ba)
         {
-            if ((int)ab.TileStates < 4 && (int)ba.TileStates < 4)
+            if (ab.TileStates < States.Occupied && ba.TileStates < States.Occupied)
             {
                 return -1;
             }
@@ -141,24 +141,25 @@ namespace Pacman
             HashSet<Vertex> targets = new HashSet<Vertex>();
 
             Point startingPoint = new Point(wallGrid.ghostChamberTiles[3, 0].Cord.X - 1, wallGrid.ghostChamberTiles[3, 0].Cord.Y - 2);
-            Tiles[startingPoint.X, startingPoint.Y].Tint = Color.Red;
+            
 
             if (!ghostChamberExitCheck(startingPoint))
             {
                 return false;
             }
 
-            for (int y = 0; y < Tiles.GetLength(1); y++)
+            for (int x = 0; x < Tiles.GetLength(0); x++)
             {
-                for (int x = 0; x < Tiles.GetLength(0); x++)
+                for (int y = 0; y < Tiles.GetLength(1); y++)
                 {
+                    Tiles[x, y].Tint = Color.White;
                     Vertex vertex = new Vertex(Tiles[x, y].Cord);
 
                     if (Tiles[x, y].TileStates < States.Occupied && Tiles[x, y].TileStates != States.Empty)
                     {
                         targets.Add(vertex);
                     }
-                    else if(Tiles[x, y].TileStates >= States.Occupied)
+                    else if (Tiles[x, y].TileStates >= States.Occupied)
                     {
                         vertex.isWall = true;
                     }
@@ -166,34 +167,39 @@ namespace Pacman
                     graph.AddVertex(vertex);
                 }
             }
-            
+
+            Tiles[startingPoint.X, startingPoint.Y].Tint = Color.Red;
+
             #region Creating Edges
             for (int x = 0; x < Tiles.GetLength(0); x++)
             {
                 for (int y = 0; y < Tiles.GetLength(1); y++)
-                { 
+                {
                     int i = x * Tiles.GetLength(1) + y;
 
-                    if (x != 0 && !invalidConnect(Tiles[x, y], Tiles[x - 1, y]))
+
+                    if (x != 0)//&& !invalidConnect(Tiles[x, y], Tiles[x - 1, y]))
                     {
                         //no left
                         graph.AddEdge(graph.vertices[i], graph.vertices[i - Tiles.GetLength(1)], getWeight(Tiles[x, y], Tiles[x - 1, y]));
                     }
-                    if (x != Tiles.GetLength(0) - 1 && !invalidConnect(Tiles[x, y], Tiles[x + 1, y]))
+                    if (x != Tiles.GetLength(0) - 1)// !invalidConnect(Tiles[x, y], Tiles[x + 1, y]))
                     {
                         //no right
                         graph.AddEdge(graph.vertices[i], graph.vertices[i + Tiles.GetLength(1)], getWeight(Tiles[x, y], Tiles[x + 1, y]));
                     }
-                    if (y != 0 && !invalidConnect(Tiles[x, y], Tiles[x, y - 1]))
+                    if (y != 0)// && !invalidConnect(Tiles[x, y], Tiles[x, y - 1]))
                     {
                         //no up
                         graph.AddEdge(graph.vertices[i], graph.vertices[i - 1], getWeight(Tiles[x, y], Tiles[x, y - 1]));
                     }
-                    if (y != Tiles.GetLength(1) - 1 && !invalidConnect(Tiles[x, y], Tiles[x, y + 1]))
+                    if (y != Tiles.GetLength(1) - 1)// && !invalidConnect(Tiles[x, y], Tiles[x, y + 1]))
                     {
                         //no right
                         graph.AddEdge(graph.vertices[i], graph.vertices[i + 1], getWeight(Tiles[x, y], Tiles[x, y + 1]));
                     }
+
+
                 }
             }
 
@@ -204,12 +210,12 @@ namespace Pacman
 
             //Graph is Y, X
 
-            Vertex startingVertex = graph.vertices[startingPoint.Y * Tiles.GetLength(0) + startingPoint.X];
+            Vertex startingVertex = graph.vertices[startingPoint.X * Tiles.GetLength(1) + startingPoint.Y];
             Tiles[startingVertex.Value.X, startingVertex.Value.Y].Tint = Color.Red;
 
             List<Vertex> invalidPelletTiles = Pathfinders.otherDijkstra(graph, startingVertex, targets);
 
-            if (invalidPelletTiles.Count == 0) 
+            if (invalidPelletTiles.Count == 0)
             {
                 return true;
             }
@@ -229,21 +235,21 @@ namespace Pacman
 
         private void addPortalEdge(MapEditorWallGrid wallGrid, Graph graph)
         {
+            int count = 0;
             foreach (var portalPair in wallGrid.Portals)
             {
+                count++;
+               // int i = x * Tiles.GetLength(1) + y;
                 Point firstPortalTile = Tiles[Math.Clamp(portalPair.firstPortal.secondTile.Cord.X, 0, Tiles.GetLength(0) - 1), Math.Clamp(portalPair.firstPortal.secondTile.Cord.Y, 0, Tiles.GetLength(1) - 1)].Cord;
                 Point secondPortalTile = Tiles[Math.Clamp(portalPair.secondPortal.secondTile.Cord.X, 0, Tiles.GetLength(0) - 1), Math.Clamp(portalPair.secondPortal.secondTile.Cord.Y, 0, Tiles.GetLength(1) - 1)].Cord;
 
-                int firstPortalVertexIndex = firstPortalTile.Y * Tiles.GetLength(0) + firstPortalTile.X;
-                int secondPortalVertexIndex = secondPortalTile.Y * Tiles.GetLength(0) + secondPortalTile.X;
+                int firstPortalVertexIndex = firstPortalTile.X * Tiles.GetLength(1) + firstPortalTile.Y;
+                int secondPortalVertexIndex = secondPortalTile.X * Tiles.GetLength(1) + secondPortalTile.Y;
 
-                graph.AddEdge(graph.vertices[firstPortalVertexIndex], graph.vertices[secondPortalVertexIndex], -1);
-                graph.AddEdge(graph.vertices[secondPortalVertexIndex], graph.vertices[firstPortalVertexIndex], -1);
+                graph.AddEdge(graph.vertices[firstPortalVertexIndex], graph.vertices[secondPortalVertexIndex], getWeight(Tiles[firstPortalTile.X, firstPortalTile.Y], Tiles[secondPortalTile.X, secondPortalTile.Y]));
+                graph.AddEdge(graph.vertices[secondPortalVertexIndex], graph.vertices[firstPortalVertexIndex], getWeight(Tiles[secondPortalTile.X, secondPortalTile.Y], Tiles[firstPortalTile.X, firstPortalTile.Y]));
             }
         }
-
-
-
 
         public void RemovePacman(Point gridIndex)
         {
@@ -304,8 +310,8 @@ namespace Pacman
                             tile.CurrentImage = pixelVisual.NBemptySprite;
                             FilledTiles.Add(tile);
 
-                            Tiles[pacmanOrigin.X, pacmanOrigin.Y + 1].CurrentImage = pixelVisual.NBemptySprite;
-                            FilledTiles.Add(Tiles[pacmanOrigin.X, pacmanOrigin.Y + 1]);
+                            Tiles[pacmanOrigin.X + 1, pacmanOrigin.Y].CurrentImage = pixelVisual.NBemptySprite;
+                            FilledTiles.Add(Tiles[pacmanOrigin.X + 1, pacmanOrigin.Y]);
                         }
                         break;
                 }

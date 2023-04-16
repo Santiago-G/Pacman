@@ -25,7 +25,8 @@ namespace Pacman
         public MapEditorPixelGrid PelletGrid;
         public MapEditorWallGrid WallGrid;
 
-        static Vector2 wallGridOffest = new Vector2(40, 90);
+        static Vector2 wallGridOffest = new Vector2(
+            0, 90);
         static Point wallGridSize = new Point(29, 32);
 
         Vector2 pixelGridOffest;
@@ -233,6 +234,29 @@ namespace Pacman
         }
 
 
+        private void duplicatePortalCheck()
+        {
+            bool dupeFound = false;
+            Point currPortalTileCoord; 
+
+            for(int i = 0; i < WallGrid.Portals.Count -1; i++)
+            {
+                currPortalTileCoord = WallGrid.Portals[i].firstPortal.firstTile.Cord;
+                for(int j = i + 1; j < WallGrid.Portals.Count; j++)
+                {
+                    if (currPortalTileCoord == WallGrid.Portals[j].firstPortal.firstTile.Cord) { dupeFound = true; }
+                    else if (currPortalTileCoord == WallGrid.Portals[j].firstPortal.secondTile.Cord) { dupeFound = true; }
+                    else if (currPortalTileCoord == WallGrid.Portals[j].secondPortal.firstTile.Cord) { dupeFound = true; }
+                    else if (currPortalTileCoord == WallGrid.Portals[j].secondPortal.secondTile.Cord) { dupeFound = true; }
+
+                    if (dupeFound)
+                    {
+                        WallGrid.Portals.Remove(WallGrid.Portals[j]);
+                    }
+                }
+            }
+        }
+
         private void ValidityChecks()
         {
             //Check if outer walls are valid*
@@ -245,14 +269,18 @@ namespace Pacman
                 return;
             }
 
-            //foreach (var portals in WallGrid.Portals)
-            //{
-            //    portals.firstPortal.firstTile.Tint = Color.Red;
-            //    portals.firstPortal.secondTile.Tint = Color.Red;
-            //    portals.secondPortal.firstTile.Tint = Color.Red;
-            //    portals.secondPortal.secondTile.Tint = Color.Red;
-            //}
-            //WallGrid.Tiles[WallGrid.ghostChamberTiles[3, 0].Cord.X, WallGrid.ghostChamberTiles[3, 0].Cord.Y - 1].Tint = Color.Red;
+            duplicatePortalCheck();
+
+
+            foreach (var portals in WallGrid.Portals)
+            {
+                portals.firstPortal.firstTile.Tint = Color.Red;
+                portals.firstPortal.secondTile.Tint = Color.Red;
+                portals.secondPortal.firstTile.Tint = Color.Red;
+                portals.secondPortal.secondTile.Tint = Color.Red;
+
+            }
+            WallGrid.Tiles[WallGrid.ghostChamberTiles[3, 0].Cord.X, WallGrid.ghostChamberTiles[3, 0].Cord.Y - 1].Tint = Color.Red;
             switchGrids();
             switchGrids();
 
@@ -268,6 +296,7 @@ namespace Pacman
             
             
         }
+
 
         public void switchGrids()
         {

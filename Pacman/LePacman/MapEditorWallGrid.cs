@@ -519,6 +519,11 @@ namespace Pacman
                 {
                     int i = x * Tiles.GetLength(1) + y;
 
+                    if (x == 13 && y == 11)
+                    {
+                        ;
+                    }
+
                     if (x != 0)
                     {
                         //no left
