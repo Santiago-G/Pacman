@@ -31,7 +31,7 @@ namespace Pacman
         //1 Portal Pair = 2 Portals = 4 Tiles
         public WallVisual[,] ghostChamberTiles = new WallVisual[7,4];
         
-        private List<Point> pacmanTileIndex = new List<Point>();
+        public List<Point> pacmanTileIndex = new List<Point>();
         private Graph graph = new Graph();
 
         Point pacmanOrigin;

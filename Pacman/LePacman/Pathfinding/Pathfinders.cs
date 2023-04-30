@@ -120,13 +120,14 @@ namespace LePacman.Pathfinding
             return orderedVertices;
         }
 
-        public static List<Vertex> otherDijkstra(Graph graph, Vertex Start, HashSet<Vertex> End)
+        public static (List<Vertex> vertices, bool pacmanValid) otherDijkstra(Graph graph, Vertex Start, HashSet<Vertex> End)
         {
             #region Setup
             List<Vertex> invalidTiles = new List<Vertex>();
             BinaryHeap<Vertex> PriorityQueue = new BinaryHeap<Vertex>(DijkstraComparer);
             int pointTilesFound = 0;
             bool invalid = false;
+            bool isPacmanValid = false;
 
             foreach (var vertex in graph.vertices)
             {
@@ -148,6 +149,10 @@ namespace LePacman.Pathfinding
                 if (currVertex.isWall)
                 {
                     invalid = true;
+                }
+                if (!invalid && currVertex.isPacman) 
+                {
+                    isPacmanValid = true;
                 }
 
                 if (currVertex.Visited) { continue; }
@@ -178,7 +183,7 @@ namespace LePacman.Pathfinding
                 }
             }
 
-            return invalidTiles;
+            return (invalidTiles, isPacmanValid);
         }
 
     }

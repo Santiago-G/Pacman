@@ -25,8 +25,7 @@ namespace Pacman
         public MapEditorPixelGrid PelletGrid;
         public MapEditorWallGrid WallGrid;
 
-        static Vector2 wallGridOffest = new Vector2(
-            0, 90);
+        static Vector2 wallGridOffest = new Vector2(40, 90);
         static Point wallGridSize = new Point(29, 32);
 
         Vector2 pixelGridOffest;
@@ -260,9 +259,9 @@ namespace Pacman
         private void ValidityChecks()
         {
             //Check if outer walls are valid*
-            var result = WallGrid.FindInvalidOuterWalls();
+            var outerWallCheckResult = WallGrid.FindInvalidOuterWalls();
 
-            foreach (var error in result)
+            foreach (var error in outerWallCheckResult)
             {
                 PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackground, new Point(500), error.InvalidTiles.First().Position, errorHeaderFont, errorBodyFont, "Error!", error.ErrorMsg, error.InvalidTiles));
                 deselectWallButtons();
@@ -284,7 +283,12 @@ namespace Pacman
             switchGrids();
             switchGrids();
 
-            PelletGrid.longJacket(WallGrid);
+            var pelletCheckResult = PelletGrid.longJacket(WallGrid);
+
+            if (!pelletCheckResult.pacManValid)
+            {
+                ;
+            }
 
             //start the PF at 3,0
             //Pathfind for the ghost, and check if they can reach every pellet.

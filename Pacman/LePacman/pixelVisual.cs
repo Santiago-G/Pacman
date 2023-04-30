@@ -42,6 +42,8 @@ namespace Pacman
             
         }
 
+        public bool isPacmanTile = false;
+
         public override void UpdateStates(bool setDefault = false)
         {
             

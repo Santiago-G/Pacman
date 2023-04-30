@@ -134,18 +134,17 @@ namespace Pacman
         }
 
 
-        public bool longJacket(MapEditorWallGrid wallGrid)
+        public (List<pixelVisual> invalidPellets, bool pacManValid) longJacket(MapEditorWallGrid wallGrid)
         {
             Graph graph = new Graph();
 
             HashSet<Vertex> targets = new HashSet<Vertex>();
 
             Point startingPoint = new Point(wallGrid.ghostChamberTiles[3, 0].Cord.X - 1, wallGrid.ghostChamberTiles[3, 0].Cord.Y - 2);
-            
 
             if (!ghostChamberExitCheck(startingPoint))
             {
-                return false;
+                throw new Exception("uh no ghost chamber, make sure you got one mannnnn");
             }
 
             for (int x = 0; x < Tiles.GetLength(0); x++)
@@ -157,13 +156,24 @@ namespace Pacman
 
                     if (Tiles[x, y].TileStates < States.Occupied && Tiles[x, y].TileStates != States.Empty)
                     {
+                        if (Tiles[x, y].TileStates == States.Pacman)
+                        {
+                            vertex.isPacman = true;
+                        }
                         targets.Add(vertex);
                     }
                     else if (Tiles[x, y].TileStates >= States.Occupied)
                     {
-                        vertex.isWall = true;
+                        if (Tiles[x, y].isPacmanTile)
+                        {
+                            vertex.isPacman = true;
+                            targets.Add(vertex);
+                        }
+                        else
+                        {
+                            vertex.isWall = true;
+                        }
                     }
-
                     graph.AddVertex(vertex);
                 }
             }
@@ -198,12 +208,11 @@ namespace Pacman
                         //no right
                         graph.AddEdge(graph.vertices[i], graph.vertices[i + 1], getWeight(Tiles[x, y], Tiles[x, y + 1]));
                     }
-
-
                 }
             }
 
             addPortalEdge(wallGrid, graph);
+            //indPacman(wallGrid, graph, targets);
 
             //the graph should have 3590 edges
             #endregion
@@ -213,24 +222,37 @@ namespace Pacman
             Vertex startingVertex = graph.vertices[startingPoint.X * Tiles.GetLength(1) + startingPoint.Y];
             Tiles[startingVertex.Value.X, startingVertex.Value.Y].Tint = Color.Red;
 
-            List<Vertex> invalidPelletTiles = Pathfinders.otherDijkstra(graph, startingVertex, targets);
+            (List<Vertex> vertices, bool pacmanValid) pathfinderResult = Pathfinders.otherDijkstra(graph, startingVertex, targets);
 
-            if (invalidPelletTiles.Count == 0)
-            {
-                return true;
-            }
+            List<Vertex> invalidPelletTiles = pathfinderResult.vertices;
+            List<pixelVisual> leInvalidPellets = new List<pixelVisual>();
 
             foreach (var invalidTiles in invalidPelletTiles)
             {
-                Tiles[invalidTiles.Value.X, invalidTiles.Value.Y].Tint = Color.Red;
+                leInvalidPellets.Add(Tiles[invalidTiles.Value.X, invalidTiles.Value.Y]);
+                leInvalidPellets[leInvalidPellets.Count - 1].Tint = Color.Red;
             }
 
-            return false;
+            return (leInvalidPellets, pathfinderResult.pacmanValid);
         }
 
-        private bool invalidConnect(pixelVisual ab, pixelVisual ba)
+        private void findPacman(MapEditorWallGrid wallGrid, Graph graph, HashSet<Vertex> targets)
         {
-            return ((int)ab.TileStates > 4 || (int)ba.TileStates > 4);
+            if (MapEditor.pacmanPlaced == false || wallGrid.pacmanTileIndex.Count <= 0) return;
+
+            foreach (var tile in wallGrid.pacmanTileIndex)
+            {
+                if (tile.Y > wallGrid.pacmanTileIndex[0].Y)
+                {
+                    break;
+                }
+                Point pacmanPelletTile = Tiles[Math.Clamp(tile.X - 1, 0, Tiles.GetLength(0) - 1), Math.Clamp(tile.Y, 0, Tiles.GetLength(1) - 1)].Cord;
+                graph.vertices[pacmanPelletTile.X * Tiles.GetLength(1) + pacmanPelletTile.Y].isPacman = true;
+                graph.vertices[pacmanPelletTile.X * Tiles.GetLength(1) + pacmanPelletTile.Y].isWall = false;
+                targets.Add(graph.vertices[pacmanPelletTile.X * Tiles.GetLength(1) + pacmanPelletTile.Y]);
+
+                Tiles[pacmanPelletTile.X, pacmanPelletTile.Y].Tint = Color.Red;
+            }
         }
 
         private void addPortalEdge(MapEditorWallGrid wallGrid, Graph graph)
@@ -239,7 +261,7 @@ namespace Pacman
             foreach (var portalPair in wallGrid.Portals)
             {
                 count++;
-               // int i = x * Tiles.GetLength(1) + y;
+                // int i = x * Tiles.GetLength(1) + y;
                 Point firstPortalTile = Tiles[Math.Clamp(portalPair.firstPortal.secondTile.Cord.X, 0, Tiles.GetLength(0) - 1), Math.Clamp(portalPair.firstPortal.secondTile.Cord.Y, 0, Tiles.GetLength(1) - 1)].Cord;
                 Point secondPortalTile = Tiles[Math.Clamp(portalPair.secondPortal.secondTile.Cord.X, 0, Tiles.GetLength(0) - 1), Math.Clamp(portalPair.secondPortal.secondTile.Cord.Y, 0, Tiles.GetLength(1) - 1)].Cord;
 
@@ -346,6 +368,11 @@ namespace Pacman
                 Tiles[leftX, y].UpdateStates();
                 Tiles[x, y].UpdateStates();
                 Tiles[x, topY].UpdateStates();
+
+                Tiles[leftX, topY].isPacmanTile = tile.TileStates == States.Pacman;
+                Tiles[leftX, y].isPacmanTile = tile.TileStates == States.Pacman;
+                Tiles[x, y].isPacmanTile = tile.TileStates == States.Pacman;
+                Tiles[x, topY].isPacmanTile = tile.TileStates == States.Pacman;
             }
         }
 
