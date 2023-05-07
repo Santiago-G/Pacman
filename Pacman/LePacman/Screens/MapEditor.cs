@@ -54,11 +54,18 @@ namespace Pacman
         Texture2D selectedOuterWallSprite;
         Button outerWallButton;
 
+        Texture2D fruitButtonSprite;
+        Texture2D selectedFruitButtonSprite;
+        public static Button fruitButton;
+        public static Image fruitIcon;
+
+        Texture2D[] fruitImages;
+        int fruitIndex;
+
         Texture2D switchButtonSprite;
         Button switchGridButton;
 
         //Left one
-        WallVisual ghostChamberEntrance;
         Texture2D ghostChamberTexture;
         public static Button ghostChamberButton;
         public static Image ghostChamberMS;
@@ -71,16 +78,15 @@ namespace Pacman
         public static bool selectedPacman = false;
         public static bool pacmanPlaced = false;
 
+        public static bool isFruitPlaced = false;
+        public static bool selectedFruit = false;
+
         Texture2D portalButtonSprite;
         Button generatePortalButton;
 
         Texture2D errorBackground;
         SpriteFont errorHeaderFont;
         SpriteFont errorBodyFont;
-
-
-
-
 
         public MapEditor(Point Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
@@ -139,7 +145,17 @@ namespace Pacman
             generatePortalButton = new Button(portalButtonSprite, new Vector2(1000, 900), Color.White);
             objects.Add(generatePortalButton);
 
+            fruitButtonSprite = Content.Load<Texture2D>("fruitButton");
+            selectedFruitButtonSprite = Content.Load<Texture2D>("selectedFruitButton");
+            fruitButton = new Button(fruitButtonSprite, new Vector2(1100, 600), Color.White);
 
+            fruitImages = new Texture2D[5] { Content.Load<Texture2D>("cherryFruit"), Content.Load<Texture2D>("strawberryFruit"),
+                Content.Load<Texture2D>("orangeFruit"), Content.Load<Texture2D>("appleFruit"), Content.Load<Texture2D>("melonFruit") };
+
+
+            fruitIcon = new Image(fruitImages[0], new Vector2(-1000), Color.White);
+            objects.Add(fruitButton);
+            objects.Add(fruitIcon);
 
             errorBackground = Content.Load<Texture2D>("outerWallErrorMSGBG");
             errorHeaderFont = Content.Load<SpriteFont>("ErrorHeaderFont");
@@ -226,6 +242,7 @@ namespace Pacman
         {
             selectedTileType = SelectedType.Default;
 
+            fruitButton.Image = fruitButtonSprite;
             pelletButton.Image = pelletButtonSprite;
             eraserButton.Image = eraserButtonSprite;
             powerPelletButton.Image = powerPelletButtonSprite;
@@ -236,12 +253,12 @@ namespace Pacman
         private void duplicatePortalCheck()
         {
             bool dupeFound = false;
-            Point currPortalTileCoord; 
+            Point currPortalTileCoord;
 
-            for(int i = 0; i < WallGrid.Portals.Count -1; i++)
+            for (int i = 0; i < WallGrid.Portals.Count - 1; i++)
             {
                 currPortalTileCoord = WallGrid.Portals[i].firstPortal.firstTile.Cord;
-                for(int j = i + 1; j < WallGrid.Portals.Count; j++)
+                for (int j = i + 1; j < WallGrid.Portals.Count; j++)
                 {
                     if (currPortalTileCoord == WallGrid.Portals[j].firstPortal.firstTile.Cord) { dupeFound = true; }
                     else if (currPortalTileCoord == WallGrid.Portals[j].firstPortal.secondTile.Cord) { dupeFound = true; }
@@ -297,8 +314,8 @@ namespace Pacman
             //Make sure ghosts can use portals.
 
             //Pellet tiles are occupied tiles.
-            
-            
+
+
         }
 
 
@@ -315,6 +332,11 @@ namespace Pacman
                 selectedGhostChamber = false;
                 ghostChamberMS.Position = new Vector2(-300);
             }
+            if (!isFruitPlaced)
+            {
+                selectedFruit = false;
+                fruitIcon.Position = new Vector2(-1000);
+            }
 
             if (currentGridState == GridStates.PixelGrid)
             {
@@ -327,6 +349,11 @@ namespace Pacman
                 wallButton.Tint = Color.White;
                 outerWallButton.Tint = Color.White;
                 ghostChamberButton.Tint = Color.White;
+
+                if (!isFruitPlaced)
+                {
+                    fruitButton.Tint = Color.Gray;
+                }
             }
             else
             {
@@ -339,6 +366,11 @@ namespace Pacman
                 outerWallButton.Tint = Color.Gray;
                 powerPelletButton.Tint = Color.White;
                 pelletButton.Tint = Color.White;
+
+                if (!isFruitPlaced)
+                {
+                    fruitButton.Tint = Color.White;
+                }
             }
         }
 
@@ -355,14 +387,10 @@ namespace Pacman
              * IMPORTANT
              * ---------
              * 
-             * Fix pacman, its broken
+             * Have one fruit tile on the pellet grid, two tiles wide, one tile high.
+             * That is where the fruit will spawn twice per round
+             *
              * 
-             * Keep track of the number of portals (and their position you should be doing this anyways)
-             * and do another pathfinder starting in the middle. Make it targets the outer edge the map. If it reaches more outer tiles than
-             * there are portals, give an error
-             * 
-             * I'm done. Just use try catch for all the other edge cases
-             * Find other edge cases, I fixed the UI aspect of things. 
              * 
              * FIX certain chars from not appearing in the font
              * 
@@ -371,7 +399,6 @@ namespace Pacman
              * Fix saving and loading
              * Do Delete Keybind
              * 
-             * Do Portals. Portals are 2 tiles wide and there can be multiple.
              * Do Fruits
              * 
              * Make sure you check if all the outside walls are valid when the user is done making the map.
@@ -648,6 +675,26 @@ namespace Pacman
                     }
                 }
 
+                else if (fruitButton.IsClicked(ms) && !isFruitPlaced)
+                {
+                    if (selectedTileType != SelectedType.Fruit)
+                    {
+                        deselectPelletButtons();
+                        fruitIndex = Random.Shared.Next(0, 5);
+                        fruitIcon.Image = fruitImages[fruitIndex];
+
+                        selectedTileType = SelectedType.Fruit;
+                        fruitButton.Image = selectedFruitButtonSprite;
+                        selectedFruit = true;
+                    }
+                    else
+                    {
+                        selectedTileType = SelectedType.Default;
+                        fruitButton.Image = fruitButtonSprite;
+                        selectedFruit = false;
+                    }
+                }
+
                 if (selectedPacman)
                 {
                     Point index = PelletGrid.PosToIndex(ms.Position.ToVector2());
@@ -671,6 +718,32 @@ namespace Pacman
                             if (PelletGrid.Tiles[index.X + 1, index.Y].TileStates == States.Empty)
                             {
                                 PelletGrid.AddPacman(index);
+                            }
+                        }
+                    }
+                }
+
+                if (selectedFruit)
+                {
+                    Point index = PelletGrid.PosToIndex(ms.Position.ToVector2());
+                    if (index != new Point(-1))
+                    {
+                        if (index.X == wallGridSize.X - 2)
+                        {
+                            index.X--;
+                        }
+                        if (index.Y == wallGridSize.Y - 2)
+                        {
+                            index.Y--;
+                        }
+
+                        fruitIcon.Position = new Vector2(PelletGrid.Tiles[index.X, index.Y].Position.X - fruitIcon.Image.Width / 4, PelletGrid.Tiles[index.X, index.Y].Position.Y - fruitIcon.Image.Height / 2);
+
+                        if (ms.LeftButton == ButtonState.Pressed)
+                        {
+                            if (PelletGrid.Tiles[index.X, index.Y].TileStates == States.Empty && PelletGrid.Tiles[index.X + 1, index.Y].TileStates == States.Empty)
+                            {
+                                PelletGrid.addFruit(index);
                             }
                         }
                     }

@@ -8,6 +8,7 @@ namespace Pacman
         Default,
         Pellet,
         PowerPellet,
+        Fruit,
         Wall,
         OuterWall,
         Eraser,

@@ -61,6 +61,10 @@ namespace Pacman
                     CurrentImage = PowerPelletSprite;
                     PrevImage = HLPowerPelletSprite;
                     break;
+                case States.Fruit:
+                    CurrentImage = NBemptySprite;
+                    PrevImage = NBemptySprite;
+                    break;
                 case States.Occupied:
                     CurrentImage = NBemptySprite;
                     PrevImage = NBemptySprite;

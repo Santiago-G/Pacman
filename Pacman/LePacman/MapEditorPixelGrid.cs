@@ -24,6 +24,8 @@ namespace Pacman
         public pixelVisual[,] Tiles;
         public List<pixelVisual> FilledTiles = new List<pixelVisual>();
 
+        public pixelVisual[] FruitTiles = new pixelVisual[2];
+
         private List<Point> pacmanTileIndex = new List<Point>();
         Point pacmanOrigin;
 
@@ -99,21 +101,31 @@ namespace Pacman
             pacmanTileIndex.Add(new Point(index.X + 1, index.Y));
 
             pacmanOrigin = index;
+        }
+        public void RemovePacman(Point gridIndex)
+        {
+            foreach (var index in pacmanTileIndex)
+            {
+                if (Tiles[index.X, index.Y].TileStates == States.Pacman)
+                {
+                    Tiles[index.X, index.Y].TileStates = States.Empty;
+                    Tiles[index.X, index.Y].UpdateStates();
+                }
+            }
 
-            //foreach (var offset in offsets)
-            //{
-            //    if (Tiles[index.X + offset.X, index.Y + offset.Y].TileStates == States.Empty)
-            //    {
-            //        Tiles[index.X + offset.X, index.Y + offset.Y].TileStates = States.Pacman;
-            //        Tiles[index.X + offset.X, index.Y + offset.Y].UpdateStates();
+            pacmanOrigin = new Point(-1);
 
-            //        pacmanTileIndex.Add(new Point(index.X + offset.X, index.Y + offset.Y));
-            //    }
-            //}
+            pacmanTileIndex.Clear();
+
+            MapEditor.pacmanTileIcon.Position = new Vector2(-200);
+            MapEditor.pacmanPlacementButton.Tint = Color.White;
+            MapEditor.selectedPacman = false;
+            MapEditor.pacmanPlaced = false;
         }
 
         #endregion
 
+        #region Pellet/Pacman Validation Checks
         private bool ghostChamberExitCheck(Point position)
         {
             if ((int)Tiles[position.X, position.Y].TileStates > 3 || (int)Tiles[position.X + 1, position.Y].TileStates > 3)
@@ -125,7 +137,19 @@ namespace Pacman
 
         public int getWeight(pixelVisual ab, pixelVisual ba)
         {
-            if (ab.TileStates < States.Occupied && ba.TileStates < States.Occupied)
+            int abWeight = (int)ab.TileStates;
+            int baWeight = (int)ba.TileStates;
+
+            if (ba.isPacmanTile)
+            {
+                baWeight = 0;
+            }
+            if (ab.isPacmanTile)
+            {
+                abWeight = 0;
+            }
+
+            if (abWeight < (int)States.Occupied && baWeight < (int)States.Occupied)
             {
                 return -1;
             }
@@ -236,25 +260,6 @@ namespace Pacman
             return (leInvalidPellets, pathfinderResult.pacmanValid);
         }
 
-        private void findPacman(MapEditorWallGrid wallGrid, Graph graph, HashSet<Vertex> targets)
-        {
-            if (MapEditor.pacmanPlaced == false || wallGrid.pacmanTileIndex.Count <= 0) return;
-
-            foreach (var tile in wallGrid.pacmanTileIndex)
-            {
-                if (tile.Y > wallGrid.pacmanTileIndex[0].Y)
-                {
-                    break;
-                }
-                Point pacmanPelletTile = Tiles[Math.Clamp(tile.X - 1, 0, Tiles.GetLength(0) - 1), Math.Clamp(tile.Y, 0, Tiles.GetLength(1) - 1)].Cord;
-                graph.vertices[pacmanPelletTile.X * Tiles.GetLength(1) + pacmanPelletTile.Y].isPacman = true;
-                graph.vertices[pacmanPelletTile.X * Tiles.GetLength(1) + pacmanPelletTile.Y].isWall = false;
-                targets.Add(graph.vertices[pacmanPelletTile.X * Tiles.GetLength(1) + pacmanPelletTile.Y]);
-
-                Tiles[pacmanPelletTile.X, pacmanPelletTile.Y].Tint = Color.Red;
-            }
-        }
-
         private void addPortalEdge(MapEditorWallGrid wallGrid, Graph graph)
         {
             int count = 0;
@@ -272,26 +277,38 @@ namespace Pacman
                 graph.AddEdge(graph.vertices[secondPortalVertexIndex], graph.vertices[firstPortalVertexIndex], getWeight(Tiles[secondPortalTile.X, secondPortalTile.Y], Tiles[firstPortalTile.X, firstPortalTile.Y]));
             }
         }
+        #endregion
 
-        public void RemovePacman(Point gridIndex)
+        public void addFruit(Point index)
         {
-            foreach (var index in pacmanTileIndex)
-            {
-                if (Tiles[index.X, index.Y].TileStates == States.Pacman)
-                {
-                    Tiles[index.X, index.Y].TileStates = States.Empty;
-                    Tiles[index.X, index.Y].UpdateStates();
-                }
-            }
+            MapEditor.fruitButton.Tint = Color.Gray;
+            MapEditor.selectedFruit = false;
+            MapEditor.isFruitPlaced = true;
 
-            pacmanOrigin = new Point(-1);
+            Tiles[index.X, index.Y].TileStates = States.Fruit;
+            Tiles[index.X + 1, index.Y].TileStates = States.Fruit;
 
-            pacmanTileIndex.Clear();
+            Tiles[index.X, index.Y].UpdateStates();
+            Tiles[index.X + 1, index.Y].UpdateStates();
 
-            MapEditor.pacmanTileIcon.Position = new Vector2(-200);
-            MapEditor.pacmanPlacementButton.Tint = Color.White;
-            MapEditor.selectedPacman = false;
-            MapEditor.pacmanPlaced = false;
+            FruitTiles[0] = Tiles[index.X, index.Y];
+            FruitTiles[0] = Tiles[index.X + 1, index.Y];
+        }
+
+        public void removeFruit(Point index) 
+        {
+            FruitTiles[0].TileStates = States.Empty;
+            FruitTiles[0].UpdateStates();
+            FruitTiles[1].TileStates = States.Empty;
+            FruitTiles[1].UpdateStates();
+
+            FruitTiles = new pixelVisual[2];
+
+            MapEditor.fruitButton.Tint = Color.White;
+            MapEditor.fruitIcon.Position = new Vector2(-1000);
+
+            MapEditor.selectedFruit = false;
+            MapEditor.isFruitPlaced = false;
         }
 
         public void LoadGrid(List<pixelData> TileList)
@@ -324,6 +341,9 @@ namespace Pacman
                         break;
                     case States.PowerPellet:
                         tile.CurrentImage = pixelVisual.NBpowerPelletSprite;
+                        FilledTiles.Add(tile);
+                        break;
+                    case States.Fruit:
                         FilledTiles.Add(tile);
                         break;
                     case States.Pacman:

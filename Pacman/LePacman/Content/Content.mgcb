@@ -13,6 +13,18 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin appleFruit.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:appleFruit.png
+
 #begin arrow.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -36,6 +48,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:audioText.png
+
+#begin cherryFruit.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:cherryFruit.png
 
 #begin controlsText.png
 /importer:TextureImporter
@@ -243,6 +267,18 @@
 /processorParam:Quality=Best
 /build:examplesound.wav
 
+#begin fruitButton.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:fruitButton.png
+
 #begin HLEmptyPelletTile.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -351,6 +387,18 @@
 /processorParam:TextureFormat=Color
 /build:MasterVolumeText.png
 
+#begin melonFruit.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:melonFruit.png
+
 #begin middleIntersectingOuterWall.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -458,6 +506,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:optionsText.png
+
+#begin orangeFruit.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:orangeFruit.png
 
 #begin outerWallButton.png
 /importer:TextureImporter
@@ -603,6 +663,18 @@
 /processorParam:TextureFormat=Color
 /build:selectedEraserButton.png
 
+#begin selectedFruitButton.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:selectedFruitButton.png
+
 #begin selectedOuterWallButton.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -722,6 +794,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:smallPixel.png
+
+#begin strawberryFruit.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:strawberryFruit.png
 
 #begin switchButton.png
 /importer:TextureImporter
