@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Pacman
+namespace LePacman.Screens.MapEditor
 {
     public class MapEditorDataTile
     {

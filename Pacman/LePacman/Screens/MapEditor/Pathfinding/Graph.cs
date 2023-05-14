@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LePacman.Pathfinding
+namespace LePacman.Screens.MapEditor.Pathfinding
 {
     public class Graph
     {
@@ -57,7 +57,7 @@ namespace LePacman.Pathfinding
 
         public bool AddEdge(Vertex a, Vertex b, float weight)
         {
-            if ((a == null || b == null) || GetEdge(a, b) != null)
+            if (a == null || b == null || GetEdge(a, b) != null)
             {
                 throw new Exception("Eins zwei drei alle");
             }
@@ -87,7 +87,7 @@ namespace LePacman.Pathfinding
 
         public Edge GetEdge(Vertex a, Vertex b)
         {
-            if ((a != null && b != null) && (a.Neighbors.Exists((currNeighbor) => currNeighbor.End == b)))
+            if (a != null && b != null && a.Neighbors.Exists((currNeighbor) => currNeighbor.End == b))
             {
                 return a.Neighbors.First((currNeighbor) => currNeighbor.End == b);
             }

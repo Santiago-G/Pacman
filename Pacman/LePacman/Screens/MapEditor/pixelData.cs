@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Text;
 
 
-namespace Pacman
+namespace LePacman.Screens.MapEditor
 {
     public class pixelData : AbstractData
-    { 
+    {
         public override Point[] Neighbors { get; set; }
 
         public pixelData()

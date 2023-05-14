@@ -8,13 +8,15 @@ using System.Reflection;
 using System.Net.NetworkInformation;
 using System.Diagnostics.SymbolStore;
 using System.Runtime.ExceptionServices;
-using LePacman.Pathfinding;
+using LePacman;
+using LePacman.Screens.MapEditor.Pathfinding;
 using System.Diagnostics.Metrics;
 using System.Runtime.Serialization.Formatters;
 using Microsoft.Xna.Framework.Input;
 using System.IO;
+using Pacman;
 
-namespace Pacman
+namespace LePacman.Screens.MapEditor
 {
     //record class Animal<T> (string name, int age, T coffee);
     public record struct PortalPair(Portal firstPortal, Portal secondPortal);
@@ -24,13 +26,13 @@ namespace Pacman
     public class MapEditorWallGrid
     {
         Vector2 Position;
-        
+
         public WallVisual[,] Tiles;
         public List<WallVisual> FilledTiles = new List<WallVisual>();
         public List<PortalPair> Portals = new List<PortalPair>();
         //1 Portal Pair = 2 Portals = 4 Tiles
-        public WallVisual[,] ghostChamberTiles = new WallVisual[7,4];
-        
+        public WallVisual[,] ghostChamberTiles = new WallVisual[7, 4];
+
         public List<Point> pacmanTileIndex = new List<Point>();
         private Graph graph = new Graph();
 
@@ -218,7 +220,7 @@ namespace Pacman
 
         private void removeGhostChamber()
         {
-            ghostChamberTiles = new WallVisual[7,4];
+            ghostChamberTiles = new WallVisual[7, 4];
 
             foreach (var tile in Tiles)
             {
@@ -283,8 +285,8 @@ namespace Pacman
 
             //check if the float is valid, set it to floats
 
-            float gridXf = (Pos.X / Tiles[0, 0].Hitbox.Width);
-            float gridYf = (Pos.Y / Tiles[0, 0].Hitbox.Height);
+            float gridXf = Pos.X / Tiles[0, 0].Hitbox.Width;
+            float gridYf = Pos.Y / Tiles[0, 0].Hitbox.Height;
 
             if (gridXf < 0)
             {
@@ -295,8 +297,8 @@ namespace Pacman
                 gridYf = -1;
             }
 
-            int gridX = (int)(gridXf);
-            int gridY = (int)(gridYf);
+            int gridX = (int)gridXf;
+            int gridY = (int)gridYf;
 
             // Game1.WindowText = $"GridX: {gridX}, GridY: {gridY}, Offset: {Pos}";
 
@@ -370,7 +372,7 @@ namespace Pacman
                 directionY = temp;
             }
 
-            if ((directionX != 0 && directionY != 0) || (directionX == 0 && directionY == 0))
+            if (directionX != 0 && directionY != 0 || directionX == 0 && directionY == 0)
             {
                 invalidTiles.Add(startingTile);
                 return invalidTiles;
@@ -382,7 +384,7 @@ namespace Pacman
 
                 currentTile = Tiles[currentTile.Cord.X + directionX, currentTile.Cord.Y + directionY];
 
-                if (((currentTile.Cord.X == Tiles.GetLength(0) - 1 || currentTile.Cord.X == 0) && directionX != 0) || ((currentTile.Cord.Y == Tiles.GetLength(1) - 1 || currentTile.Cord.Y == 0) && directionY != 0))
+                if ((currentTile.Cord.X == Tiles.GetLength(0) - 1 || currentTile.Cord.X == 0) && directionX != 0 || (currentTile.Cord.Y == Tiles.GetLength(1) - 1 || currentTile.Cord.Y == 0) && directionY != 0)
                 {
                     invalidTiles.Clear();
                     invalidTiles.Add(startingTile);
@@ -552,7 +554,7 @@ namespace Pacman
 
             #endregion
 
-            Vertex startingVertex = (Pathfinders.Dijkstra(graph, graph.vertices[0], outsideWalls, out _, out _, 1)).First();
+            Vertex startingVertex = Pathfinders.Dijkstra(graph, graph.vertices[0], outsideWalls, out _, out _, 1).First();
 
             foundWalls = Pathfinders.Dijkstra(graph, startingVertex, outsideWalls, out List<Point> jumps, out Vertex lastVertex);
 
@@ -637,7 +639,7 @@ namespace Pacman
                     }
 
 
-                    Portals.Add(new (new (portal[0], portal[1]), new (Tiles[newPortalPos.X, newPortalPos.Y], Tiles[newPortalPos2.X, newPortalPos2.Y])));
+                    Portals.Add(new(new(portal[0], portal[1]), new(Tiles[newPortalPos.X, newPortalPos.Y], Tiles[newPortalPos2.X, newPortalPos2.Y])));
                     //Portals.Add(new WallVisual[][] { new WallVisual[] { portal[0], portal[1] },
                     //                                 new WallVisual[] {Tiles[newPortalPos.X, newPortalPos.Y], Tiles[newPortalPos2.X, newPortalPos2.Y] } });
                 }

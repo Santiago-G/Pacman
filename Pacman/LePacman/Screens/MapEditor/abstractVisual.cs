@@ -5,8 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
+using Pacman;
 
-namespace Pacman
+namespace LePacman.Screens.MapEditor
 {
     // public abstract class abstractVisual<T, D> : Sprite where D : abstractData<T>
     // : abstractVisual<T, pixelData<T>>
@@ -70,9 +71,9 @@ namespace Pacman
 
         public override Rectangle Hitbox => new Rectangle((int)(Position.X - Origin.X * Scale.X), (int)(Position.Y - Origin.Y * Scale.Y), (int)(CurrentImage.Width * Scale.X), (int)(CurrentImage.Height * Scale.Y));
 
-        public Point[] Neighbors 
-        { 
-            get { return data.Neighbors; } 
+        public Point[] Neighbors
+        {
+            get { return data.Neighbors; }
             set { data.Neighbors = value; }
         }
 
@@ -84,7 +85,7 @@ namespace Pacman
             get
             {
                 return new Vector2(Cord.X * CurrentImage.Width, Cord.Y * CurrentImage.Height) + Offset;
-            } 
+            }
         }
 
 
@@ -93,7 +94,7 @@ namespace Pacman
             CurrentImage = image;
             PrevImage = CurrentImage;
             Cord = cord;
-            Offset = offset;         
+            Offset = offset;
         }
 
         public abstractVisual(AbstractData dataTile, Vector2 offset) : base(null, new Vector2(0), dataTile.tint)
@@ -106,7 +107,7 @@ namespace Pacman
         //fix both images when i hover over them
 
         public abstract void UpdateStates(bool setDefault = false);
-       
+
         public abstract override void Update(GameTime gameTime);
 
         public abstract override void Draw(SpriteBatch batch);

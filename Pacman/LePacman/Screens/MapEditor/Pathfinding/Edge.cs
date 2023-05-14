@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LePacman.Pathfinding
+namespace LePacman.Screens.MapEditor.Pathfinding
 {
     public class Edge
     {

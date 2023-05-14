@@ -1,11 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Pacman;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Pacman
+namespace LePacman.Screens.MapEditor
 {
     public class WallVisual : abstractVisual
     {

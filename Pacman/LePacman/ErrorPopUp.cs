@@ -1,4 +1,5 @@
 ﻿using LePacman;
+using LePacman.Screens.MapEditor;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -39,6 +40,7 @@ namespace Pacman
             bodyPos = new Vector2(20, 40);
             invalidWalls = InvalidWalls;
         }
+
 
         #region Functions
         public override void setHeaderText(string newHeaderText)

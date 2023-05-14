@@ -7,7 +7,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LePacman.Pathfinding
+namespace LePacman.Screens.MapEditor.Pathfinding
 {
     public class Pathfinders
     {
@@ -15,7 +15,7 @@ namespace LePacman.Pathfinding
         public Queue<Vertex> queue = new Queue<Vertex>();
         static Vertex currVertex;
 
-        static Comparer<Vertex> DijkstraComparer = Comparer<Vertex>.Create((Vertex a, Vertex b) =>
+        static Comparer<Vertex> DijkstraComparer = Comparer<Vertex>.Create((a, b) =>
         {
             if (a.DistanceFromStart > b.DistanceFromStart)
             {
@@ -68,7 +68,7 @@ namespace LePacman.Pathfinding
                 }
 
                 currVertex = PriorityQueue.Pop();
-                if (currVertex.Visited) 
+                if (currVertex.Visited)
                 {
                     continue;
                 }
@@ -150,7 +150,7 @@ namespace LePacman.Pathfinding
                 {
                     invalid = true;
                 }
-                if (!invalid && currVertex.isPacman) 
+                if (!invalid && currVertex.isPacman)
                 {
                     isPacmanValid = true;
                 }

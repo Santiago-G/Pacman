@@ -1,12 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Pacman;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
-namespace Pacman
+namespace LePacman.Screens.MapEditor
 {
     public class pixelVisual : abstractVisual
     {
@@ -39,14 +40,14 @@ namespace Pacman
 
         public pixelVisual(pixelData dataTile, Vector2 offset) : base(dataTile, offset)
         {
-            
+
         }
 
         public bool isPacmanTile = false;
 
         public override void UpdateStates(bool setDefault = false)
         {
-            
+
             switch (TileStates)
             {
                 case States.Empty:
@@ -89,9 +90,9 @@ namespace Pacman
 
             if (Hitbox.Contains(ms.Position))
             {
-                if (ms.LeftButton == ButtonState.Pressed) 
+                if (ms.LeftButton == ButtonState.Pressed)
                 {
-                    if (TileStates != States.Occupied && TileStates != States.Pacman)
+                    if (TileStates != States.Occupied)
                     {
                         switch (MapEditor.selectedTileType)
                         {
@@ -104,19 +105,50 @@ namespace Pacman
                                 TileStates = States.PowerPellet;
                                 break;
                             case SelectedType.Eraser:
-                                TileStates = States.Empty;
+
+                                if (TileStates == States.Pacman)
+                                {
+                                    Grid.RemovePacman(Grid.PosToIndex(ms.Position.ToVector2()));
+                                }
+                                else if (TileStates == States.Fruit)
+                                {
+                                    Grid.RemoveFruit(Grid.PosToIndex(ms.Position.ToVector2()));
+                                }
+                                else
+                                {
+                                    TileStates = States.Empty;
+                                }
+
                                 break;
                         }
                     }
-                    else if (TileStates == States.Pacman && MapEditor.selectedTileType == SelectedType.Eraser)
+                    else if (MapEditor.selectedTileType == SelectedType.Eraser)
                     {
-                        Grid.RemovePacman(Grid.PosToIndex(ms.Position.ToVector2()));
+                        if (TileStates == States.Pacman)
+                        {
+                            Grid.RemovePacman(Grid.PosToIndex(ms.Position.ToVector2()));
+                        }
+                        else if (TileStates == States.Fruit)
+                        {
+                            Grid.RemoveFruit(Grid.PosToIndex(ms.Position.ToVector2()));
+                        }
                     }
                 }
 
-                if (MapEditor.selectedTileType == SelectedType.AltEraser)
+                if (MapEditor.selectedTileType == SelectedType.AltEraser && TileStates != States.Occupied)
                 {
-                    TileStates = States.Empty;
+                    if (TileStates == States.Pacman)
+                    {
+                        Grid.RemovePacman(Grid.PosToIndex(ms.Position.ToVector2()));
+                    }
+                    else if (TileStates == States.Fruit)
+                    {
+                        Grid.RemoveFruit(Grid.PosToIndex(ms.Position.ToVector2()));
+                    }
+                    else
+                    {
+                        TileStates = States.Empty;
+                    }
                 }
 
                 UpdateStates();

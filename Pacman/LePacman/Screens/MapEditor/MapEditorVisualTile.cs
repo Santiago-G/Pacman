@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace Pacman
+namespace LePacman.Screens.MapEditor
 {
     public class MapEditorVisualTile// : Sprite
-    {           
+    {
         /*
         public Texture2D CurrentImage;
 

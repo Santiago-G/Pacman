@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 
-namespace Pacman
+namespace LePacman.Screens.MapEditor
 {
     public class MapEditorGrid
     {/*

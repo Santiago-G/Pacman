@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Pacman;
 
-namespace Pacman
+namespace LePacman.Screens.MapEditor
 {
     public abstract class AbstractData
     {

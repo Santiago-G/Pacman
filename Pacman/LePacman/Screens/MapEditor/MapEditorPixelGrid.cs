@@ -8,14 +8,15 @@ using System.Reflection;
 using System.Net.NetworkInformation;
 using System.Diagnostics.SymbolStore;
 using System.Runtime.ExceptionServices;
-using LePacman.Pathfinding;
+using LePacman.Screens.MapEditor.Pathfinding;
 using System.Diagnostics.Metrics;
 using System.Runtime.Serialization.Formatters;
 using Microsoft.Xna.Framework.Input;
 using System.IO;
 using static Microsoft.Xna.Framework.Graphics.SpriteFont;
+using Pacman;
 
-namespace Pacman
+namespace LePacman.Screens.MapEditor
 {
     public class MapEditorPixelGrid
     {
@@ -59,8 +60,8 @@ namespace Pacman
 
             //check if the float is valid, set it to floats
 
-            float gridXf = (Pos.X / Tiles[0, 0].Hitbox.Width);
-            float gridYf = (Pos.Y / Tiles[0, 0].Hitbox.Height);
+            float gridXf = Pos.X / Tiles[0, 0].Hitbox.Width;
+            float gridYf = Pos.Y / Tiles[0, 0].Hitbox.Height;
 
             if (gridXf < 0)
             {
@@ -71,8 +72,8 @@ namespace Pacman
                 gridYf = -1;
             }
 
-            int gridX = (int)(gridXf);
-            int gridY = (int)(gridYf);
+            int gridX = (int)gridXf;
+            int gridY = (int)gridYf;
 
             Point retPoint = new Point(gridX, gridY);
             if (!IsValid(retPoint)) return new Point(-1);
@@ -92,10 +93,10 @@ namespace Pacman
             Point[] offsets = new Point[] { new Point(1, 1), new Point(0, 1), new Point(0, -1), new Point(1, -1) };
 
             Tiles[index.X, index.Y].TileStates = States.Pacman;
-            Tiles[index.X, index.Y + 1].TileStates = States.Pacman;
+            Tiles[index.X + 1, index.Y].TileStates = States.Pacman;
 
             Tiles[index.X, index.Y].UpdateStates();
-            Tiles[index.X, index.Y + 1].UpdateStates();
+            Tiles[index.X + 1, index.Y].UpdateStates();
 
             pacmanTileIndex.Add(index);
             pacmanTileIndex.Add(new Point(index.X + 1, index.Y));
@@ -292,10 +293,10 @@ namespace Pacman
             Tiles[index.X + 1, index.Y].UpdateStates();
 
             FruitTiles[0] = Tiles[index.X, index.Y];
-            FruitTiles[0] = Tiles[index.X + 1, index.Y];
+            FruitTiles[1] = Tiles[index.X + 1, index.Y];
         }
 
-        public void removeFruit(Point index) 
+        public void RemoveFruit(Point index)
         {
             FruitTiles[0].TileStates = States.Empty;
             FruitTiles[0].UpdateStates();

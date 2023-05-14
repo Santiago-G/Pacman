@@ -11,11 +11,18 @@ using System.Net.Security;
 using LePacman;
 using System.Reflection.Metadata;
 using System.Security.Cryptography.X509Certificates;
+using Pacman;
 
-namespace Pacman
+namespace LePacman.Screens.MapEditor
 {
     public class MapEditor : Screen
     {
+        public struct SavedMap
+        {
+            public string Name;
+
+        }
+
         static public SelectedType selectedTileType = SelectedType.Default;
         private SelectedType prevSelctedTileType;
         bool eraserSelected = false;
@@ -85,8 +92,13 @@ namespace Pacman
         Button generatePortalButton;
 
         Texture2D errorBackground;
+        Texture2D errorBackgroundTwo;
+        Texture2D errorBackgroundThree;
         SpriteFont errorHeaderFont;
         SpriteFont errorBodyFont;
+
+        TimeSpan fruitTimer = new TimeSpan();
+        TimeSpan fruitTarget = new TimeSpan();
 
         public MapEditor(Point Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
@@ -158,6 +170,9 @@ namespace Pacman
             objects.Add(fruitIcon);
 
             errorBackground = Content.Load<Texture2D>("outerWallErrorMSGBG");
+            errorBackgroundTwo = Content.Load<Texture2D>("errorBackgroundTwo");
+            errorBackgroundThree = Content.Load<Texture2D>("errorBackgroundThree");
+            errorBackground = Content.Load<Texture2D>("errorBackgroundThree");
             errorHeaderFont = Content.Load<SpriteFont>("ErrorHeaderFont");
             errorBodyFont = Content.Load<SpriteFont>("ErrorBodyText");
 
@@ -273,7 +288,7 @@ namespace Pacman
             }
         }
 
-        private void ValidityChecks()
+        private bool ValidityChecks()
         {
             //Check if outer walls are valid*
             var outerWallCheckResult = WallGrid.FindInvalidOuterWalls();
@@ -282,12 +297,12 @@ namespace Pacman
             {
                 PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackground, new Point(500), error.InvalidTiles.First().Position, errorHeaderFont, errorBodyFont, "Error!", error.ErrorMsg, error.InvalidTiles));
                 deselectWallButtons();
-                return;
+                return false;
             }
 
             duplicatePortalCheck();
 
-
+            /* Tint every portal entrance
             foreach (var portals in WallGrid.Portals)
             {
                 portals.firstPortal.firstTile.Tint = Color.Red;
@@ -296,6 +311,14 @@ namespace Pacman
                 portals.secondPortal.secondTile.Tint = Color.Red;
 
             }
+            */
+
+            if (!ghostChamberPlaced)
+            {
+                PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackgroundTwo, new Point(500), new Vector2(1090, 740), errorHeaderFont, errorBodyFont, "Error!", "No Ghost Chamber found!", new List<WallVisual>()));
+                return false;
+            }
+
             WallGrid.Tiles[WallGrid.ghostChamberTiles[3, 0].Cord.X, WallGrid.ghostChamberTiles[3, 0].Cord.Y - 1].Tint = Color.Red;
             switchGrids();
             switchGrids();
@@ -304,20 +327,27 @@ namespace Pacman
 
             if (!pelletCheckResult.pacManValid)
             {
-                ;
+                PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackgroundThree, new Point(500), new Vector2(1020, 700), errorHeaderFont, errorBodyFont, "Error!", "No Pacman found!", new List<WallVisual>()));
             }
 
-            //start the PF at 3,0
-            //Pathfind for the ghost, and check if they can reach every pellet.
-            //Also keep track if they encounter Pacman
-            //If everything above is true, everything is valid.
-            //Make sure ghosts can use portals.
+            foreach (var error in pelletCheckResult.invalidPellets)
+            {
+                PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackground, new Point(500), error.Position, errorHeaderFont, errorBodyFont, "Error!", "Pacman and the Ghosts cannot reach these tiles!", new List<WallVisual>()));
+                return false;
+            }
 
-            //Pellet tiles are occupied tiles.
-
-
+            return true;
         }
 
+        private void FinishMap()
+        {
+            if (!ValidityChecks()) { return; }
+
+            //Give the option between Save & Load, or just Save
+            
+            ;
+            //oh boy
+        }
 
         public void switchGrids()
         {
@@ -379,33 +409,18 @@ namespace Pacman
             MouseState ms = Mouse.GetState();
             KeyboardState kb = Keyboard.GetState();
 
-
             //CircleF outer wall breaks
 
             /* TO DO LIST
              * 
              * IMPORTANT
              * ---------
-             * 
-             * Have one fruit tile on the pellet grid, two tiles wide, one tile high.
-             * That is where the fruit will spawn twice per round
              *
-             * 
-             * 
+             * You can save up to 3 different maps. 
+             *
              * FIX certain chars from not appearing in the font
              * 
-             * 
-             * 
-             * Fix saving and loading
-             * Do Delete Keybind
-             * 
-             * Do Fruits
-             * 
-             * Make sure you check if all the outside walls are valid when the user is done making the map.
-             * 
-             * For the ghosts, once you place the ghost chamber?, make sure they can reach every empty tile in the map via DFS or BFS.
-             *
-             * Before you can "save" the map, make sure it fills out a list of requirements (like having a ghost chamber.)
+
              * 
              * Quality of Life
              * ---------------
@@ -637,7 +652,7 @@ namespace Pacman
 
                     if (generatePortalButton.IsClicked(ms))
                     {
-                        ValidityChecks();
+                        FinishMap();
                     }
                 }
             }
@@ -793,6 +808,17 @@ namespace Pacman
                         selectedPacman = true;
                         pacmanPlacementButton.Tint = Color.Gray;
                     }
+                }
+            }
+
+            if (isFruitPlaced)
+            {
+                fruitTarget += gameTime.ElapsedGameTime;
+
+                if (fruitTarget >= TimeSpan.FromMilliseconds(200))
+                {
+                    fruitIcon.Image = fruitImages[Random.Shared.Next(0, 5)];
+                    fruitTarget = TimeSpan.Zero;
                 }
             }
 
