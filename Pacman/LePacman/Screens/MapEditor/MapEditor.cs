@@ -12,15 +12,27 @@ using LePacman;
 using System.Reflection.Metadata;
 using System.Security.Cryptography.X509Certificates;
 using Pacman;
+using System.IO;
 
 namespace LePacman.Screens.MapEditor
 {
     public class MapEditor : Screen
-    {
-        public struct SavedMap
+    {        
+        public record struct SavedMap
         {
-            public string Name;
+            public string Name { get; set; }
 
+            public pixelData[] PixelTiles { get; set; }
+            public wallData[] WallTiles { get; set; }
+            public PortalPair[] Portals { get; set; }
+
+            public SavedMap(string name, pixelData[] pixelTiles, wallData[] wallTiles, PortalPair[] portals)
+            {
+                Name = name;
+                PixelTiles = pixelTiles;
+                WallTiles = wallTiles;
+                Portals = portals;
+            }
         }
 
         static public SelectedType selectedTileType = SelectedType.Default;
@@ -97,7 +109,6 @@ namespace LePacman.Screens.MapEditor
         SpriteFont errorHeaderFont;
         SpriteFont errorBodyFont;
 
-        TimeSpan fruitTimer = new TimeSpan();
         TimeSpan fruitTarget = new TimeSpan();
 
         public MapEditor(Point Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
@@ -302,17 +313,6 @@ namespace LePacman.Screens.MapEditor
 
             duplicatePortalCheck();
 
-            /* Tint every portal entrance
-            foreach (var portals in WallGrid.Portals)
-            {
-                portals.firstPortal.firstTile.Tint = Color.Red;
-                portals.firstPortal.secondTile.Tint = Color.Red;
-                portals.secondPortal.firstTile.Tint = Color.Red;
-                portals.secondPortal.secondTile.Tint = Color.Red;
-
-            }
-            */
-
             if (!ghostChamberPlaced)
             {
                 PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackgroundTwo, new Point(500), new Vector2(1090, 740), errorHeaderFont, errorBodyFont, "Error!", "No Ghost Chamber found!", new List<WallVisual>()));
@@ -343,8 +343,16 @@ namespace LePacman.Screens.MapEditor
         {
             if (!ValidityChecks()) { return; }
 
+            SavedMap newMap = new SavedMap("CrackedActor", PelletGrid.Tiles.Flatten().Select(tile => tile.Data).ToArray(),
+                WallGrid.Tiles.Flatten().Select(tile => tile.Data).ToArray(), WallGrid.Portals.ToArray());
+
+
+            string SerializedMap100PercentTrustmebro = "hi";
+            string MapName = "bob";
+
+            File.WriteAllText(MapName + ".json", SerializedMap100PercentTrustmebro);
             //Give the option between Save & Load, or just Save
-            
+           // File.ReadAllText()
             ;
             //oh boy
         }
