@@ -349,12 +349,10 @@ namespace LePacman.Screens.MapEditor
 
             string SerializedMap100PercentTrustmebro = "hi";
             string MapName = "bob";
-
+            //Have 3 files: Map1, Map2, Map3.  Write the map to the corrisponding file
             File.WriteAllText(MapName + ".json", SerializedMap100PercentTrustmebro);
+
             //Give the option between Save & Load, or just Save
-           // File.ReadAllText()
-            ;
-            //oh boy
         }
 
         public void switchGrids()
