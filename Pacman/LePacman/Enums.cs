@@ -135,8 +135,12 @@ namespace Pacman
         OptionsVisual,
         OptionsControl,
 
+        SaveMap,
+
         MapEditor,
         MainGame,
+
+        
     }
 
     public enum PopUpStates 

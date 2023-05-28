@@ -17,7 +17,7 @@ namespace Pacman
         PopUpManager popUpManager = PopUpManager.Instance;
 
         //0 is normal pacman map
-        string[] savedMaps = new string[4];
+        public static string[] savedMaps = new string[4] { "Standard", "EMPTY", "EMPTY", "EMPTY" };
         
         public static float MasterVolume = .5f;
         public static float SFXVolume = .5f;

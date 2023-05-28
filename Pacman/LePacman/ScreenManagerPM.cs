@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using LePacman.Screens.MapEditor;
 using static Pacman.Options;
+using LePacman.Screens;
 
 namespace LePacman
 {
@@ -20,12 +21,13 @@ namespace LePacman
     {
         static public GraphicsDeviceManager graphics;
 
-        public Dictionary<GameStates, Screen> screens = new Dictionary<GameStates, Screen>() 
+        public Dictionary<GameStates, Screen> screens = new Dictionary<GameStates, Screen>()
         {
             [GameStates.TitleScreen] = new TitleScreen(new Point(800), new Vector2(0), graphics),
             [GameStates.MapEditor] = new MapEditor(new Point(1600, 1000), new Vector2(0), graphics),
             [GameStates.Options] = new Options(new Point(800), new Vector2(0), graphics),
-            [GameStates.OptionsAudio] = new OptionsAudio(new Point(800), screenOrigin, graphics)
+            [GameStates.OptionsAudio] = new OptionsAudio(new Point(800), screenOrigin, graphics),
+            [GameStates.SaveMap] = new SaveMap(new Point(800, 900), new Vector2(100), graphics),
         };
        
         public Screen currentScreen;
@@ -59,6 +61,11 @@ namespace LePacman
                 screens[GameStates.Options].size = screens[newScreen].size;
                 screenOrigin = new Vector2(screens[newScreen].size.X - 700, screens[newScreen].size.Y - 400);
             }
+            else if (newScreen == GameStates.SaveMap)
+            {
+                SaveMap.screenOrigin = new Vector2((screens[GameStates.SaveMap].background.Width / 2) - (menuBackground.Image.Width / 2), (screens[GameStates.SaveMap].background.Height / 2) - (menuBackground.Image.Height / 2));
+                SaveMap.setUpPositions();
+            }
         }
         public void setGraphics(GraphicsDeviceManager grap)
         {
@@ -67,7 +74,9 @@ namespace LePacman
 
         private bool notUpdateScreens(GameStates currScreen)
         {
-            return (currScreen != GameStates.Options && currScreen != GameStates.OptionsAudio && currScreen != GameStates.OptionsVisual && currScreen != GameStates.OptionsControl);
+            return (!(currScreen >= GameStates.Options && currScreen <= GameStates.SaveMap));
+            
+            //return (currScreen != GameStates.Options && currScreen != GameStates.OptionsAudio && currScreen != GameStates.OptionsVisual && currScreen != GameStates.OptionsControl);
         }
 
 
@@ -95,6 +104,19 @@ namespace LePacman
 
             background = new Texture2D(gd, gd.Viewport.Width, gd.Viewport.Height);
             background.SetData(colors);
+        }
+
+        public Texture2D GetBackgroundImage()
+        {
+            var gd = graphics.GraphicsDevice;
+
+            Color[] colors = new Color[gd.Viewport.Width * gd.Viewport.Height];
+            gd.GetBackBufferData(colors);
+
+            Texture2D backgroundImage = new Texture2D(gd, gd.Viewport.Width, gd.Viewport.Height);
+            backgroundImage.SetData(colors);
+
+            return backgroundImage;
         }
         #endregion
 

@@ -14,6 +14,8 @@ namespace Pacman
 
         public Vector2 position;
 
+        public Texture2D background;
+
         protected List<Sprite> objects = new List<Sprite>();
 
         public Screen(Point Size, Vector2 Position, GraphicsDeviceManager Graphics)

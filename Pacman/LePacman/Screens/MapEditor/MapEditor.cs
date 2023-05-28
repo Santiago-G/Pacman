@@ -328,6 +328,7 @@ namespace LePacman.Screens.MapEditor
             if (!pelletCheckResult.pacManValid)
             {
                 PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackgroundThree, new Point(500), new Vector2(1020, 700), errorHeaderFont, errorBodyFont, "Error!", "No Pacman found!", new List<WallVisual>()));
+                return false;
             }
 
             foreach (var error in pelletCheckResult.invalidPellets)
@@ -345,6 +346,11 @@ namespace LePacman.Screens.MapEditor
 
             SavedMap newMap = new SavedMap("CrackedActor", PelletGrid.Tiles.Flatten().Select(tile => tile.Data).ToArray(),
                 WallGrid.Tiles.Flatten().Select(tile => tile.Data).ToArray(), WallGrid.Portals.ToArray());
+
+            SaveMap.currentMap = newMap;
+
+            ScreenManagerPM.Instance.screens[GameStates.SaveMap].background = ScreenManagerPM.Instance.GetBackgroundImage();
+            ScreenManagerPM.Instance.ChangeScreens(GameStates.SaveMap);
 
 
             string SerializedMap100PercentTrustmebro = "hi";
