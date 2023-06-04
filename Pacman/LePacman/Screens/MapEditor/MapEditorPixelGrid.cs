@@ -315,9 +315,21 @@ namespace LePacman.Screens.MapEditor
         public void LoadGrid(List<pixelData> TileList)
         {
             Tiles = TileList.Select(x => new pixelVisual(x, Position)).Expand(new Point(Tiles.GetLength(0), Tiles.GetLength(1)));
+            bool foundPacman = false;
 
             foreach (var tile in Tiles)
             {
+                if (!foundPacman && tile.TileStates == States.Pacman)
+                {
+                    MapEditor.pacmanTileIcon.Position = new Vector2(tile.Position.X - 13, tile.Position.Y- 26);
+                    foundPacman = true;
+                    MapEditor.pacmanPlaced = true;
+
+                    pacmanOrigin = tile.Cord;
+                    pacmanTileIndex.Add(tile.Cord); pacmanTileIndex.Add(new Point(tile.Cord.X + 1, tile.Cord.Y));
+                    pacmanTileIndex.Add(new Point(tile.Cord.X, tile.Cord.Y + 1)); pacmanTileIndex.Add(new Point(tile.Cord.X + 1, tile.Cord.Y + 1));
+                }
+
                 tile.UpdateStates(true);
             }
         }

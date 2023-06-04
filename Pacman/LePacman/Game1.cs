@@ -1,4 +1,5 @@
 ﻿using LePacman;
+using LePacman.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -6,7 +7,7 @@ using MonoGame.Extended.Screens;
 using Pacman.Screens;
 using System.Collections.Generic;
 using System.IO;
-
+using static LePacman.Screens.MapEditor.MapEditor;
 
 namespace Pacman
 {
@@ -17,7 +18,8 @@ namespace Pacman
         PopUpManager popUpManager = PopUpManager.Instance;
 
         //0 is normal pacman map
-        public static string[] savedMaps = new string[4] { "Standard", "EMPTY", "EMPTY", "EMPTY" };
+        public static SavedMap[] savedMaps = new SavedMap[4] { new SavedMap("ORIGINAL", default, default, default), new SavedMap("EMPTY", default, default, default),
+            new SavedMap("EMPTY", default, default, default), new SavedMap("EMPTY", default, default, default) };
         
         public static float MasterVolume = .5f;
         public static float SFXVolume = .5f;

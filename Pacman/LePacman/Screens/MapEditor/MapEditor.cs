@@ -13,6 +13,7 @@ using System.Reflection.Metadata;
 using System.Security.Cryptography.X509Certificates;
 using Pacman;
 using System.IO;
+using System.Xml.Linq;
 
 namespace LePacman.Screens.MapEditor
 {
@@ -22,16 +23,48 @@ namespace LePacman.Screens.MapEditor
         {
             public string Name { get; set; }
 
-            public pixelData[] PixelTiles { get; set; }
-            public wallData[] WallTiles { get; set; }
+            public PelletTileInfo[] PixelTiles { get; set; }
+            public WallTileInfo[] WallTiles { get; set; }
             public PortalPair[] Portals { get; set; }
 
-            public SavedMap(string name, pixelData[] pixelTiles, wallData[] wallTiles, PortalPair[] portals)
+            public SavedMap(string name, PelletTileInfo[] pixelTiles, WallTileInfo[] wallTiles, PortalPair[] portals)
             {
                 Name = name;
                 PixelTiles = pixelTiles;
                 WallTiles = wallTiles;
                 Portals = portals;
+            }
+        }
+
+        //TS => TileState, C => Coord, NBR => Neighbor, WS => WallState
+        public record struct WallTileInfo
+        {
+            public States TS { get; set; }
+            public Point C { get; set; }
+            public Point[] NBR { get; set; }
+            public WallStates WS { get; set; }
+
+            public WallTileInfo(States tileStates, Point coord, Point[] neighbors, WallStates wallState)
+            {
+                TS = tileStates;
+                C = coord;
+                NBR = neighbors;
+                WS = wallState;
+            }
+        }
+
+        //TS => TileState, C => Coord, NBR => Neighbor
+        public record struct PelletTileInfo
+        {
+            public States TS { get; set; }
+            public Point C { get; set; }
+            public Point[] NBR { get; set; }
+
+            public PelletTileInfo(States tileStates, Point coord, Point[] neighbors)
+            {
+                TS = tileStates;
+                C = coord;
+                NBR = neighbors;
             }
         }
 
@@ -344,8 +377,8 @@ namespace LePacman.Screens.MapEditor
         {
             if (!ValidityChecks()) { return; }
 
-            SavedMap newMap = new SavedMap("CrackedActor", PelletGrid.Tiles.Flatten().Select(tile => tile.Data).ToArray(),
-                WallGrid.Tiles.Flatten().Select(tile => tile.Data).ToArray(), WallGrid.Portals.ToArray());
+            SavedMap newMap = new SavedMap("Cracked Actor", PelletGrid.Tiles.Flatten().Select(tiles => tiles.Data).ToArray().SavePelletData(),
+                WallGrid.Tiles.Flatten().Select(tiles => tiles.Data).ToArray().SaveWallData(), WallGrid.Portals.ToArray());
 
             SaveMap.currentMap = newMap;
 
@@ -357,7 +390,7 @@ namespace LePacman.Screens.MapEditor
             string MapName = "bob";
             //Have 3 files: Map1, Map2, Map3.  Write the map to the corrisponding file
             File.WriteAllText(MapName + ".json", SerializedMap100PercentTrustmebro);
-
+            
             //Give the option between Save & Load, or just Save
         }
 

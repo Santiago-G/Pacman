@@ -23,6 +23,22 @@ namespace LePacman.Screens.MapEditor
 
     public record struct Portal(WallVisual firstTile, WallVisual secondTile);
 
+
+    //FP => First Portal;  SP => Second Portal
+    public record struct PortalPairData(PortalData FP, PortalData SP);
+    public record struct PortalData
+    {
+        //FT => First Tile, ST => Second Tile
+        public Point FT { get; set; }
+        public Point ST { get; set; }
+
+        public PortalData(Point firstTile, Point secondTile)
+        {
+            FT = firstTile;
+            ST = secondTile;
+        }
+    }
+
     public class MapEditorWallGrid
     {
         Vector2 Position;
@@ -316,6 +332,7 @@ namespace LePacman.Screens.MapEditor
         {
             Tiles = TileList.Select(x => new WallVisual(x, Position)).Expand(new Point(Tiles.GetLength(0), Tiles.GetLength(1)));
             bool foundGhostChamber = false;
+            bool foundPacman = false;
 
             foreach (var tile in Tiles)
             {
@@ -332,6 +349,15 @@ namespace LePacman.Screens.MapEditor
                             ghostChamberTiles[x, y] = Tiles[tile.Cord.X + x, tile.Cord.Y + y];
                         }
                     }
+                }
+                else if (!foundPacman && tile.TileStates == States.Pacman)
+                {
+                    MapEditor.pacmanTileIcon.Position = new Vector2(tile.Position.X - 13, tile.Position.Y - 13);
+                    foundPacman = true;
+                    MapEditor.pacmanPlaced = true;
+
+                    pacmanTileIndex.Add(tile.Cord); pacmanTileIndex.Add(new Point(tile.Cord.X + 1, tile.Cord.Y)); 
+                    pacmanTileIndex.Add(new Point(tile.Cord.X, tile.Cord.Y + 1)); pacmanTileIndex.Add(new Point(tile.Cord.X + 1, tile.Cord.Y + 1));
                 }
                 tile.UpdateStates(true);
             }

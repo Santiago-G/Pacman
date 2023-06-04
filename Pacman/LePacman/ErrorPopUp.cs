@@ -125,59 +125,5 @@ namespace Pacman
                 batch.DrawString(bodyFont, "Click to continue", new Vector2(Position.X + bodyFont.MeasureString("Click to continue").X / 2, Position.Y + (Image.Height - Image.Height / 6)), Tint);
             }
         }
-
-        /*
-        public PopUp(Texture2D Background, Point Size, Vector2 Position, SpriteFont HeaderFont, SpriteFont BodyFont, string HeaderText, string BodyText,
-            Vector2 HeaderPos, Vector2 bodyPos)
-        
-
-        //check if i really need an abstract pop up class, and if the old one worked
-
-        public ErrorPopUp(Texture2D Background, Point Size, Vector2 Position, SpriteFont HeaderFont, SpriteFont BodyFont, string HeaderText, string BodyText,
-            Vector2 HeaderPos, Vector2 BodyPos) : base(Background, Size, Position, HeaderFont, BodyFont, HeaderText, BodyText, HeaderPos, BodyPos)
-        {
-            
-        }
-
-        public ErrorPopUp(Texture2D Image, Vector2 Pos, Color Tint, SpriteFont HeaderFont, SpriteFont BodyFont, string HeaderText, string BodyText, Vector2 HeaderPos, Vector2 BodyPos)
-        : base(Image, Pos, Tint)
-        {
-            headerFont = HeaderFont;
-            bodyFont = BodyFont;
-
-            headerText = HeaderText;
-            bodyText = BodyText;
-
-            headerPos = HeaderPos;
-            bodyPos = BodyPos;
-        }
-
-        public ErrorPopUp(Texture2D Image, Vector2 Pos, Color Tint, SpriteFont HeaderFont, SpriteFont BodyFont, string HeaderText, string BodyText, float HeaderY, Vector2 BodyPos)
-        : base(Image, Pos, Tint)
-        {
-            headerFont = HeaderFont;
-            bodyFont = BodyFont;
-
-            headerText = HeaderText;
-            bodyText = BodyText;
-
-            headerPos = new Vector2(Image.Width /2 - (HeaderFont.MeasureString(HeaderText).X / 2), HeaderY);
-            bodyPos = BodyPos;
-        }
-
-        public ErrorPopUp(Texture2D Image, Vector2 Pos, Color Tint, SpriteFont HeaderFont, SpriteFont BodyFont, string HeaderText, string BodyText)
-        : base(Image, Pos, Tint)
-        {
-            headerFont = HeaderFont;
-            bodyFont = BodyFont;
-
-            headerText = HeaderText;
-            bodyText = BodyText;
-
-            headerPos = new Vector2(Image.Width / 2 - (HeaderFont.MeasureString(HeaderText).X / 2), 10);
-            bodyPos = new Vector2(20, 40);
-        }
-        */
-
     }
 }

@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using static LePacman.Screens.MapEditor.MapEditor;
 using Newtonsoft.Json;
 using System.IO;
+using LePacman.Screens.MapEditor;
 
 namespace LePacman.Screens
 {
@@ -27,9 +28,12 @@ namespace LePacman.Screens
         private static Button slotTwo;
         private static Button slotThree;
 
+        private SpriteFont NameText;
+
         public static SavedMap currentMap;
 
         private string MapName;
+        private int MapNum;
         private bool slotClicked = false;
 
         public SaveMap(Point Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size , Position, Graphics)
@@ -48,15 +52,15 @@ namespace LePacman.Screens
             slotTwo.Position += screenOrigin;
             slotThree.Position += screenOrigin;
 
-            if (Game1.savedMaps[1] != "EMPTY")
+            if (Game1.savedMaps[1].Name != "EMPTY")
             {
                 //DO SMTH FOR SLOT ONE
             }
-            if (Game1.savedMaps[2] != "EMPTY")
+            if (Game1.savedMaps[2].Name != "EMPTY")
             {
                 //DO SMTH FOR SLOT TWO
             }
-            if (Game1.savedMaps[3] != "EMPTY")
+            if (Game1.savedMaps[3].Name != "EMPTY")
             {
                 //DO SMTH FOR SLOT THREE
             }
@@ -77,34 +81,42 @@ namespace LePacman.Screens
             objects.Add(slotTwo);
             slotThree = new Button(emptySlotImage, new Vector2(70, 500), Color.White);
             objects.Add(slotThree);
+
+            NameText = Content.Load<SpriteFont>("MapNameText");
         }
 
         public override void Update(GameTime gameTime)
         {
             MouseState ms = Mouse.GetState();
 
+
             //do pop up saying "are you sure you want to override this save" when overriding
             if (slotOne.IsClicked(ms))
             {
                 slotClicked = true;
-                MapName = "Map1";
+                MapNum = 1;
             }
             else if (slotTwo.IsClicked(ms)) 
             {
                 slotClicked = true;
-                MapName = "MapTwo";
+                MapNum = 2;
             }
             else if (slotThree.IsClicked(ms))
             {
                 slotClicked = true;
-                MapName = "MapThree";
+                MapNum = 3;
             }
 
             if (slotClicked) 
             {
-                string SerializedMap100PercentTrustmebro = "hi";
+                MapName = $"Map{MapNum}";
+                currentMap.Name = "Scary Monsters";
+                Game1.savedMaps[MapNum] = currentMap;
+                string SerializedMap100PercentTrustmebro = $"{JsonConvert.SerializeObject(currentMap.PixelTiles)};{JsonConvert.SerializeObject(currentMap.WallTiles)};" +
+                    $"{JsonConvert.SerializeObject(currentMap.Portals.ToPortalDataArray())}";
 
                 File.WriteAllText(MapName + ".json", SerializedMap100PercentTrustmebro);
+                slotClicked = false;
             }
             base.Update(gameTime);
         }
@@ -115,6 +127,10 @@ namespace LePacman.Screens
             menuBackground.Draw(spriteBatch);
 
             base.Draw(spriteBatch);
-        }
+
+            spriteBatch.DrawString(NameText, Game1.savedMaps[1].Name, new Vector2(slotOne.Position.X + 105, slotOne.Position.Y + 20), Color.DarkRed);
+            spriteBatch.DrawString(NameText, Game1.savedMaps[2].Name, new Vector2(slotTwo.Position.X + 105, slotTwo.Position.Y + 20), Color.DarkRed);
+            spriteBatch.DrawString(NameText, Game1.savedMaps[3].Name, new Vector2(slotThree.Position.X + 105, slotThree.Position.Y + 20), Color.DarkRed);
+        } 
     }
 }

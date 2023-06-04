@@ -411,6 +411,13 @@
 /processorParam:TextureFormat=Color
 /build:mapEditorTile2.png
 
+#begin MapNameText.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:MapNameText.spritefont
+
 #begin MasterVolumeText.png
 /importer:TextureImporter
 /processor:TextureProcessor
