@@ -8,7 +8,7 @@ using System.Text;
 
 namespace LePacman.Screens.MapEditor
 {
-    public class WallVisual : abstractVisual
+    public class WallTile : abstractVisual
     {
         public static MapEditorWallGrid Grid;
 
@@ -55,9 +55,9 @@ namespace LePacman.Screens.MapEditor
         public static Texture2D singleOWError;
         #endregion
 
-        public wallData Data { get; set; } = new wallData();
+        public WallTileData Data { get; set; } = new WallTileData();
 
-        public int OuterWallNeighborCount(WallVisual[,] Tiles, bool countDiaganals)
+        public int OuterWallNeighborCount(WallTile[,] Tiles, bool countDiaganals)
         {
             int numOfNeighboringOWs = 0;
             int maxCount = Neighbors.Length;
@@ -80,16 +80,16 @@ namespace LePacman.Screens.MapEditor
             return numOfNeighboringOWs;
         }
 
-        private bool isValidPostion(Point Cord, WallVisual[,] Tiles)
+        private bool isValidPostion(Point Cord, WallTile[,] Tiles)
         {
             return isValidPostion(Cord.ToVector2(), Tiles);
         }
-        private bool isValidPostion(Vector2 Cord, WallVisual[,] Tiles)
+        private bool isValidPostion(Vector2 Cord, WallTile[,] Tiles)
         {
             return !(Cord.X < 0 || Cord.Y < 0 || Cord.X >= Tiles.GetLength(0) || Cord.Y >= Tiles.GetLength(1));
         }
 
-        protected override AbstractData data { get => Data; set { Data = (wallData)value; } }
+        protected override AbstractData data { get => Data; set { Data = (WallTileData)value; } }
 
         public WallStates WallState
         {
@@ -97,12 +97,12 @@ namespace LePacman.Screens.MapEditor
             set { Data.WallState = value; }
         }
 
-        public WallVisual(Texture2D Image, Point Cord, Color Tint, Vector2 Offset, Vector2 Scale, Vector2 Origin, float Rotation, SpriteEffects spriteEffects) : base(Image, Cord, Tint, Offset, Scale, Origin, Rotation, spriteEffects)
+        public WallTile(Texture2D Image, Point Cord, Color Tint, Vector2 Offset, Vector2 Scale, Vector2 Origin, float Rotation, SpriteEffects spriteEffects) : base(Image, Cord, Tint, Offset, Scale, Origin, Rotation, spriteEffects)
         {
             ;
         }
 
-        public WallVisual(wallData dataTile, Vector2 offset) : base(dataTile, offset)
+        public WallTile(WallTileData dataTile, Vector2 offset) : base(dataTile, offset)
         {
 
         }

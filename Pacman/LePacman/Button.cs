@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Pacman
 {
-    public class Button : Sprite
+    public class Button : SpriteBase
     {
         bool isPressed = false;
 

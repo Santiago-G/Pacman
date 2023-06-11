@@ -22,7 +22,7 @@ namespace Pacman
             }
         }
 
-        public static WallTileInfo[] SaveWallData(this wallData[] tiles)
+        public static WallTileInfo[] SaveWallData(this WallTileData[] tiles)
         {
             WallTileInfo[] savedMapTiles = new WallTileInfo[tiles.Length];
 
@@ -34,7 +34,7 @@ namespace Pacman
             return savedMapTiles;
         }
 
-        public static PelletTileInfo[] SavePelletData(this pixelData[] tiles)
+        public static PelletTileInfo[] SavePelletData(this PixelTileData[] tiles)
         {
             PelletTileInfo[] savedMapTiles = new PelletTileInfo[tiles.Length];
 

@@ -13,7 +13,7 @@ namespace Pacman
 {
     public class TitleScreen : Screen
     {
-        Image titleImage;
+        Sprite titleImage;
         Texture2D titleSprite;
 
         Texture2D mapEditorSprite;
@@ -32,7 +32,7 @@ namespace Pacman
         public override void LoadContent(ContentManager Content)
         {
             titleSprite = Content.Load<Texture2D>("PacManTitle");
-            titleImage = new Image(titleSprite, new Vector2(400 - (titleSprite.Width / 2), 100), Color.White);
+            titleImage = new Sprite(titleSprite, new Vector2(400 - (titleSprite.Width / 2), 100), Color.White);
             objects.Add(titleImage);
 
             mapEditorSprite = Content.Load<Texture2D>("mapEditorText");

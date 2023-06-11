@@ -8,11 +8,11 @@ using System.Text;
 
 namespace LePacman.Screens.MapEditor
 {
-    public class pixelData : AbstractData
+    public class PixelTileData : AbstractData
     {
         public override Point[] Neighbors { get; set; }
 
-        public pixelData()
+        public PixelTileData()
         {
             Neighbors = new Point[8];
         }

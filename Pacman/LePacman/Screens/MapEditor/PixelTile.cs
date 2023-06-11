@@ -9,7 +9,7 @@ using System.Text;
 
 namespace LePacman.Screens.MapEditor
 {
-    public class pixelVisual : abstractVisual
+    public class PixelTile : abstractVisual
     {
         #region Textures
 
@@ -29,16 +29,16 @@ namespace LePacman.Screens.MapEditor
 
         public static MapEditorPixelGrid Grid;
 
-        public pixelData Data { get; set; } = new pixelData();
+        public PixelTileData Data { get; set; } = new PixelTileData();
 
-        protected override AbstractData data { get => Data; set { Data = (pixelData)value; } }
+        protected override AbstractData data { get => Data; set { Data = (PixelTileData)value; } }
 
-        public pixelVisual(Texture2D Image, Point Cord, Color Tint, Vector2 Offset, Vector2 Scale, Vector2 Origin, float Rotation, SpriteEffects spriteEffects) : base(Image, Cord, Tint, Offset, Scale, Origin, Rotation, spriteEffects)
+        public PixelTile(Texture2D Image, Point Cord, Color Tint, Vector2 Offset, Vector2 Scale, Vector2 Origin, float Rotation, SpriteEffects spriteEffects) : base(Image, Cord, Tint, Offset, Scale, Origin, Rotation, spriteEffects)
         {
 
         }
 
-        public pixelVisual(pixelData dataTile, Vector2 offset) : base(dataTile, offset)
+        public PixelTile(PixelTileData dataTile, Vector2 offset) : base(dataTile, offset)
         {
 
         }

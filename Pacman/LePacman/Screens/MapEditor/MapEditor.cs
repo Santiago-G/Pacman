@@ -83,7 +83,7 @@ namespace LePacman.Screens.MapEditor
         Vector2 pixelGridOffest;
         Point pixelGridSize;
 
-        Image mapEditorImage;
+        Sprite mapEditorImage;
         Texture2D mapEditorSprite;
 
         Texture2D pelletButtonSprite;
@@ -109,7 +109,7 @@ namespace LePacman.Screens.MapEditor
         Texture2D fruitButtonSprite;
         Texture2D selectedFruitButtonSprite;
         public static Button fruitButton;
-        public static Image fruitIcon;
+        public static Sprite fruitIcon;
 
         Texture2D[] fruitImages;
         int fruitIndex;
@@ -120,13 +120,13 @@ namespace LePacman.Screens.MapEditor
         //Left one
         Texture2D ghostChamberTexture;
         public static Button ghostChamberButton;
-        public static Image ghostChamberMS;
+        public static Sprite ghostChamberMS;
         public static bool selectedGhostChamber = false;
         public static bool ghostChamberPlaced = false;
 
         Texture2D pmPlacementSprite;
         public static Button pacmanPlacementButton;
-        public static Image pacmanTileIcon;
+        public static Sprite pacmanTileIcon;
         public static bool selectedPacman = false;
         public static bool pacmanPlaced = false;
 
@@ -152,7 +152,7 @@ namespace LePacman.Screens.MapEditor
         public override void LoadContent(ContentManager Content)
         {
             mapEditorSprite = Content.Load<Texture2D>("mapEditorText");
-            mapEditorImage = new Image(mapEditorSprite, new Vector2(800 - mapEditorSprite.Width / 2, 10), Color.White);
+            mapEditorImage = new Sprite(mapEditorSprite, new Vector2(800 - mapEditorSprite.Width / 2, 10), Color.White);
             objects.Add(mapEditorImage);
 
             pelletButtonSprite = Content.Load<Texture2D>("UnselectedPelletButton");
@@ -187,12 +187,12 @@ namespace LePacman.Screens.MapEditor
 
             ghostChamberTexture = Content.Load<Texture2D>("pacManGhostChamber");
             ghostChamberButton = new Button(ghostChamberTexture, new Vector2(1000, 700), Color.White);
-            ghostChamberMS = new Image(ghostChamberTexture, new Vector2(-200), Color.White, new Vector2(1), Vector2.Zero, 0f, SpriteEffects.None);
+            ghostChamberMS = new Sprite(ghostChamberTexture, new Vector2(-200), Color.White, new Vector2(1), Vector2.Zero, 0f, SpriteEffects.None);
             objects.Add(ghostChamberButton);
             objects.Add(ghostChamberMS);
 
             pmPlacementSprite = Content.Load<Texture2D>("pacManButton");
-            pacmanTileIcon = new Image(Content.Load<Texture2D>("pacManTileImage"), new Vector2(-200), Color.White);
+            pacmanTileIcon = new Sprite(Content.Load<Texture2D>("pacManTileImage"), new Vector2(-200), Color.White);
             pacmanPlacementButton = new Button(pmPlacementSprite, new Vector2(1000, 850), Color.White);
             objects.Add(pacmanPlacementButton);
             objects.Add(pacmanTileIcon);
@@ -209,7 +209,7 @@ namespace LePacman.Screens.MapEditor
                 Content.Load<Texture2D>("orangeFruit"), Content.Load<Texture2D>("appleFruit"), Content.Load<Texture2D>("melonFruit") };
 
 
-            fruitIcon = new Image(fruitImages[0], new Vector2(-1000), Color.White);
+            fruitIcon = new Sprite(fruitImages[0], new Vector2(-1000), Color.White);
             objects.Add(fruitButton);
             objects.Add(fruitIcon);
 
@@ -222,58 +222,58 @@ namespace LePacman.Screens.MapEditor
 
             //ADD THING THAT IF SELECTED ONLY DRAWS OVER BLANK TILES
 
-            pixelVisual.EmptySprite = Content.Load<Texture2D>("emptyPelletTile");
-            pixelVisual.HLEmptySprite = Content.Load<Texture2D>("HLEmptyPelletTile");
-            pixelVisual.PelletSprite = Content.Load<Texture2D>("mapEditorTile2");
-            pixelVisual.HLPelletSprite = Content.Load<Texture2D>("enlargedPelletTile");
-            pixelVisual.PowerPelletSprite = Content.Load<Texture2D>("powerPelletSprite");
-            pixelVisual.HLPowerPelletSprite = Content.Load<Texture2D>("enlargedPowerPelletSprite");
+            PixelTile.EmptySprite = Content.Load<Texture2D>("emptyPelletTile");
+            PixelTile.HLEmptySprite = Content.Load<Texture2D>("HLEmptyPelletTile");
+            PixelTile.PelletSprite = Content.Load<Texture2D>("mapEditorTile2");
+            PixelTile.HLPelletSprite = Content.Load<Texture2D>("enlargedPelletTile");
+            PixelTile.PowerPelletSprite = Content.Load<Texture2D>("powerPelletSprite");
+            PixelTile.HLPowerPelletSprite = Content.Load<Texture2D>("enlargedPowerPelletSprite");
 
-            pixelVisual.NBemptySprite = Content.Load<Texture2D>("emptyTile");
-            pixelVisual.NBpelletSprite = Content.Load<Texture2D>("NBpixelTile");
-            pixelVisual.NBpowerPelletSprite = Content.Load<Texture2D>("NBpowerPelletTile");
+            PixelTile.NBemptySprite = Content.Load<Texture2D>("emptyTile");
+            PixelTile.NBpelletSprite = Content.Load<Texture2D>("NBpixelTile");
+            PixelTile.NBpowerPelletSprite = Content.Load<Texture2D>("NBpowerPelletTile");
 
-            WallVisual.NBemptySprite = pixelVisual.NBemptySprite;
+            WallTile.NBemptySprite = PixelTile.NBemptySprite;
 
-            WallVisual.EmptySprite = Content.Load<Texture2D>("mapEditorTile");
-            WallVisual.HLEmptySprite = Content.Load<Texture2D>("EnlargeBorderTile");
+            WallTile.EmptySprite = Content.Load<Texture2D>("mapEditorTile");
+            WallTile.HLEmptySprite = Content.Load<Texture2D>("EnlargeBorderTile");
 
-            WallVisual.LoneWallSprite = Content.Load<Texture2D>("loneWall");
-            WallVisual.InteriorWallSprite = Content.Load<Texture2D>("InteriorWall");
+            WallTile.LoneWallSprite = Content.Load<Texture2D>("loneWall");
+            WallTile.InteriorWallSprite = Content.Load<Texture2D>("InteriorWall");
 
-            WallVisual.MiddleWallSprite = Content.Load<Texture2D>("singleMiddleWall");
-            WallVisual.SingleWallEnd = Content.Load<Texture2D>("singleWallEnd");
+            WallTile.MiddleWallSprite = Content.Load<Texture2D>("singleMiddleWall");
+            WallTile.SingleWallEnd = Content.Load<Texture2D>("singleWallEnd");
 
-            WallVisual.CornerWallFilledTile = Content.Load<Texture2D>("CornerWallsFilled");
+            WallTile.CornerWallFilledTile = Content.Load<Texture2D>("CornerWallsFilled");
 
-            WallVisual.CornerWallTile = WallVisual.CornerWallFilledTile;
+            WallTile.CornerWallTile = WallTile.CornerWallFilledTile;
 
-            WallVisual.EdgeSprite = Content.Load<Texture2D>("EdgeTile");
+            WallTile.EdgeSprite = Content.Load<Texture2D>("EdgeTile");
 
-            WallVisual.InteriorCrossSprite = Content.Load<Texture2D>("Cross");
+            WallTile.InteriorCrossSprite = Content.Load<Texture2D>("Cross");
 
-            WallVisual.SingleCrossSprite = WallVisual.EdgeSprite;
+            WallTile.SingleCrossSprite = WallTile.EdgeSprite;
 
-            WallVisual.InteriorFilledCorner = Content.Load<Texture2D>("InteriorFilledCorner");
+            WallTile.InteriorFilledCorner = Content.Load<Texture2D>("InteriorFilledCorner");
 
-            WallVisual.MiddleOuterWall = Content.Load<Texture2D>("singleMiddleOuterWall");
-            WallVisual.CornerOuterWall = Content.Load<Texture2D>("cornerOuterWall");
-            WallVisual.SingleIntersectingOuterWall = Content.Load<Texture2D>("singleIntersectingOuterWall");
-            WallVisual.MiddleIntersectingOuterWall = Content.Load<Texture2D>("middleIntersectingOuterWall");
-            WallVisual.EdgeIntersectingOuterWall = Content.Load<Texture2D>("edgeIntersectingOuterWall");
-            WallVisual.Edge2IntersectingOuterWall = Content.Load<Texture2D>("edge2IntersectingOuterWall");
+            WallTile.MiddleOuterWall = Content.Load<Texture2D>("singleMiddleOuterWall");
+            WallTile.CornerOuterWall = Content.Load<Texture2D>("cornerOuterWall");
+            WallTile.SingleIntersectingOuterWall = Content.Load<Texture2D>("singleIntersectingOuterWall");
+            WallTile.MiddleIntersectingOuterWall = Content.Load<Texture2D>("middleIntersectingOuterWall");
+            WallTile.EdgeIntersectingOuterWall = Content.Load<Texture2D>("edgeIntersectingOuterWall");
+            WallTile.Edge2IntersectingOuterWall = Content.Load<Texture2D>("edge2IntersectingOuterWall");
 
-            WallVisual.emptyWallError = Content.Load<Texture2D>("errorEmptyTile");
-            WallVisual.singleOWError = Content.Load<Texture2D>("middleOWError");
+            WallTile.emptyWallError = Content.Load<Texture2D>("errorEmptyTile");
+            WallTile.singleOWError = Content.Load<Texture2D>("middleOWError");
 
             pixelGridSize = new Point(wallGridSize.X - 1, wallGridSize.Y - 1);
-            pixelGridOffest = new Vector2(wallGridOffest.X + pixelVisual.EmptySprite.Width / 2, wallGridOffest.Y + pixelVisual.EmptySprite.Height / 2);
+            pixelGridOffest = new Vector2(wallGridOffest.X + PixelTile.EmptySprite.Width / 2, wallGridOffest.Y + PixelTile.EmptySprite.Height / 2);
 
-            WallGrid = new MapEditorWallGrid(wallGridSize, new Point(WallVisual.EmptySprite.Width, WallVisual.EmptySprite.Height), wallGridOffest);
-            WallVisual.Grid = WallGrid;
+            WallGrid = new MapEditorWallGrid(wallGridSize, new Point(WallTile.EmptySprite.Width, WallTile.EmptySprite.Height), wallGridOffest);
+            WallTile.Grid = WallGrid;
 
-            PelletGrid = new MapEditorPixelGrid(pixelGridSize, new Point(pixelVisual.EmptySprite.Width, pixelVisual.EmptySprite.Height), pixelGridOffest);
-            pixelVisual.Grid = PelletGrid;
+            PelletGrid = new MapEditorPixelGrid(pixelGridSize, new Point(PixelTile.EmptySprite.Width, PixelTile.EmptySprite.Height), pixelGridOffest);
+            PixelTile.Grid = PelletGrid;
         }
 
         MouseState prevms;
@@ -348,7 +348,7 @@ namespace LePacman.Screens.MapEditor
 
             if (!ghostChamberPlaced)
             {
-                PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackgroundTwo, new Point(500), new Vector2(1090, 740), errorHeaderFont, errorBodyFont, "Error!", "No Ghost Chamber found!", new List<WallVisual>()));
+                PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackgroundTwo, new Point(500), new Vector2(1090, 740), errorHeaderFont, errorBodyFont, "Error!", "No Ghost Chamber found!", new List<WallTile>()));
                 return false;
             }
 
@@ -360,13 +360,13 @@ namespace LePacman.Screens.MapEditor
 
             if (!pelletCheckResult.pacManValid)
             {
-                PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackgroundThree, new Point(500), new Vector2(1020, 700), errorHeaderFont, errorBodyFont, "Error!", "No Pacman found!", new List<WallVisual>()));
+                PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackgroundThree, new Point(500), new Vector2(1020, 700), errorHeaderFont, errorBodyFont, "Error!", "No Pacman found!", new List<WallTile>()));
                 return false;
             }
 
             foreach (var error in pelletCheckResult.invalidPellets)
             {
-                PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackground, new Point(500), error.Position, errorHeaderFont, errorBodyFont, "Error!", "Pacman and the Ghosts cannot reach these tiles!", new List<WallVisual>()));
+                PopUpManager.Instance.EnqueuePopUp(new ErrorPopUp(errorBackground, new Point(500), error.Position, errorHeaderFont, errorBodyFont, "Error!", "Pacman and the Ghosts cannot reach these tiles!", new List<WallTile>()));
                 return false;
             }
 
@@ -513,8 +513,8 @@ namespace LePacman.Screens.MapEditor
                     string pelletContent = System.IO.File.ReadAllText("SavedPelletMap.json");
                     string wallContent = System.IO.File.ReadAllText("SavedWallMap.json");
 
-                    List<pixelData> flattenedPelletTiles = JsonConvert.DeserializeObject<List<pixelData>>(pelletContent);
-                    List<wallData> flattenedWallTiles = JsonConvert.DeserializeObject<List<wallData>>(wallContent);
+                    List<PixelTileData> flattenedPelletTiles = JsonConvert.DeserializeObject<List<PixelTileData>>(pelletContent);
+                    List<WallTileData> flattenedWallTiles = JsonConvert.DeserializeObject<List<WallTileData>>(wallContent);
                     //tiles = flattenedTiles.Select(x => new MapEditorVisualTile(.To2DArray(/*maybe needs parameters*/);
                     //Create grid based on this two d array
                     PelletGrid.LoadGrid(flattenedPelletTiles);
@@ -569,7 +569,7 @@ namespace LePacman.Screens.MapEditor
 
                     if (index != new Point(-1) && index.X < wallGridSize.X - 6 && index.Y < wallGridSize.Y - 3)
                     {
-                        ghostChamberMS.Position = new Vector2(WallGrid.Tiles[index.X, index.Y].Position.X - pixelVisual.EmptySprite.Width / 2, WallGrid.Tiles[index.X, index.Y].Position.Y - pixelVisual.EmptySprite.Height / 2);
+                        ghostChamberMS.Position = new Vector2(WallGrid.Tiles[index.X, index.Y].Position.X - PixelTile.EmptySprite.Width / 2, WallGrid.Tiles[index.X, index.Y].Position.Y - PixelTile.EmptySprite.Height / 2);
                         concord = 1;
                     }
                     else
@@ -667,7 +667,7 @@ namespace LePacman.Screens.MapEditor
                             }
 
                             //make a small pacman image, and have it follow "lock" the mouse
-                            pacmanTileIcon.Position = new Vector2(WallGrid.Tiles[index.X, index.Y].Position.X - pixelVisual.EmptySprite.Width / 2, WallGrid.Tiles[index.X, index.Y].Position.Y - pixelVisual.EmptySprite.Height / 2);
+                            pacmanTileIcon.Position = new Vector2(WallGrid.Tiles[index.X, index.Y].Position.X - PixelTile.EmptySprite.Width / 2, WallGrid.Tiles[index.X, index.Y].Position.Y - PixelTile.EmptySprite.Height / 2);
 
                             if (ms.LeftButton == ButtonState.Pressed && WallGrid.Tiles[index.X, index.Y].TileStates == States.Empty && WallGrid.Tiles[index.X, index.Y + 1].TileStates == States.Empty && WallGrid.Tiles[index.X + 1, index.Y].TileStates == States.Empty)
                             {

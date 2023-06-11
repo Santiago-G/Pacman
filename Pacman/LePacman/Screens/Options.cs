@@ -17,7 +17,7 @@ namespace Pacman
         public static Vector2 screenOrigin;
         public static Texture2D background;
 
-        public static Image menuBackground;
+        public static Sprite menuBackground;
 
         private static Button audioButton;
         private static Button visualsButton;
@@ -46,7 +46,7 @@ namespace Pacman
 
         public override void LoadContent(ContentManager Content)
         {
-            menuBackground = new Image(Content.Load<Texture2D>("optionsBackground"), new Vector2(), Color.White);
+            menuBackground = new Sprite(Content.Load<Texture2D>("optionsBackground"), new Vector2(), Color.White);
 
             audioButton = new Button(Content.Load<Texture2D>("audioText"), new Vector2(), Color.White);
             objects.Add(audioButton);

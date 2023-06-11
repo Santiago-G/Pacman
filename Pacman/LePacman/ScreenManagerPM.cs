@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using LePacman.Screens.MapEditor;
 using static Pacman.Options;
 using LePacman.Screens;
+using LePacman.Screens.MainGame;
 
 namespace LePacman
 {
@@ -28,6 +29,7 @@ namespace LePacman
             [GameStates.Options] = new Options(new Point(800), new Vector2(0), graphics),
             [GameStates.OptionsAudio] = new OptionsAudio(new Point(800), screenOrigin, graphics),
             [GameStates.SaveMap] = new SaveMap(new Point(800, 900), new Vector2(100), graphics),
+            [GameStates.MainGame] = new MainGame(new Point(1000, 1000), Vector2.Zero, graphics),
         };
        
         public Screen currentScreen;

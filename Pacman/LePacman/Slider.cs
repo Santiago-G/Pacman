@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Pacman
 {
-    public class Slider : Sprite
+    public class Slider : SpriteBase
     {
         SliderBar bar;
         Rectangle borderHitbox;

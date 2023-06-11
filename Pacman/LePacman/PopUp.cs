@@ -7,14 +7,14 @@ using System.Collections.Generic;
 
 namespace LePacman
 {
-    public abstract class PopUp : Sprite
+    public abstract class PopUp : SpriteBase
     {
         //public static GraphicsDeviceManager graphics;
 
         public Point size;
         protected bool pauseScreen;
 
-        protected List<Sprite> objects = new List<Sprite>();
+        protected List<SpriteBase> objects = new List<SpriteBase>();
 
         protected SpriteFont headerFont;
         protected SpriteFont bodyFont;

@@ -20,17 +20,17 @@ namespace Pacman
             Vector2 HeaderPos, Vector2 bodyPos)
          */
 
-        List<WallVisual> invalidWalls;
+        List<WallTile> invalidWalls;
 
         public ErrorPopUp(Texture2D Background, Point Size, Vector2 Position, SpriteFont HeaderFont, SpriteFont BodyFont, string HeaderText, string BodyText,
-            Vector2 HeaderPos, Vector2 BodyPos, List<WallVisual> InvalidWalls) : base(Background, Size, Position, HeaderFont, BodyFont, HeaderText, BodyText, HeaderPos, BodyPos)
+            Vector2 HeaderPos, Vector2 BodyPos, List<WallTile> InvalidWalls) : base(Background, Size, Position, HeaderFont, BodyFont, HeaderText, BodyText, HeaderPos, BodyPos)
         {
             setVisable(false);
             pauseScreen = true;
             invalidWalls = InvalidWalls;
         }
 
-        public ErrorPopUp(Texture2D Background, Point Size, Vector2 Position, SpriteFont HeaderFont, SpriteFont BodyFont, string HeaderText, string BodyText, List<WallVisual> InvalidWalls)
+        public ErrorPopUp(Texture2D Background, Point Size, Vector2 Position, SpriteFont HeaderFont, SpriteFont BodyFont, string HeaderText, string BodyText, List<WallTile> InvalidWalls)
             : base(Background, Size, Position, HeaderFont, BodyFont, HeaderText, BodyText, Vector2.One, Vector2.One)
         {
             setVisable(false);

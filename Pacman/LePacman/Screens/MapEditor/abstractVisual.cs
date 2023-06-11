@@ -11,7 +11,7 @@ namespace LePacman.Screens.MapEditor
 {
     // public abstract class abstractVisual<T, D> : Sprite where D : abstractData<T>
     // : abstractVisual<T, pixelData<T>>
-    public abstract class abstractVisual : Sprite
+    public abstract class abstractVisual : SpriteBase
     {
         public Texture2D CurrentImage;
         public Texture2D PrevImage;

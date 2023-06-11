@@ -12,12 +12,12 @@ namespace Pacman.Screens
 {
     public class OptionsAudio : Screen
     {
-        static Image menuBackground => Options.menuBackground;
+        static Sprite menuBackground => Options.menuBackground;
         static Texture2D background => Options.background;
         static Button audioText;
-        static Image masterVolumeText;
-        static Image SFXVolumeText;
-        static Image musicVolumeText;
+        static Sprite masterVolumeText;
+        static Sprite SFXVolumeText;
+        static Sprite musicVolumeText;
         static Vector2 screenOrigin => Options.screenOrigin;
 
         static Slider masterVolumeControl;
@@ -39,13 +39,13 @@ namespace Pacman.Screens
             audioText = new Button(Content.Load<Texture2D>("audioText"), new Vector2(), Color.White);
             objects.Add(audioText);
 
-            masterVolumeText = new Image(Content.Load<Texture2D>("MasterVolumeText"), new Vector2(), Color.White);
+            masterVolumeText = new Sprite(Content.Load<Texture2D>("MasterVolumeText"), new Vector2(), Color.White);
             objects.Add(masterVolumeText);
 
-            SFXVolumeText = new Image(Content.Load<Texture2D>("SFXVolumeText"), new Vector2(), Color.White);
+            SFXVolumeText = new Sprite(Content.Load<Texture2D>("SFXVolumeText"), new Vector2(), Color.White);
             objects.Add(SFXVolumeText);
 
-            musicVolumeText = new Image(Content.Load<Texture2D>("musicVolumeText"), new Vector2(), Color.White);
+            musicVolumeText = new Sprite(Content.Load<Texture2D>("musicVolumeText"), new Vector2(), Color.White);
             objects.Add(musicVolumeText);
 
             masterVolumeControl = new Slider(new SliderBar(Content.Load<Texture2D>("smallPixel"), new Vector2(0), 15, 30, Color.White), new Vector2(0), 2, Color.White, 10, 3);

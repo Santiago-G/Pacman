@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Pacman
 {
-    public class SliderBar : Sprite
+    public class SliderBar : SpriteBase
     {
         public Rectangle Hitbox;
         public int BarNumber;

@@ -22,10 +22,10 @@ namespace LePacman.Screens.MapEditor
     {
         Vector2 Position;
 
-        public pixelVisual[,] Tiles;
-        public List<pixelVisual> FilledTiles = new List<pixelVisual>();
+        public PixelTile[,] Tiles;
+        public List<PixelTile> FilledTiles = new List<PixelTile>();
 
-        public pixelVisual[] FruitTiles = new pixelVisual[2];
+        public PixelTile[] FruitTiles = new PixelTile[2];
 
         private List<Point> pacmanTileIndex = new List<Point>();
         Point pacmanOrigin;
@@ -34,16 +34,16 @@ namespace LePacman.Screens.MapEditor
 
         public MapEditorPixelGrid(Point gridSize, Point tileSize, Vector2 position)
         {
-            Position = position + new Vector2(pixelVisual.EmptySprite.Width / 2, pixelVisual.EmptySprite.Height / 2);
+            Position = position + new Vector2(PixelTile.EmptySprite.Width / 2, PixelTile.EmptySprite.Height / 2);
 
-            Tiles = new pixelVisual[gridSize.X, gridSize.Y];
+            Tiles = new PixelTile[gridSize.X, gridSize.Y];
 
             for (int x = 0; x < gridSize.X; x++)
             {
                 for (int y = 0; y < gridSize.Y; y++)
                 {
                     //new Vector2(MapEditorVisualTile.NormalSprite.Width /2, MapEditorVisualTile.NormalSprite.Height/2)
-                    Tiles[x, y] = new pixelVisual(pixelVisual.EmptySprite, new Point(x, y), Color.White, Position, Vector2.One, new Vector2(pixelVisual.EmptySprite.Width / 2f, pixelVisual.EmptySprite.Height / 2f), 0f, SpriteEffects.None);
+                    Tiles[x, y] = new PixelTile(PixelTile.EmptySprite, new Point(x, y), Color.White, Position, Vector2.One, new Vector2(PixelTile.EmptySprite.Width / 2f, PixelTile.EmptySprite.Height / 2f), 0f, SpriteEffects.None);
 
                     for (int i = 0; i < offsets.Length; i++)
                     {
@@ -136,7 +136,7 @@ namespace LePacman.Screens.MapEditor
             return true;
         }
 
-        public int getWeight(pixelVisual ab, pixelVisual ba)
+        public int getWeight(PixelTile ab, PixelTile ba)
         {
             int abWeight = (int)ab.TileStates;
             int baWeight = (int)ba.TileStates;
@@ -159,7 +159,7 @@ namespace LePacman.Screens.MapEditor
         }
 
 
-        public (List<pixelVisual> invalidPellets, bool pacManValid) longJacket(MapEditorWallGrid wallGrid)
+        public (List<PixelTile> invalidPellets, bool pacManValid) longJacket(MapEditorWallGrid wallGrid)
         {
             Graph graph = new Graph();
 
@@ -250,7 +250,7 @@ namespace LePacman.Screens.MapEditor
             (List<Vertex> vertices, bool pacmanValid) pathfinderResult = Pathfinders.otherDijkstra(graph, startingVertex, targets);
 
             List<Vertex> invalidPelletTiles = pathfinderResult.vertices;
-            List<pixelVisual> leInvalidPellets = new List<pixelVisual>();
+            List<PixelTile> leInvalidPellets = new List<PixelTile>();
 
             foreach (var invalidTiles in invalidPelletTiles)
             {
@@ -303,7 +303,7 @@ namespace LePacman.Screens.MapEditor
             FruitTiles[1].TileStates = States.Empty;
             FruitTiles[1].UpdateStates();
 
-            FruitTiles = new pixelVisual[2];
+            FruitTiles = new PixelTile[2];
 
             MapEditor.fruitButton.Tint = Color.White;
             MapEditor.fruitIcon.Position = new Vector2(-1000);
@@ -312,9 +312,9 @@ namespace LePacman.Screens.MapEditor
             MapEditor.isFruitPlaced = false;
         }
 
-        public void LoadGrid(List<pixelData> TileList)
+        public void LoadGrid(List<PixelTileData> TileList)
         {
-            Tiles = TileList.Select(x => new pixelVisual(x, Position)).Expand(new Point(Tiles.GetLength(0), Tiles.GetLength(1)));
+            Tiles = TileList.Select(x => new PixelTile(x, Position)).Expand(new Point(Tiles.GetLength(0), Tiles.GetLength(1)));
             bool foundPacman = false;
 
             foreach (var tile in Tiles)
@@ -343,17 +343,17 @@ namespace LePacman.Screens.MapEditor
                 switch (tile.TileStates)
                 {
                     case States.Empty:
-                        tile.CurrentImage = pixelVisual.NBemptySprite;
+                        tile.CurrentImage = PixelTile.NBemptySprite;
                         break;
                     case States.Occupied:
-                        tile.CurrentImage = pixelVisual.NBemptySprite;
+                        tile.CurrentImage = PixelTile.NBemptySprite;
                         break;
                     case States.Pellet:
-                        tile.CurrentImage = pixelVisual.NBpelletSprite;
+                        tile.CurrentImage = PixelTile.NBpelletSprite;
                         FilledTiles.Add(tile);
                         break;
                     case States.PowerPellet:
-                        tile.CurrentImage = pixelVisual.NBpowerPelletSprite;
+                        tile.CurrentImage = PixelTile.NBpowerPelletSprite;
                         FilledTiles.Add(tile);
                         break;
                     case States.Fruit:
@@ -362,10 +362,10 @@ namespace LePacman.Screens.MapEditor
                     case States.Pacman:
                         if (Tiles[pacmanOrigin.X, pacmanOrigin.Y] == tile)
                         {
-                            tile.CurrentImage = pixelVisual.NBemptySprite;
+                            tile.CurrentImage = PixelTile.NBemptySprite;
                             FilledTiles.Add(tile);
 
-                            Tiles[pacmanOrigin.X + 1, pacmanOrigin.Y].CurrentImage = pixelVisual.NBemptySprite;
+                            Tiles[pacmanOrigin.X + 1, pacmanOrigin.Y].CurrentImage = PixelTile.NBemptySprite;
                             FilledTiles.Add(Tiles[pacmanOrigin.X + 1, pacmanOrigin.Y]);
                         }
                         break;
@@ -373,7 +373,7 @@ namespace LePacman.Screens.MapEditor
             }
         }
 
-        public void GoInFocus(List<WallVisual> wallTiles)
+        public void GoInFocus(List<WallTile> wallTiles)
         {
             foreach (var tile in Tiles)
             {
@@ -409,7 +409,7 @@ namespace LePacman.Screens.MapEditor
             }
         }
 
-        public List<pixelVisual> GetFilledTiles()
+        public List<PixelTile> GetFilledTiles()
         {
             FilledTiles.Clear();
 

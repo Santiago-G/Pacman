@@ -16,7 +16,7 @@ namespace Pacman
 
         public Texture2D background;
 
-        protected List<Sprite> objects = new List<Sprite>();
+        protected List<SpriteBase> objects = new List<SpriteBase>();
 
         public Screen(Point Size, Vector2 Position, GraphicsDeviceManager Graphics)
         {

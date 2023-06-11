@@ -73,6 +73,18 @@
 /processorParam:TextureFormat=Color
 /build:controlsText.png
 
+#begin coolRedButton.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:coolRedButton.png
+
 #begin cornerOuterWall.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -180,6 +192,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:emptyText.png
+
+#begin emptyText2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:emptyText2.png
 
 #begin emptyTile.png
 /importer:TextureImporter
@@ -849,6 +873,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:smallPixel.png
+
+#begin smolPacman.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:smolPacman.png
 
 #begin strawberryFruit.png
 /importer:TextureImporter
