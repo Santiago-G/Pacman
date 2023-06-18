@@ -13,6 +13,7 @@ using static LePacman.Screens.MapEditor.MapEditor;
 using Newtonsoft.Json;
 using System.IO;
 using LePacman.Screens.MapEditor;
+using LePacman.Screens.MainGame;
 using MonoGame.Extended.BitmapFonts;
 
 namespace LePacman.Screens
@@ -180,9 +181,10 @@ namespace LePacman.Screens
                 Game1.savedMaps[3].Name = "Empty";
             }
 
-            if (playButton.IsClicked(ms) && playMap) 
+            if (playButton.IsClicked(ms) && playMap)
             {
                 ScreenManagerPM.Instance.ChangeScreens(GameStates.MainGame);
+                MainGame.MainGame.LoadMap();
             }
 
             base.Update(gameTime);
