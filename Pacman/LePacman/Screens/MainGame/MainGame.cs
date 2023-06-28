@@ -17,6 +17,10 @@ namespace LePacman.Screens.MainGame
         public static Texture2D spriteSheet;
         WallTileVisual test2;
 
+        TimeSpan TimeSpantestDuration;
+        TimeSpan limit = TimeSpan.FromSeconds(1);
+        int timeThing = 0;
+
         private static WallTileVisual[,] wallGrid = new WallTileVisual[29, 32];
 
         WallStates[] iLoveTesting = new WallStates[] { WallStates.Empty, WallStates.LoneWall, WallStates.Horiz, WallStates.HorizLeftEnd, WallStates.HorizRightEnd, WallStates.Verti, WallStates.VertiTopEnd, WallStates.VertiBottomEnd, WallStates.TopLeftCorner, WallStates.TopRightCorner, WallStates.BottomRightCorner, WallStates.BottomLeftCorner, WallStates.TopEdge, WallStates.RightEdge, WallStates.BottomEdge, WallStates.LeftEdge, WallStates.Interior, WallStates.OuterVerti, WallStates.OuterHoriz, WallStates.TopLeftCornerOW, WallStates.TopRightCornerOW };
@@ -29,10 +33,10 @@ namespace LePacman.Screens.MainGame
         public override void LoadContent(ContentManager Content)
         {
             spriteSheet = Content.Load<Texture2D>("PacmanMainGameSpriteSheet");
-            test2 = new WallTileVisual(new Vector2(100), Color.White, iLoveTesting[10], new Vector2(4));
+            test2 = new WallTileVisual(new Vector2(100, 800), Color.White, iLoveTesting[2], new Vector2(4));
 
 
-            //objects.Add(test2);
+            objects.Add(test2);
         }
 
         public static void LoadMap() 
@@ -51,14 +55,27 @@ namespace LePacman.Screens.MainGame
                     y++;
                 }
 
-                wallGrid[x, y] = new WallTileVisual(new Vector2(offset.X + x*9, offset.Y + y*9), Color.White, map.WallTiles[i].WS, new Vector2(1));
+                int size = 3;
+
+                wallGrid[x, y] = new WallTileVisual(new Vector2(offset.X + x*9 * size, offset.Y + y*9 * size).ToPoint().ToVector2(), Color.White, map.WallTiles[i].WS, new Vector2(size));
                 x++;
             }
         }
 
         public override void Update(GameTime gameTime)
         {
-            
+            //TimeSpantestDuration += gameTime.ElapsedGameTime;
+
+            //if (TimeSpantestDuration >= limit)
+            //{
+            //    timeThing++;
+            //    TimeSpantestDuration = TimeSpan.Zero;
+            //}
+            //if (timeThing >= iLoveTesting.Length)
+            //{
+            //    timeThing = 0;
+            //}
+            //test2.currentState = iLoveTesting[timeThing];
 
             base.Update(gameTime);
         }

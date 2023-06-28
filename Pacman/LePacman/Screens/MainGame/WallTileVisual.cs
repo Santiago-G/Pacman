@@ -14,8 +14,10 @@ namespace LePacman.Screens.MainGame
         public WallStates currentState;
 
         int defaultSize = 9;
-        Rectangle SourceRectangle => new Rectangle(Textures[currentState].imagePos, new Point(defaultSize));
-        Rectangle DestinationRectangle => new Rectangle(Position.ToPoint(), new Point((int)(defaultSize * scale.X)));
+        public Rectangle SourceRectangle => new Rectangle(Textures[currentState].imagePos, new Point(defaultSize));
+        public Rectangle DestinationRectangle => new Rectangle(Position.ToPoint(), new Point((int)(defaultSize * scale.X)));
+
+        private Vector2 origin => SourceRectangle.Size.ToVector2() / 2 * 0;
 
         Vector2 scale;
 
@@ -91,7 +93,7 @@ namespace LePacman.Screens.MainGame
 
         public override void Draw(SpriteBatch batch)
         {
-            batch.Draw(Image, DestinationRectangle, SourceRectangle, Tint, Textures[currentState].Rotation, new Vector2((defaultSize * scale.X) / 2), SpriteEffects.None, 0);
+            batch.Draw(Image, DestinationRectangle, SourceRectangle, Tint, Textures[currentState].Rotation, origin, SpriteEffects.None, 0);
         }
     }
 }
