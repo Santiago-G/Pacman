@@ -17,7 +17,9 @@ namespace LePacman.Screens.MainGame
         public Rectangle SourceRectangle => new Rectangle(Textures[currentState].imagePos, new Point(defaultSize));
         public Rectangle DestinationRectangle => new Rectangle(Position.ToPoint(), new Point((int)(defaultSize * scale.X)));
 
-        private Vector2 origin => SourceRectangle.Size.ToVector2() / 2 * 0;
+        int changed the scale of the sprite sheet, fix that man
+
+        private Vector2 origin => SourceRectangle.Size.ToVector2() / 2;
 
         Vector2 scale;
 
