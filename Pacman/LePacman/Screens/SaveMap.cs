@@ -184,7 +184,7 @@ namespace LePacman.Screens
             if (playButton.IsClicked(ms) && playMap)
             {
                 ScreenManagerPM.Instance.ChangeScreens(GameStates.MainGame);
-                MainGame.MainGame.LoadMap();
+                MainGame.MainGame.LoadMap(2.8f);
             }
 
             base.Update(gameTime);
