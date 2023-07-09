@@ -120,6 +120,45 @@ namespace Pacman
         GhostChamber,
     }
 
+    [Flags]
+    public enum EntityStates
+    {
+        ClosedPacman,
+        Pacman,
+        OpenPacman,
+
+        Blinky,
+        Pinky,
+        Inky,
+        Clyde,
+
+        Left = 8,
+        Right = 16,
+        Up = 32,
+        Down = 64,
+
+        BlinkyUp = Blinky | Up,
+        BlinkyRight = Blinky | Right,
+        BlinkyDown = Blinky | Down,
+        BlinkyLeft = Blinky | Left,
+
+        PinkyUp = Pinky | Up,
+        PinkyRight = Pinky | Right,
+        PinkyDown = Pinky | Down,
+        PinkyLeft = Pinky | Left,
+
+        InkyUp = Inky | Up,
+        InkyRight = Inky | Right,
+        InkyDown = Inky | Down,
+        InkyLeft = Inky | Left,
+
+        ClydeUp = Clyde | Up,
+        ClydeRight = Clyde | Right,
+        ClydeDown = Clyde | Down,
+        ClydeLeft = Clyde | Left,
+
+    }
+
     public enum GridStates
     {
         WallGrid,

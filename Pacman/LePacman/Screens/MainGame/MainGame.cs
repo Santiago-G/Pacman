@@ -24,8 +24,8 @@ namespace LePacman.Screens.MainGame
         private static WallTileVisual[,] wallGrid = new WallTileVisual[29, 32];
         private static PelletTileVisual[,] pelletGrid = new PelletTileVisual[28, 31];
 
-        WallStates[] iLoveTesting = new WallStates[] { WallStates.Empty, WallStates.LoneWall, WallStates.Horiz, WallStates.HorizLeftEnd, WallStates.HorizRightEnd, WallStates.Verti, WallStates.VertiTopEnd, WallStates.VertiBottomEnd, WallStates.TopLeftCorner, WallStates.TopRightCorner, WallStates.BottomRightCorner, WallStates.BottomLeftCorner, WallStates.TopEdge, WallStates.RightEdge, WallStates.BottomEdge, WallStates.LeftEdge, WallStates.Interior, WallStates.OuterVerti, WallStates.OuterHoriz, WallStates.TopLeftCornerOW, WallStates.TopRightCornerOW };
-
+        public static Pacman lePacman;
+        
         public MainGame(Point Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
             size = Size;
@@ -34,8 +34,7 @@ namespace LePacman.Screens.MainGame
         public override void LoadContent(ContentManager Content)
         {
             spriteSheet = Content.Load<Texture2D>("PacmanMainGameSpriteSheet");
-            test2 = new PelletTileVisual(new Vector2(100, 800), Color.White, States.Pellet, new Vector2(4));
-
+            //test2 = new PelletTileVisual(new Vector2(100, 800), Color.White, States.Pellet, new Vector2(4));
 
            // objects.Add(test2);
         }
@@ -57,8 +56,14 @@ namespace LePacman.Screens.MainGame
                     y++;
                 }
 
-                wallGrid[x, y] = new WallTileVisual(new Vector2(offset.X + x*tileSize, offset.Y + y* tileSize), Color.White, map.WallTiles[i].WS, new Vector2(size));
+                wallGrid[x, y] = new WallTileVisual(new Vector2(offset.X + x*tileSize, offset.Y + y* tileSize), Color.White, map.WallTiles[i].WS, map.WallTiles[i].C, new Vector2(size));
                 x++;
+
+                if (map.WallTiles[i].TS == States.Pacman)
+                {
+                    lePacman = new Pacman(wallGrid[x-1, y].Position, Color.White, new Vector2(2.8f));
+                    
+                }
             }
 
             x = 0; y = 0; offset += new Vector2(tileSize/2);
@@ -71,7 +76,7 @@ namespace LePacman.Screens.MainGame
                     y++;
                 }
 
-                pelletGrid[x, y] = new PelletTileVisual(new Vector2(offset.X + x*tileSize, offset.Y + y*tileSize), Color.White, map.PixelTiles[i].TS, new Vector2(size));
+                pelletGrid[x, y] = new PelletTileVisual(new Vector2(offset.X + x*tileSize, offset.Y + y*tileSize), Color.White, map.PixelTiles[i].TS, map.PixelTiles[i].C, new Vector2(size));
                 x++;
             }
         }
@@ -108,6 +113,8 @@ namespace LePacman.Screens.MainGame
             {
                 tile.Draw(spriteBatch);
             }
+
+            lePacman.Draw(spriteBatch);
 
             base.Draw(spriteBatch);
             spriteBatch.End();

@@ -6,14 +6,15 @@ using System.Text;
 
 namespace Pacman
 {
-    public class Sprite : SpriteBase
+    public sealed class Sprite : SpriteBase
     {
         public Sprite(Texture2D texture2D, Vector2 Position, Color Tint) : base(texture2D, Position, Tint)
         {
         }
 
         public Sprite(Texture2D Image, Vector2 Position, Color Tint, Vector2 Scale, Vector2 Origin, float Rotation, SpriteEffects spriteEffects) : base(Image, Position, Tint, Scale, Origin, Rotation, spriteEffects)
-        {       
+        {
+
         }
 
         public override void Update(GameTime gameTime)

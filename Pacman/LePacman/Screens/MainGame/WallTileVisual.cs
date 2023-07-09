@@ -9,17 +9,19 @@ using System.Threading.Tasks;
 
 namespace LePacman.Screens.MainGame
 {
-    public class WallTileVisual : Sprite
+    public class WallTileVisual : SpriteBase
     {
         public WallStates currentState;
 
+        public static Point pacmanPos = new Point(-1000);
+        public Point coord;
+
         public static int defaultSize => 10;
         public Rectangle SourceRectangle => new Rectangle(Textures[currentState].imagePos, new Point(defaultSize));
-        public Rectangle DestinationRectangle => new Rectangle(Position.ToPoint(), new Point((int)(defaultSize * scale.X)));
+        public Rectangle DestinationRectangle => new Rectangle(Position.ToPoint(), new Point((int)(defaultSize * Scale.X)));
 
         private Vector2 origin => SourceRectangle.Size.ToVector2() / 2;
 
-        Vector2 scale;
 
         Dictionary<WallStates, (Point imagePos, float Rotation)> Textures = new Dictionary<WallStates,  (Point, float)>()
         {
@@ -80,16 +82,21 @@ namespace LePacman.Screens.MainGame
             //midle, edge, edge2
         };
 
-        public WallTileVisual(Vector2 Position, Color Tint, WallStates CurrentState, Vector2 Scale) : base(MainGame.spriteSheet, Position, Tint)
+        public WallTileVisual(Vector2 Position, Color Tint, WallStates CurrentState, Point Coord, Vector2 Scale) : base(MainGame.spriteSheet, Position, Tint)
         {
             currentState = CurrentState;
-            scale = Scale;
+            this.Scale = Scale;
+            coord = Coord;
 
             if (currentState == WallStates.OuterRight || currentState == WallStates.OuterLeft)
             {
                 currentState = WallStates.OuterHoriz;
             }
+        }
 
+        public override void Update(GameTime gameTime)
+        {
+            throw new NotImplementedException();
         }
 
         public override void Draw(SpriteBatch batch)
