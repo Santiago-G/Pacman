@@ -131,6 +131,7 @@ namespace Pacman
         Pinky,
         Inky,
         Clyde,
+        GhostChamber,
 
         Left = 8,
         Right = 16,
@@ -157,6 +158,27 @@ namespace Pacman
         ClydeDown = Clyde | Down,
         ClydeLeft = Clyde | Left,
 
+        Shifty = 128,
+
+        BlinkyUpShifty = BlinkyUp | Shifty,
+        BlinkyRightShifty = BlinkyRight | Shifty,
+        BlinkyDownShifty = BlinkyDown | Shifty,
+        BlinkyLeftShifty = BlinkyLeft | Shifty,
+
+        PinkyUpShifty = PinkyUp | Shifty,
+        PinkyRightShifty = PinkyRight | Shifty,
+        PinkyDownShifty = PinkyDown | Shifty,
+        PinkyLeftShifty = PinkyLeft | Shifty,
+
+        InkyUpShifty = InkyUp | Shifty,
+        InkyRightShifty = InkyRight | Shifty,
+        InkyDownShifty = InkyDown | Shifty,
+        InkyLeftShifty = InkyLeft | Shifty,
+
+        ClydeUpShifty = ClydeUp | Shifty,
+        ClydeRightShifty = ClydeRight | Shifty,
+        ClydeDownShifty = ClydeDown | Shifty,
+        ClydeLeftShifty = ClydeLeft | Shifty,
     }
 
     public enum GridStates

@@ -34,9 +34,9 @@ namespace LePacman.Screens.MainGame
             [States.Pellet] = new Point(1, 12),
             [States.PowerPellet] = new Point(12, 12),
 
-            [States.Pacman] = new Point(34, 12),
+            [States.Pacman] = new Point(122, 1),
             [States.Fruit] = new Point(122, 1),
-            [States.Occupied] = new Point(23, 12),
+            [States.Occupied] = new Point(122, 1),
         };
 
         public PelletTileVisual(Vector2 Position, Color Tint, States CurrentState, Point Coord, Vector2 Scale) : base(MainGame.spriteSheet, Position, Tint)

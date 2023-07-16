@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace LePacman.Screens.MainGame
 {
-    public class Pacman : Entity
+    public class GhostChamber : Entity
     {
-        public Pacman(Vector2 Position, Color Tint, Vector2 Scale) : base(Position, Tint, Scale, EntityStates.ClosedPacman)
+        public GhostChamber(Vector2 Position, Color Tint, Vector2 Scale) : base(Position, Tint, Scale, EntityStates.GhostChamber)
         {
-            defaultSize = new Point(13);
+            defaultSize = new Point(70, 40);
         }
     }
 }

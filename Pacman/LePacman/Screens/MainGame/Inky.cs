@@ -8,11 +8,10 @@ using System.Threading.Tasks;
 
 namespace LePacman.Screens.MainGame
 {
-    public class Pacman : Entity
+    public class Inky : Entity
     {
-        public Pacman(Vector2 Position, Color Tint, Vector2 Scale) : base(Position, Tint, Scale, EntityStates.ClosedPacman)
+        public Inky(Vector2 Position, Color Tint, Vector2 Scale) : base(Position, Tint, Scale, EntityStates.InkyDown)
         {
-            defaultSize = new Point(13);
         }
     }
 }

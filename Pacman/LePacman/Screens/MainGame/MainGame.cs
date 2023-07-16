@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Pacman;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,8 @@ namespace LePacman.Screens.MainGame
         private static PelletTileVisual[,] pelletGrid = new PelletTileVisual[28, 31];
 
         public static Pacman lePacman;
-        
+        private static GhostChamber ghostChamber;
+
         public MainGame(Point Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
             size = Size;
@@ -34,9 +36,6 @@ namespace LePacman.Screens.MainGame
         public override void LoadContent(ContentManager Content)
         {
             spriteSheet = Content.Load<Texture2D>("PacmanMainGameSpriteSheet");
-            //test2 = new PelletTileVisual(new Vector2(100, 800), Color.White, States.Pellet, new Vector2(4));
-
-           // objects.Add(test2);
         }
 
         public static void LoadMap(float size) 
@@ -45,6 +44,9 @@ namespace LePacman.Screens.MainGame
             int y = 0;
             float tileSize = size * WallTileVisual.defaultSize;
             Vector2 offset = new Vector2(110, 20);
+
+            Vector2 pacmanPos = new Vector2(-1);
+            Vector2 ghostChamberPos = new Vector2(-1);
 
             SavedMap map = SaveMap.currentMap;
 
@@ -57,13 +59,17 @@ namespace LePacman.Screens.MainGame
                 }
 
                 wallGrid[x, y] = new WallTileVisual(new Vector2(offset.X + x*tileSize, offset.Y + y* tileSize), Color.White, map.WallTiles[i].WS, map.WallTiles[i].C, new Vector2(size));
-                x++;
-
+                
                 if (map.WallTiles[i].TS == States.Pacman)
                 {
-                    lePacman = new Pacman(wallGrid[x-1, y].Position, Color.White, new Vector2(2.8f));
-                    
+                    pacmanPos = wallGrid[x, y].Position - new Vector2(tileSize / 2);
                 }
+                else if (map.WallTiles[i].TS == States.GhostChamber && ghostChamberPos == new Vector2(-1))
+                {
+                    ghostChamberPos = (wallGrid[x, y].Position + new Vector2(size * 70, size * 40) / 2) - new Vector2(tileSize / 2);
+                }
+
+                x++;
             }
 
             x = 0; y = 0; offset += new Vector2(tileSize/2);
@@ -77,24 +83,22 @@ namespace LePacman.Screens.MainGame
                 }
 
                 pelletGrid[x, y] = new PelletTileVisual(new Vector2(offset.X + x*tileSize, offset.Y + y*tileSize), Color.White, map.PixelTiles[i].TS, map.PixelTiles[i].C, new Vector2(size));
+
+                if (map.PixelTiles[i].TS == States.Pacman && pacmanPos == new Vector2(-1))
+                {
+                    pacmanPos = pelletGrid[x, y].Position + new Vector2(tileSize/2, 0);
+                }
+
                 x++;
             }
+
+            lePacman = new Pacman(pacmanPos, Color.White, new Vector2(size * 1.4f));
+            ghostChamber = new GhostChamber(ghostChamberPos, Color.White, new Vector2(size));
         }
 
         public override void Update(GameTime gameTime)
         {
-            //TimeSpantestDuration += gameTime.ElapsedGameTime;
-
-            //if (TimeSpantestDuration >= limit)
-            //{
-            //    timeThing++;
-            //    TimeSpantestDuration = TimeSpan.Zero;
-            //}
-            //if (timeThing >= iLoveTesting.Length)
-            //{
-            //    timeThing = 0;
-            //}
-            //test2.currentState = iLoveTesting[timeThing];
+            MouseState ms = Mouse.GetState();
 
             base.Update(gameTime);
         }
@@ -113,6 +117,8 @@ namespace LePacman.Screens.MainGame
             {
                 tile.Draw(spriteBatch);
             }
+
+            ghostChamber.Draw(spriteBatch);
 
             lePacman.Draw(spriteBatch);
 
