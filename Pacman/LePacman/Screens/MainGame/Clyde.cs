@@ -8,10 +8,15 @@ using System.Threading.Tasks;
 
 namespace LePacman.Screens.MainGame
 {
-    public class Clyde : Entity
+    public class Clyde : Ghost
     {
-        public Clyde(Vector2 Position, Color Tint, Vector2 Scale) : base(Position, Tint, Scale, EntityStates.ClydeDown)
+        public Clyde(Vector2 Position, Color Tint, Vector2 Scale, Point Coord) : base(Position, Tint, Scale, EntityStates.ClydeUpShifty, Coord)
         {
+        }
+
+        public override void Update(Point PacmanPosition)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -181,6 +181,11 @@ namespace Pacman
         ClydeLeftShifty = ClydeLeft | Shifty,
     }
 
+    public enum Directions
+    {
+        Up, Down, Left, Right,
+    }
+
     public enum GridStates
     {
         WallGrid,

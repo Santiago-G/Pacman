@@ -8,10 +8,15 @@ using System.Threading.Tasks;
 
 namespace LePacman.Screens.MainGame
 {
-    public class Pinky : Entity
+    public class Pinky : Ghost
     {
-        public Pinky(Vector2 Position, Color Tint, Vector2 Scale) : base(Position, Tint, Scale, EntityStates.PinkyUp)
+        public Pinky(Vector2 Position, Color Tint, Vector2 Scale, Point Coord) : base(Position, Tint, Scale, EntityStates.PinkyDownShifty, Coord)
         {
+        }
+
+        public override void Update(Point PacmanPosition)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -8,10 +8,15 @@ using System.Threading.Tasks;
 
 namespace LePacman.Screens.MainGame
 {
-    public class Blinky : Entity
+    public class Blinky : Ghost
     {
-        public Blinky(Vector2 Position, Color Tint, Vector2 Scale) : base(Position, Tint, Scale, EntityStates.BlinkyLeft)
+        public Blinky(Vector2 Position, Color Tint, Vector2 Scale, Point Coord) : base(Position, Tint, Scale, EntityStates.BlinkyLeftShifty, Coord)
         {
+        }
+
+        public override void Update(Point PacmanPosition)
+        {
+            throw new NotImplementedException();
         }
     }
 }

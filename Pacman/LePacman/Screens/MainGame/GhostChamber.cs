@@ -10,7 +10,7 @@ namespace LePacman.Screens.MainGame
 {
     public class GhostChamber : Entity
     {
-        public GhostChamber(Vector2 Position, Color Tint, Vector2 Scale) : base(Position, Tint, Scale, EntityStates.GhostChamber)
+        public GhostChamber(Vector2 Position, Color Tint, Vector2 Scale) : base(Position, Tint, Scale, EntityStates.GhostChamber, new Point(0))
         {
             defaultSize = new Point(70, 40);
         }

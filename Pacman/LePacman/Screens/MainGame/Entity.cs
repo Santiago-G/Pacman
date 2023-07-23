@@ -10,6 +10,7 @@ namespace LePacman.Screens.MainGame
 {
     public abstract class Entity : SpriteBase
     {
+        #region Textures
         private protected Dictionary<EntityStates, Point> Textures = new Dictionary<EntityStates, Point>()
         {
             [EntityStates.ClosedPacman] = new Point(1, 23),
@@ -54,25 +55,67 @@ namespace LePacman.Screens.MainGame
             [EntityStates.PinkyDown] = new Point(91, 82),
             [EntityStates.PinkyDownShifty] = new Point(106, 82),
         };
-
         EntityStates entityState;
+        #endregion
+
+        #region Grid Positions
+        protected Point prevGridPos;
+        protected Point gridPos;
+
+        public  Point GridPosition
+        {
+            get => gridPos;
+            set
+            {
+                prevGridPos = gridPos;
+                gridPos = value;
+            }
+        }
+        #endregion
+
+        #region Movement and Timers
+
+        protected bool canMove = true;
+
+        public Directions currDirection = Directions.Right;
+        protected Dictionary<Directions, Point> directions = new Dictionary<Directions, Point>
+        {
+            [Directions.Up] = new Point(0, -1),
+            [Directions.Right] = new Point(1, 0),
+            [Directions.Down] = new Point(0, 1),
+            [Directions.Left] = new Point(-1, 0),
+        };
+
+        protected TimeSpan speed = TimeSpan.FromMilliseconds(700);
+        protected TimeSpan timer;
+        #endregion
 
         public override Vector2 Origin { get => SourceRectangle.Size.ToVector2() / 2; }
 
-        private protected Point defaultSize;
+        protected Point defaultSize;
         public Rectangle SourceRectangle => new Rectangle(Textures[entityState], defaultSize);
         public Rectangle DestinationRectangle => new Rectangle(Position.ToPoint(), new Point((int)(defaultSize.X * Scale.X), (int)(defaultSize.Y * Scale.Y)));
 
-        public Entity(Vector2 Position, Color Tint, Vector2 Scale, EntityStates EntityState) : base(MainGame.spriteSheet, Position, Tint)
+        public Entity(Vector2 Position, Color Tint, Vector2 Scale, EntityStates EntityState, Point Coord) : base(MainGame.spriteSheet, Position, Tint)
         {
             this.Scale = Scale;
             entityState = EntityState;
             Rotation = 0;
+            GridPosition = Coord;
         }
 
         public override void Update(GameTime gameTime)
         {
-            throw new NotImplementedException();
+            Position = Vector2.Lerp(MainGame.CoordToPostion(prevGridPos), MainGame.CoordToPostion(gridPos), (float)(speed.TotalMilliseconds / timer.TotalMilliseconds));
+
+            timer += gameTime.ElapsedGameTime;
+
+            if (timer > speed)
+            {
+                GridPosition += directions[currDirection];
+
+                timer = TimeSpan.Zero;
+            }
         }
 
         public override void Draw(SpriteBatch batch)
