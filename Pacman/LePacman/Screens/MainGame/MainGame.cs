@@ -1,7 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LePacman.Screens.MapEditor;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json.Bson;
 using Pacman;
 using System;
 using System.Collections.Generic;
@@ -17,14 +19,20 @@ namespace LePacman.Screens.MainGame
     public class MainGame : Screen
     {
         public static Texture2D spriteSheet;
-        PelletTileVisual test2;
+        private static SpriteFont HeaderFonts;
 
-        TimeSpan TimeSpantestDuration;
-        TimeSpan limit = TimeSpan.FromSeconds(1);
+        public static List<Point> PortalCoord = new List<Point>();
+
+        TimeSpan powerPelletTimer;
+        TimeSpan powerPelletLimit = TimeSpan.FromMilliseconds(500);
         int timeThing = 0;
 
         public static WallTileVisual[,] wallGrid = new WallTileVisual[29, 32];
         public static PelletTileVisual[,] pelletGrid = new PelletTileVisual[28, 31];
+
+        private int score;
+        private static int pelletTarget = 0;
+        private int targetScore;
 
         public static Ghost[] ghosts;
 
@@ -34,6 +42,7 @@ namespace LePacman.Screens.MainGame
         static Vector2 offset = new Vector2(110, 75);
         static float tileSize;
 
+
         public MainGame(Point Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
             size = Size;
@@ -42,11 +51,30 @@ namespace LePacman.Screens.MainGame
         public override void LoadContent(ContentManager Content)
         {
             spriteSheet = Content.Load<Texture2D>("PacmanMainGameSpriteSheet");
+            HeaderFonts = Content.Load<SpriteFont>("mainGameHeader");
         }
 
         public static Vector2 CoordToPostion(Point Coord)
         {
             return new Vector2(offset.X + Coord.X * tileSize, offset.Y + Coord.Y * tileSize);
+        }
+
+        private static void portalLogic(SavedMap map)
+        {
+            foreach (var portalPair in map.Portals)
+            {
+                Point currPortalCoord = portalPair.firstPortal.firstTile.Cord;
+                PortalCoord.Add(new Point(Math.Clamp((currPortalCoord.X - 1), 0, 28), Math.Clamp((currPortalCoord.Y - 1), 0, 32)));
+
+                currPortalCoord = portalPair.firstPortal.secondTile.Cord;
+                PortalCoord.Add(new Point(Math.Clamp((currPortalCoord.X - 1), 0, 28), Math.Clamp((currPortalCoord.Y - 1), 0, 32)));
+
+                currPortalCoord = portalPair.secondPortal.firstTile.Cord;
+                PortalCoord.Add(new Point(Math.Clamp((currPortalCoord.X - 1), 0, 28), Math.Clamp((currPortalCoord.Y - 1), 0, 32)));
+
+                currPortalCoord = portalPair.secondPortal.secondTile.Cord;
+                PortalCoord.Add(new Point(Math.Clamp((currPortalCoord.X - 1), 0, 28), Math.Clamp((currPortalCoord.Y - 1), 0, 32)));
+            }
         }
 
         public static void LoadMap(float size)
@@ -100,14 +128,27 @@ namespace LePacman.Screens.MainGame
 
                 pelletGrid[x, y] = new PelletTileVisual(new Vector2(offset.X + x * tileSize, offset.Y + y * tileSize), Color.White, map.PixelTiles[i].TS, map.PixelTiles[i].C, new Vector2(size));
 
-                if (map.PixelTiles[i].TS == States.Pacman && pacmanPos == new Vector2(-1))
+                switch (map.PixelTiles[i].TS)
                 {
-                    pacmanPos = pelletGrid[x, y].Position + new Vector2(tileSize / 2, 0);
-                    pacmanCoord = pelletGrid[x, y].coord + new Point(1, 0);
+                    case States.Pellet:
+                        pelletTarget ++;
+                        break;
+                    case States.PowerPellet:
+                        pelletTarget ++;
+                        break;
+                    case States.Pacman:
+                        if (pacmanPos == new Vector2(-1))
+                        {
+                            pacmanPos = pelletGrid[x, y].Position + new Vector2(tileSize / 2, 0);
+                            pacmanCoord = pelletGrid[x, y].coord + new Point(1, 0);
+                        }
+                        break;
                 }
 
                 x++;
             }
+
+            portalLogic(map);
 
             pacman = new Pacman(pacmanPos, Color.White, new Vector2(size * 1.4f), pacmanCoord);
             ghostChamber = new GhostChamber(gcPos, Color.White, new Vector2(size));
@@ -133,15 +174,27 @@ namespace LePacman.Screens.MainGame
 
         }
 
+        private PelletTileVisual pacmanPosition => pelletGrid[pacman.GridPosition.X, pacman.GridPosition.Y];
+
         public override void Update(GameTime gameTime)
         {
             MouseState ms = Mouse.GetState();
 
-
-            //pacman.canMove = pelletGrid[(pacman.GridPosition + Entity.directions[pacman.currDirection]).X, (pacman.GridPosition + Entity.directions[pacman.currDirection]).Y].currentState != States.Occupied;
-
-
             pacman.Update(gameTime);
+
+            if (pacmanPosition.currentState == States.Pellet)
+            {
+                pacmanPosition.currentState = States.Empty;
+                score += 10;
+                targetScore++;
+            }
+            if (pacmanPosition.currentState == States.PowerPellet)
+            {
+                pacmanPosition.currentState = States.Empty;
+                score += 50;
+                targetScore++;
+            }
+
 
             base.Update(gameTime);
         }
@@ -169,6 +222,9 @@ namespace LePacman.Screens.MainGame
             {
                 /////     ghost.Draw(spriteBatch);
             }
+
+            spriteBatch.DrawString(HeaderFonts, "High Score", new Vector2(size.X / 2 - HeaderFonts.MeasureString("HighScore").X/2, 0), Color.White);
+            spriteBatch.DrawString(HeaderFonts, score.ToString(), new Vector2(size.X / 2, 27), Color.White);
 
             base.Draw(spriteBatch);
             spriteBatch.End();

@@ -88,7 +88,7 @@ namespace LePacman.Screens.MainGame
             [Directions.Left] = new Point(-1, 0),
         };
 
-        protected TimeSpan speed;
+        protected TimeSpan ļSpeed;
         protected TimeSpan timer;
         #endregion
 
@@ -121,7 +121,7 @@ namespace LePacman.Screens.MainGame
         public override void Update(GameTime gameTime)
         {
             timer += gameTime.ElapsedGameTime;
-            Position = Vector2.Lerp(MainGame.CoordToPostion(prevGridPos), MainGame.CoordToPostion(gridPos), (float)(timer.TotalMilliseconds  / speed.TotalMilliseconds));
+            Position = Vector2.Lerp(MainGame.CoordToPostion(prevGridPos), MainGame.CoordToPostion(gridPos), (float)(timer.TotalMilliseconds  / ļSpeed.TotalMilliseconds));
 
             if (animate)
             {

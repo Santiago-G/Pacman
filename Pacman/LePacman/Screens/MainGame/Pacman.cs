@@ -13,15 +13,15 @@ namespace LePacman.Screens.MainGame
     {
         private Directions pendingDirection;
         private float pendingRotation;
-        private bool unMomentoDePrince = false;
+        private bool movementWindow = false;
 
-        private TimeSpan skyWasAllPurpleThereWerePeopleRunningEverywhere = TimeSpan.FromMilliseconds(500);
-        private TimeSpan tryingToRunFromTheDestruction_YouKnowIDidntEvenCare;
+        private TimeSpan cushionTime = TimeSpan.FromMilliseconds(500);
+        private TimeSpan movementCounter;
 
         public Pacman(Vector2 Position, Color Tint, Vector2 Scale, Point Coord) : base(Position, Tint, Scale, EntityStates.ClosedPacman, Coord)
         {
             defaultSize = new Point(13);
-            speed = TimeSpan.FromMilliseconds(100);
+            ļSpeed = TimeSpan.FromMilliseconds(100);
 
             animationLimit = TimeSpan.FromMilliseconds(75);
             animationMin = 0;
@@ -32,12 +32,18 @@ namespace LePacman.Screens.MainGame
 
         public PelletTileVisual tileInFront(bool pending)
         {
+            int x = Math.Clamp(GridPosition.X + directions[currDirection].X, 0, 28);
+            int y = Math.Clamp(GridPosition.Y + directions[currDirection].Y, 0, 31);
+
             if (pending)
             {
-                return MainGame.pelletGrid[GridPosition.X + directions[pendingDirection].X, GridPosition.Y + directions[pendingDirection].Y];
+                x = Math.Clamp(GridPosition.X + directions[pendingDirection].X, 0, 28);
+                y = Math.Clamp(GridPosition.Y + directions[pendingDirection].Y, 0, 31);
+
+                return MainGame.pelletGrid[x, y];
             }
 
-            return MainGame.pelletGrid[GridPosition.X + directions[currDirection].X, GridPosition.Y + directions[currDirection].Y];
+            return MainGame.pelletGrid[x, y];
         }
 
         public PelletTileVisual currPelletTile => MainGame.pelletGrid[GridPosition.X, GridPosition.Y];
@@ -47,23 +53,21 @@ namespace LePacman.Screens.MainGame
 
         //also clean up
 
-        private void iWasDreamingWhenIWroteThis_ForgiveMeIfThisGoesAstray(GameTime gameTime)
+        private void checkMovementWindow(GameTime gameTime)
         {
-            tryingToRunFromTheDestruction_YouKnowIDidntEvenCare += gameTime.ElapsedGameTime;
+            movementCounter += gameTime.ElapsedGameTime;
 
-            PelletTileVisual imLiterallyPrince = tileInFront(true);
-
-            if (imLiterallyPrince.currentState != States.Occupied)
+            if (tileInFront(true).currentState != States.Occupied)
             {
                 currDirection = pendingDirection;
                 Rotation = pendingRotation;
-                unMomentoDePrince = false;
+                movementWindow = false;
             }
 
-            if (tryingToRunFromTheDestruction_YouKnowIDidntEvenCare > skyWasAllPurpleThereWerePeopleRunningEverywhere)
+            if (movementCounter > cushionTime)
             {
-                unMomentoDePrince = false;
-                tryingToRunFromTheDestruction_YouKnowIDidntEvenCare = TimeSpan.Zero;
+                movementWindow = false;
+                movementCounter = TimeSpan.Zero;
                 pendingDirection = currDirection;
             }
         }
@@ -72,52 +76,64 @@ namespace LePacman.Screens.MainGame
         {
             KeyboardState kb = Keyboard.GetState();
 
-            if (currPelletTile.currentState == States.Pellet)
-            {
-                currPelletTile.currentState = States.Empty;
-            }
-
-
-
             if (kb.IsKeyDown(Keys.Up))
             {
                 pendingDirection = Directions.Up;
                 pendingRotation = (float)(Math.PI * 1.5);
-                unMomentoDePrince = true;
+                movementWindow = true;
             }
             else if (kb.IsKeyDown(Keys.Right))
             {
                 pendingDirection = Directions.Right;
                 pendingRotation = 0;
-                unMomentoDePrince = true;
+                movementWindow = true;
             }
             else if (kb.IsKeyDown(Keys.Down))
             {
                 pendingDirection = Directions.Down;
                 pendingRotation = (float)(Math.PI * .5);
-                unMomentoDePrince = true;
+                movementWindow = true;
             }
             else if (kb.IsKeyDown(Keys.Left))
             {
                 pendingDirection = Directions.Left;
                 pendingRotation = (float)(Math.PI);
-                unMomentoDePrince = true;
+                movementWindow = true;
             }
 
-            if (unMomentoDePrince)
+            if (movementWindow)
             {
-                iWasDreamingWhenIWroteThis_ForgiveMeIfThisGoesAstray(gameTime);
+                checkMovementWindow(gameTime);
             }
 
             #region Timer Based Movement
-            base.Update(gameTime);
 
-            if (timer > speed)
+            base.Update(gameTime);
+         
+            if (timer > ļSpeed)
             {
                 if (tileInFront(false).currentState != States.Occupied)
-                {
+                { 
                     GridPosition += directions[currDirection];
                     animate = true;
+
+                    //29, 32
+                    if (GridPosition.X < 0)
+                    {
+                        GridPosition = new Point(28, GridPosition.Y);
+                    }
+                    else if (GridPosition.X >= 28)
+                    {
+                        GridPosition = new Point(0, GridPosition.Y);
+                    }
+                    else if (GridPosition.Y <= 0)
+                    {
+                        GridPosition = new Point(GridPosition.X, 31);
+                    }
+                    else if (GridPosition.Y >= 31)
+                    {
+                        GridPosition = new Point(GridPosition.X, 0);
+                    }
                 }
                 else
                 {

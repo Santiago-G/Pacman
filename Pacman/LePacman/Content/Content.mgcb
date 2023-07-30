@@ -399,6 +399,13 @@
 /processorParam:TextureFormat=Color
 /build:loneWall.png
 
+#begin mainGameHeader.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:mainGameHeader.spritefont
+
 #begin mapEditorText.png
 /importer:TextureImporter
 /processor:TextureProcessor
