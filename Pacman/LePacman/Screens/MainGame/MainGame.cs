@@ -23,8 +23,8 @@ namespace LePacman.Screens.MainGame
         TimeSpan limit = TimeSpan.FromSeconds(1);
         int timeThing = 0;
 
-        private static WallTileVisual[,] wallGrid = new WallTileVisual[29, 32];
-        private static PelletTileVisual[,] pelletGrid = new PelletTileVisual[28, 31];
+        public static WallTileVisual[,] wallGrid = new WallTileVisual[29, 32];
+        public static PelletTileVisual[,] pelletGrid = new PelletTileVisual[28, 31];
 
         public static Ghost[] ghosts;
 
@@ -49,12 +49,12 @@ namespace LePacman.Screens.MainGame
             return new Vector2(offset.X + Coord.X * tileSize, offset.Y + Coord.Y * tileSize);
         }
 
-        public static void LoadMap(float size) 
+        public static void LoadMap(float size)
         {
             int x = 0;
             int y = 0;
             tileSize = size * WallTileVisual.defaultSize;
-            
+
 
             Vector2 pacmanPos = new Vector2(-1);
             Point pacmanCoord = new Point(-1);
@@ -72,8 +72,8 @@ namespace LePacman.Screens.MainGame
                     y++;
                 }
 
-                wallGrid[x, y] = new WallTileVisual(new Vector2(offset.X + x*tileSize, offset.Y + y* tileSize), Color.White, map.WallTiles[i].WS, map.WallTiles[i].C, new Vector2(size));
-                
+                wallGrid[x, y] = new WallTileVisual(new Vector2(offset.X + x * tileSize, offset.Y + y * tileSize), Color.White, map.WallTiles[i].WS, map.WallTiles[i].C, new Vector2(size));
+
                 if (map.WallTiles[i].TS == States.Pacman)
                 {
                     pacmanPos = wallGrid[x, y].Position - new Vector2(tileSize / 2);
@@ -88,7 +88,7 @@ namespace LePacman.Screens.MainGame
                 x++;
             }
 
-            x = 0; y = 0; offset += new Vector2(tileSize/2);
+            x = 0; y = 0; offset += new Vector2(tileSize / 2);
 
             for (int i = 0; i < map.PixelTiles.Length; i++)
             {
@@ -98,12 +98,12 @@ namespace LePacman.Screens.MainGame
                     y++;
                 }
 
-                pelletGrid[x, y] = new PelletTileVisual(new Vector2(offset.X + x*tileSize, offset.Y + y*tileSize), Color.White, map.PixelTiles[i].TS, map.PixelTiles[i].C, new Vector2(size));
+                pelletGrid[x, y] = new PelletTileVisual(new Vector2(offset.X + x * tileSize, offset.Y + y * tileSize), Color.White, map.PixelTiles[i].TS, map.PixelTiles[i].C, new Vector2(size));
 
                 if (map.PixelTiles[i].TS == States.Pacman && pacmanPos == new Vector2(-1))
                 {
-                    pacmanPos = pelletGrid[x, y].Position + new Vector2(tileSize/2, 0);
-                    pacmanCoord = pelletGrid[x, y].coord;
+                    pacmanPos = pelletGrid[x, y].Position + new Vector2(tileSize / 2, 0);
+                    pacmanCoord = pelletGrid[x, y].coord + new Point(1, 0);
                 }
 
                 x++;
@@ -112,12 +112,12 @@ namespace LePacman.Screens.MainGame
             pacman = new Pacman(pacmanPos, Color.White, new Vector2(size * 1.4f), pacmanCoord);
             ghostChamber = new GhostChamber(gcPos, Color.White, new Vector2(size));
 
-            ghosts = new Ghost[4] 
+            ghosts = new Ghost[4]
             {
                 new Blinky(new Vector2(gcPos.X, gcPos.Y - tileSize*3), Color.White, new Vector2(size * 1.4f), blinkyCoord),
                 new Inky(new Vector2(gcPos.X - tileSize*2, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X - 2, blinkyCoord.Y + 3)),
-                new Pinky(new Vector2(gcPos.X, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X, blinkyCoord.Y + 3)), 
-                new Clyde(new Vector2(gcPos.X + tileSize*2, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X + 2, blinkyCoord.Y + 3)) 
+                new Pinky(new Vector2(gcPos.X, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X, blinkyCoord.Y + 3)),
+                new Clyde(new Vector2(gcPos.X + tileSize*2, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X + 2, blinkyCoord.Y + 3))
             };
             pelletGrid[ghosts[0].GridPosition.X, ghosts[0].GridPosition.Y].currentState = States.PowerPellet;
             pelletGrid[ghosts[0].GridPosition.X, ghosts[0].GridPosition.Y].Tint = Color.Red;
@@ -136,6 +136,10 @@ namespace LePacman.Screens.MainGame
         public override void Update(GameTime gameTime)
         {
             MouseState ms = Mouse.GetState();
+
+
+            //pacman.canMove = pelletGrid[(pacman.GridPosition + Entity.directions[pacman.currDirection]).X, (pacman.GridPosition + Entity.directions[pacman.currDirection]).Y].currentState != States.Occupied;
+
 
             pacman.Update(gameTime);
 
@@ -163,7 +167,7 @@ namespace LePacman.Screens.MainGame
 
             foreach (var ghost in ghosts)
             {
-           /////     ghost.Draw(spriteBatch);
+                /////     ghost.Draw(spriteBatch);
             }
 
             base.Draw(spriteBatch);

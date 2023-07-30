@@ -17,6 +17,8 @@ namespace LePacman.Screens.MainGame
 
         public void Update(GameTime gameTime, Point pacmanPosition)
         {
+            //they're thing for movement should be a stack of directions that get popped into pending direction
+            //this stack should be updated every movement tick (timer)
             Update(pacmanPosition);
             Update(gameTime);
         }

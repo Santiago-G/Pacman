@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using Pacman;
 using System.Net.NetworkInformation;
+using System.ComponentModel.Design;
 
 namespace LePacman.Screens.MainGame
 {
@@ -55,14 +56,15 @@ namespace LePacman.Screens.MainGame
             [EntityStates.PinkyDown] = new Point(91, 82),
             [EntityStates.PinkyDownShifty] = new Point(106, 82),
         };
-        EntityStates entityState;
+
+        protected EntityStates entityState;
         #endregion
 
         #region Grid Positions
         protected Point prevGridPos;
         protected Point gridPos;
 
-        public  Point GridPosition
+        public Point GridPosition
         {
             get => gridPos;
             set
@@ -75,10 +77,10 @@ namespace LePacman.Screens.MainGame
 
         #region Movement and Timers
 
-        protected bool canMove = true;
+        public bool canMove = true;
 
-        public Directions currDirection = Directions.Right;
-        protected Dictionary<Directions, Point> directions = new Dictionary<Directions, Point>
+        public Directions currDirection;
+        public static Dictionary<Directions, Point> directions = new Dictionary<Directions, Point>
         {
             [Directions.Up] = new Point(0, -1),
             [Directions.Right] = new Point(1, 0),
@@ -86,8 +88,19 @@ namespace LePacman.Screens.MainGame
             [Directions.Left] = new Point(-1, 0),
         };
 
-        protected TimeSpan speed = TimeSpan.FromMilliseconds(700);
+        protected TimeSpan speed;
         protected TimeSpan timer;
+        #endregion
+
+        #region Animation
+        protected TimeSpan animationLimit;
+        protected TimeSpan animationTimer;
+
+        protected int animationDirection = -1;
+        protected int animationMin = 0;
+        protected int animationMax = 10;
+
+        protected bool animate = true;
         #endregion
 
         public override Vector2 Origin { get => SourceRectangle.Size.ToVector2() / 2; }
@@ -102,19 +115,28 @@ namespace LePacman.Screens.MainGame
             entityState = EntityState;
             Rotation = 0;
             GridPosition = Coord;
+            GridPosition = Coord;
         }
 
         public override void Update(GameTime gameTime)
         {
-            Position = Vector2.Lerp(MainGame.CoordToPostion(prevGridPos), MainGame.CoordToPostion(gridPos), (float)(speed.TotalMilliseconds / timer.TotalMilliseconds));
-
             timer += gameTime.ElapsedGameTime;
+            Position = Vector2.Lerp(MainGame.CoordToPostion(prevGridPos), MainGame.CoordToPostion(gridPos), (float)(timer.TotalMilliseconds  / speed.TotalMilliseconds));
 
-            if (timer > speed)
+            if (animate)
             {
-                GridPosition += directions[currDirection];
+                animationTimer += gameTime.ElapsedGameTime;
 
-                timer = TimeSpan.Zero;
+                if (animationTimer > animationLimit)
+                {
+                    if ((int)entityState >= animationMax || (int)entityState <= animationMin)
+                    {
+                        animationDirection *= -1;
+                    }
+
+                    entityState += animationDirection;
+                    animationTimer = TimeSpan.Zero;
+                }
             }
         }
 
