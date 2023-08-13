@@ -118,6 +118,7 @@ namespace Pacman
         Occupied,
         Wall,
         GhostChamber,
+        Debug,
     }
 
     [Flags]
@@ -181,6 +182,12 @@ namespace Pacman
         ClydeLeftShifty = ClydeLeft | Shifty,
     }
 
+    public enum GhostStates
+    {
+        Chase,
+        Scatter,
+        Frightened
+    }
     public enum Directions
     {
         Up, Down, Left, Right,

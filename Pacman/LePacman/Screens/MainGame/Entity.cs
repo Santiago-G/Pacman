@@ -77,6 +77,7 @@ namespace LePacman.Screens.MainGame
 
         #region Movement and Timers
 
+        public TimeSpan maxSpeed;
         public bool canMove = true;
 
         public Directions currDirection;
@@ -88,7 +89,7 @@ namespace LePacman.Screens.MainGame
             [Directions.Left] = new Point(-1, 0),
         };
 
-        protected TimeSpan ļSpeed;
+        public TimeSpan ļSpeed;
         protected TimeSpan timer;
         #endregion
 
@@ -103,6 +104,8 @@ namespace LePacman.Screens.MainGame
         protected bool animate = true;
         #endregion
 
+
+        public float Scalar => (float)(timer.TotalMilliseconds / ļSpeed.TotalMilliseconds);
         public override Vector2 Origin { get => SourceRectangle.Size.ToVector2() / 2; }
 
         protected Point defaultSize;

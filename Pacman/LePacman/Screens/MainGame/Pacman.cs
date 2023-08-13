@@ -4,6 +4,7 @@ using Pacman;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,13 +22,17 @@ namespace LePacman.Screens.MainGame
         public Pacman(Vector2 Position, Color Tint, Vector2 Scale, Point Coord) : base(Position, Tint, Scale, EntityStates.ClosedPacman, Coord)
         {
             defaultSize = new Point(13);
-            ļSpeed = TimeSpan.FromMilliseconds(100);
+
+            maxSpeed = TimeSpan.FromMilliseconds(100);
+            ļSpeed = maxSpeed * .8;
 
             animationLimit = TimeSpan.FromMilliseconds(75);
             animationMin = 0;
             animationMax = 2;
 
             currDirection = Directions.Right;
+
+            //Max speed
         }
 
         public PelletTileVisual tileInFront(bool pending)
@@ -51,7 +56,8 @@ namespace LePacman.Screens.MainGame
         //Ask if I should keep track of the tiles in the Pacman class or in MainGame, like if I should check for pellets or if a wall is infront of pacman in the class
         //cuz If i do i have to make a lot of stuff public static and idk if thats the right way to go about it
 
-        //also clean up
+        //https://gameinternals.com/understanding-pac-man-ghost-behavior
+        //https://www.gamedeveloper.com/design/the-pac-man-dossier#close-modal
 
         private void checkMovementWindow(GameTime gameTime)
         {
@@ -106,33 +112,43 @@ namespace LePacman.Screens.MainGame
                 checkMovementWindow(gameTime);
             }
 
+         
+
             #region Timer Based Movement
 
             base.Update(gameTime);
-         
+
+            MainGame.pelletGrid[prevGridPos.X, prevGridPos.Y].currentState = States.Empty;
+            var localPos = Scalar >= .5f ? gridPos : prevGridPos;
+            MainGame.pelletGrid[localPos.X, localPos.Y].currentState = States.Debug;
+
             if (timer > ļSpeed)
             {
                 if (tileInFront(false).currentState != States.Occupied)
-                { 
+                {
                     GridPosition += directions[currDirection];
                     animate = true;
 
                     //29, 32
-                    if (GridPosition.X < 0)
+                    if (GridPosition.X == 0)
                     {
-                        GridPosition = new Point(28, GridPosition.Y);
+                        GridPosition = new Point(MainGame.pelletGrid.GetLength(0) - 1, GridPosition.Y);
+                        prevGridPos = GridPosition;
                     }
-                    else if (GridPosition.X >= 28)
+                    else if (GridPosition.X == MainGame.pelletGrid.GetLength(0) - 1)
                     {
                         GridPosition = new Point(0, GridPosition.Y);
+                        prevGridPos = GridPosition;
                     }
                     else if (GridPosition.Y <= 0)
                     {
-                        GridPosition = new Point(GridPosition.X, 31);
+                        GridPosition = new Point(GridPosition.X, MainGame.pelletGrid.GetLength(1) - 1);
+                        prevGridPos = GridPosition;
                     }
-                    else if (GridPosition.Y >= 31)
+                    else if (GridPosition.Y >= MainGame.pelletGrid.GetLength(1) - 1)
                     {
                         GridPosition = new Point(GridPosition.X, 0);
+                        prevGridPos = GridPosition;
                     }
                 }
                 else

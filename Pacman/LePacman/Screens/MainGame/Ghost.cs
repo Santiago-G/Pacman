@@ -10,7 +10,14 @@ namespace LePacman.Screens.MainGame
 {
     public abstract class Ghost : Entity
     {
-        public Ghost(Vector2 Position, Color Tint, Vector2 Scale, EntityStates EntityState, Point Coord) : base(Position, Tint, Scale, EntityState, Coord)
+        protected Point currTargetTile;
+        protected Point scatterTarget;
+
+        public static GhostStates currGhostState;
+
+        //the change between ghost states is gonna be in MainGame based on a timer and if pacman ate power pellet
+
+        public Ghost(Vector2 Position, Color Tint, Vector2 Scale, EntityStates EntityState, Point Coord/*, Point ScatterTarget*/) : base(Position, Tint, Scale, EntityState, Coord)
         {
             defaultSize = new Point(14);
         }
@@ -20,7 +27,14 @@ namespace LePacman.Screens.MainGame
             //they're thing for movement should be a stack of directions that get popped into pending direction
             //this stack should be updated every movement tick (timer)
             Update(pacmanPosition);
-            Update(gameTime);
+            base.Update(gameTime);
+
+            if (timer > ļSpeed)
+            {
+
+
+                timer = TimeSpan.Zero;
+            }
         }
 
         public abstract void Update(Point PacmanPosition);
