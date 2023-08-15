@@ -37,13 +37,13 @@ namespace LePacman.Screens.MainGame
 
         public PelletTileVisual tileInFront(bool pending)
         {
-            int x = Math.Clamp(GridPosition.X + directions[currDirection].X, 0, 28);
-            int y = Math.Clamp(GridPosition.Y + directions[currDirection].Y, 0, 31);
+            int x = Math.Clamp(PendingLocation.X + directions[currDirection].X, 0, 28);
+            int y = Math.Clamp(PendingLocation.Y + directions[currDirection].Y, 0, 31);
 
             if (pending)
             {
-                x = Math.Clamp(GridPosition.X + directions[pendingDirection].X, 0, 28);
-                y = Math.Clamp(GridPosition.Y + directions[pendingDirection].Y, 0, 31);
+                x = Math.Clamp(PendingLocation.X + directions[pendingDirection].X, 0, 28);
+                y = Math.Clamp(PendingLocation.Y + directions[pendingDirection].Y, 0, 31);
 
                 return MainGame.pelletGrid[x, y];
             }
@@ -51,7 +51,7 @@ namespace LePacman.Screens.MainGame
             return MainGame.pelletGrid[x, y];
         }
 
-        public PelletTileVisual currPelletTile => MainGame.pelletGrid[GridPosition.X, GridPosition.Y];
+        public PelletTileVisual currPelletTile => MainGame.pelletGrid[PendingLocation.X, PendingLocation.Y];
 
         //Ask if I should keep track of the tiles in the Pacman class or in MainGame, like if I should check for pellets or if a wall is infront of pacman in the class
         //cuz If i do i have to make a lot of stuff public static and idk if thats the right way to go about it
@@ -118,42 +118,46 @@ namespace LePacman.Screens.MainGame
 
             base.Update(gameTime);
 
-            MainGame.pelletGrid[prevGridPos.X, prevGridPos.Y].currentState = States.Empty;
-            var localPos = Scalar >= .5f ? gridPos : prevGridPos;
-            MainGame.pelletGrid[localPos.X, localPos.Y].currentState = States.Debug;
+            MainGame.pelletGrid[PreviousLocation.X, PreviousLocation.Y].currentState = States.Empty;
+            MainGame.pelletGrid[CurrentLocation.X, CurrentLocation.Y].currentState = States.Debug;
+
+            if (CurrentLocation != PendingLocation)
+            {
+                ;
+            }
 
             if (timer > ļSpeed)
             {
                 if (tileInFront(false).currentState != States.Occupied)
                 {
-                    GridPosition += directions[currDirection];
+                    PendingLocation += directions[currDirection];
                     animate = true;
 
                     //29, 32
-                    if (GridPosition.X == 0)
+                    if (PendingLocation.X == 0)
                     {
-                        GridPosition = new Point(MainGame.pelletGrid.GetLength(0) - 1, GridPosition.Y);
-                        prevGridPos = GridPosition;
+                        PendingLocation = new Point(MainGame.pelletGrid.GetLength(0) - 1, PendingLocation.Y);
+                        PendingLocation = PendingLocation;
                     }
-                    else if (GridPosition.X == MainGame.pelletGrid.GetLength(0) - 1)
+                    else if (PendingLocation.X == MainGame.pelletGrid.GetLength(0) - 1)
                     {
-                        GridPosition = new Point(0, GridPosition.Y);
-                        prevGridPos = GridPosition;
+                        PendingLocation = new Point(0, PendingLocation.Y);
+                        PendingLocation = PendingLocation;
                     }
-                    else if (GridPosition.Y <= 0)
+                    else if (PendingLocation.Y <= 0)
                     {
-                        GridPosition = new Point(GridPosition.X, MainGame.pelletGrid.GetLength(1) - 1);
-                        prevGridPos = GridPosition;
+                        PendingLocation = new Point(PendingLocation.X, MainGame.pelletGrid.GetLength(1) - 1);
+                        PendingLocation = PendingLocation;
                     }
-                    else if (GridPosition.Y >= MainGame.pelletGrid.GetLength(1) - 1)
+                    else if (PendingLocation.Y >= MainGame.pelletGrid.GetLength(1) - 1)
                     {
-                        GridPosition = new Point(GridPosition.X, 0);
-                        prevGridPos = GridPosition;
+                        PendingLocation = new Point(PendingLocation.X, 0);
+                        PendingLocation = PendingLocation;
                     }
                 }
                 else
                 {
-                    GridPosition = GridPosition;
+                    PendingLocation = PendingLocation;
                     animate = false;
                 }
 

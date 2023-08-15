@@ -160,21 +160,21 @@ namespace LePacman.Screens.MainGame
                 new Pinky(new Vector2(gcPos.X, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X, blinkyCoord.Y + 3)),
                 new Clyde(new Vector2(gcPos.X + tileSize*2, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X + 2, blinkyCoord.Y + 3))
             };
-            pelletGrid[ghosts[0].GridPosition.X, ghosts[0].GridPosition.Y].currentState = States.PowerPellet;
-            pelletGrid[ghosts[0].GridPosition.X, ghosts[0].GridPosition.Y].Tint = Color.Red;
+            pelletGrid[ghosts[0].PendingLocation.X, ghosts[0].PendingLocation.Y].currentState = States.PowerPellet;
+            pelletGrid[ghosts[0].PendingLocation.X, ghosts[0].PendingLocation.Y].Tint = Color.Red;
 
-            pelletGrid[ghosts[1].GridPosition.X, ghosts[1].GridPosition.Y].currentState = States.PowerPellet;
-            pelletGrid[ghosts[1].GridPosition.X, ghosts[1].GridPosition.Y].Tint = Color.Cyan;
+            pelletGrid[ghosts[1].PendingLocation.X, ghosts[1].PendingLocation.Y].currentState = States.PowerPellet;
+            pelletGrid[ghosts[1].PendingLocation.X, ghosts[1].PendingLocation.Y].Tint = Color.Cyan;
 
-            pelletGrid[ghosts[2].GridPosition.X, ghosts[2].GridPosition.Y].currentState = States.PowerPellet;
-            pelletGrid[ghosts[2].GridPosition.X, ghosts[2].GridPosition.Y].Tint = Color.Pink;
+            pelletGrid[ghosts[2].PendingLocation.X, ghosts[2].PendingLocation.Y].currentState = States.PowerPellet;
+            pelletGrid[ghosts[2].PendingLocation.X, ghosts[2].PendingLocation.Y].Tint = Color.Pink;
 
-            pelletGrid[ghosts[3].GridPosition.X, ghosts[3].GridPosition.Y].currentState = States.PowerPellet;
-            pelletGrid[ghosts[3].GridPosition.X, ghosts[3].GridPosition.Y].Tint = Color.Orange;
+            pelletGrid[ghosts[3].PendingLocation.X, ghosts[3].PendingLocation.Y].currentState = States.PowerPellet;
+            pelletGrid[ghosts[3].PendingLocation.X, ghosts[3].PendingLocation.Y].Tint = Color.Orange;
 
         }
 
-        private PelletTileVisual pacmanPosition => pelletGrid[pacman.GridPosition.X, pacman.GridPosition.Y];
+        private PelletTileVisual pacmanPosition => pelletGrid[pacman.PendingLocation.X, pacman.PendingLocation.Y];
 
         public override void Update(GameTime gameTime)
         {
