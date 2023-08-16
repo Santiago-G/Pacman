@@ -61,10 +61,10 @@ namespace LePacman.Screens.MainGame
         #endregion
 
         #region Grid Positions
-        private Point prevGridPos;
-        private Point gridPos;
+        protected Point prevGridPos;
+        protected Point gridPos;
 
-        public Point PendingLocation
+        public Point GridPosition
         {
             get => gridPos;
             set
@@ -73,9 +73,6 @@ namespace LePacman.Screens.MainGame
                 gridPos = value;
             }
         }
-        public Point PreviousLocation => prevGridPos;
-
-        public Point CurrentLocation => Scalar >= .5f ? gridPos : prevGridPos;
         #endregion
 
         #region Movement and Timers
@@ -120,8 +117,8 @@ namespace LePacman.Screens.MainGame
             this.Scale = Scale;
             entityState = EntityState;
             Rotation = 0;
-            PendingLocation = Coord;
-            PendingLocation = Coord;
+            GridPosition = Coord;
+            GridPosition = Coord;
         }
 
         public override void Update(GameTime gameTime)
