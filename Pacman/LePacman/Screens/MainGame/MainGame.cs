@@ -54,10 +54,7 @@ namespace LePacman.Screens.MainGame
             HeaderFonts = Content.Load<SpriteFont>("mainGameHeader");
         }
 
-        public static Vector2 CoordToPostion(Point Coord)
-        {
-            return new Vector2(offset.X + Coord.X * tileSize, offset.Y + Coord.Y * tileSize);
-        }
+
 
         private static void portalLogic(SavedMap map)
         {
@@ -223,6 +220,7 @@ namespace LePacman.Screens.MainGame
             ghostChamber.Draw(spriteBatch);
 
             pacman.Draw(spriteBatch);
+            pelletGrid[pacman.localPos.X, pacman.localPos.Y].Draw(spriteBatch);
 
             foreach (var ghost in ghosts)
             {

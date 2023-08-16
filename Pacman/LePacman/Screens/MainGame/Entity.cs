@@ -63,6 +63,8 @@ namespace LePacman.Screens.MainGame
         #region Grid Positions
         protected Point prevGridPos;
         protected Point gridPos;
+        public Point localPos;
+
 
         public Point GridPosition
         {
@@ -121,10 +123,78 @@ namespace LePacman.Screens.MainGame
             GridPosition = Coord;
         }
 
-        public override void Update(GameTime gameTime)
+        protected virtual bool NextPositionValid() => true;
+
+        public void EddenUpdate(GameTime gameTime)
         {
             timer += gameTime.ElapsedGameTime;
-            Position = Vector2.Lerp(MainGame.CoordToPostion(prevGridPos), MainGame.CoordToPostion(gridPos), (float)(timer.TotalMilliseconds  / ļSpeed.TotalMilliseconds));
+
+            MainGame.pelletGrid[prevGridPos.X, prevGridPos.Y].currentState = States.Empty;
+            localPos = Scalar >= .5f ? gridPos : prevGridPos;
+            MainGame.pelletGrid[localPos.X, localPos.Y].currentState = States.Debug;
+
+            if (timer >= ļSpeed)
+            {
+                if (NextPositionValid())
+                {
+                    GridPosition += directions[currDirection];
+                    animate = true;
+
+                    //29, 32
+                    if (GridPosition.X == 0)
+                    {
+                        GridPosition = new Point(MainGame.pelletGrid.GetLength(0) - 1, GridPosition.Y);
+                        prevGridPos = GridPosition;
+                    }
+                    else if (GridPosition.X == MainGame.pelletGrid.GetLength(0) - 1)
+                    {
+                        GridPosition = new Point(0, GridPosition.Y);
+                        prevGridPos = GridPosition;
+                    }
+                    else if (GridPosition.Y <= 0)
+                    {
+                        GridPosition = new Point(GridPosition.X, MainGame.pelletGrid.GetLength(1) - 1);
+                        prevGridPos = GridPosition;
+                    }
+                    else if (GridPosition.Y >= MainGame.pelletGrid.GetLength(1) - 1)
+                    {
+                        GridPosition = new Point(GridPosition.X, 0);
+                        prevGridPos = GridPosition;
+                    }
+                    //
+                }
+                else
+                {
+                    GridPosition = GridPosition;
+                    animate = false;
+                }
+
+                timer = TimeSpan.Zero;
+            }
+
+            Position = Vector2.Lerp(MainGame.CoordToPostion(prevGridPos), MainGame.CoordToPostion(gridPos), (float)(timer.TotalMilliseconds / ļSpeed.TotalMilliseconds));
+
+            if (animate)
+            {
+                animationTimer += gameTime.ElapsedGameTime;
+
+                if (animationTimer > animationLimit)
+                {
+                    if ((int)entityState >= animationMax || (int)entityState <= animationMin)
+                    {
+                        animationDirection *= -1;
+                    }
+
+                    entityState += animationDirection;
+                    animationTimer = TimeSpan.Zero;
+                }
+            }
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            //timer += gameTime.ElapsedGameTime;
+            //Position = Vector2.Lerp(MainGame.CoordToPostion(prevGridPos), MainGame.CoordToPostion(gridPos), (float)(timer.TotalMilliseconds  / ļSpeed.TotalMilliseconds));
 
             if (animate)
             {
