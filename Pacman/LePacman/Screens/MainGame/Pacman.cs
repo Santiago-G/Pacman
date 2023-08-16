@@ -33,6 +33,9 @@ namespace LePacman.Screens.MainGame
             currDirection = Directions.Right;
 
             //Max speed
+
+            PelletGrid.Instance.Pacman = this;
+
         }
 
         protected override bool NextPositionValid()

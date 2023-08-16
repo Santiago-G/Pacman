@@ -27,7 +27,9 @@ namespace LePacman.Screens.MainGame
 
         //how should i format it/what do i put in the singleton (pacman, ghosts, ect)
 
-        public Point PacmanPosition =>
+
+
+        public Pacman Pacman;
 
     }
 }
