@@ -29,7 +29,7 @@ namespace LePacman.Screens.MainGame
             Update(pacmanPosition);
             base.Update(gameTime);
 
-            if (timer > ļSpeed)
+            if (timer > speedInterval)
             {
 
 

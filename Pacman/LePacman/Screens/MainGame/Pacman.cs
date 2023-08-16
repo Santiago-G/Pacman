@@ -23,8 +23,7 @@ namespace LePacman.Screens.MainGame
         {
             defaultSize = new Point(13);
 
-            maxSpeed = TimeSpan.FromMilliseconds(100);
-            ļSpeed = maxSpeed * .8;
+            speed = new Point(2);
 
             animationLimit = TimeSpan.FromMilliseconds(75);
             animationMin = 0;
@@ -37,21 +36,21 @@ namespace LePacman.Screens.MainGame
 
         public PelletTileVisual tileInFront(bool pending)
         {
-            int x = Math.Clamp(PendingLocation.X + directions[currDirection].X, 0, 28);
-            int y = Math.Clamp(PendingLocation.Y + directions[currDirection].Y, 0, 31);
+            int x = Math.Clamp(currentTilePos.X + directions[currDirection].X, 0, 28);
+            int y = Math.Clamp(currentTilePos.Y + directions[currDirection].Y, 0, 31);
 
             if (pending)
             {
-                x = Math.Clamp(PendingLocation.X + directions[pendingDirection].X, 0, 28);
-                y = Math.Clamp(PendingLocation.Y + directions[pendingDirection].Y, 0, 31);
-
+                x = Math.Clamp(currentTilePos.X + directions[pendingDirection].X, 0, 28);
+                y = Math.Clamp(currentTilePos.Y + directions[pendingDirection].Y, 0, 31);
+                    
                 return MainGame.pelletGrid[x, y];
             }
 
             return MainGame.pelletGrid[x, y];
         }
 
-        public PelletTileVisual currPelletTile => MainGame.pelletGrid[PendingLocation.X, PendingLocation.Y];
+        //public PelletTileVisual currPelletTile => MainGame.pelletGrid[PendingLocation.X, PendingLocation.Y];
 
         //Ask if I should keep track of the tiles in the Pacman class or in MainGame, like if I should check for pellets or if a wall is infront of pacman in the class
         //cuz If i do i have to make a lot of stuff public static and idk if thats the right way to go about it
@@ -112,7 +111,7 @@ namespace LePacman.Screens.MainGame
                 checkMovementWindow(gameTime);
             }
 
-         
+
 
             #region Timer Based Movement
 
@@ -121,48 +120,44 @@ namespace LePacman.Screens.MainGame
             MainGame.pelletGrid[PreviousLocation.X, PreviousLocation.Y].currentState = States.Empty;
             MainGame.pelletGrid[CurrentLocation.X, CurrentLocation.Y].currentState = States.Debug;
 
-            if (CurrentLocation != PendingLocation)
-            {
-                ;
-            }
 
-            if (timer > ļSpeed)
-            {
-                if (tileInFront(false).currentState != States.Occupied)
-                {
-                    PendingLocation += directions[currDirection];
-                    animate = true;
 
-                    //29, 32
-                    if (PendingLocation.X == 0)
-                    {
-                        PendingLocation = new Point(MainGame.pelletGrid.GetLength(0) - 1, PendingLocation.Y);
-                        PendingLocation = PendingLocation;
-                    }
-                    else if (PendingLocation.X == MainGame.pelletGrid.GetLength(0) - 1)
-                    {
-                        PendingLocation = new Point(0, PendingLocation.Y);
-                        PendingLocation = PendingLocation;
-                    }
-                    else if (PendingLocation.Y <= 0)
-                    {
-                        PendingLocation = new Point(PendingLocation.X, MainGame.pelletGrid.GetLength(1) - 1);
-                        PendingLocation = PendingLocation;
-                    }
-                    else if (PendingLocation.Y >= MainGame.pelletGrid.GetLength(1) - 1)
-                    {
-                        PendingLocation = new Point(PendingLocation.X, 0);
-                        PendingLocation = PendingLocation;
-                    }
-                }
-                else
+
+            Position += speed.ToVector2();
+
+            if (tileInFront(false).currentState != States.Occupied)
+            {
+                PendingLocation += directions[currDirection];
+                animate = true;
+
+                //29, 32
+                if (PendingLocation.X == 0)
                 {
+                    PendingLocation = new Point(MainGame.pelletGrid.GetLength(0) - 1, PendingLocation.Y);
                     PendingLocation = PendingLocation;
-                    animate = false;
                 }
-
-                timer = TimeSpan.Zero;
+                else if (PendingLocation.X == MainGame.pelletGrid.GetLength(0) - 1)
+                {
+                    PendingLocation = new Point(0, PendingLocation.Y);
+                    PendingLocation = PendingLocation;
+                }
+                else if (PendingLocation.Y <= 0)
+                {
+                    PendingLocation = new Point(PendingLocation.X, MainGame.pelletGrid.GetLength(1) - 1);
+                    PendingLocation = PendingLocation;
+                }
+                else if (PendingLocation.Y >= MainGame.pelletGrid.GetLength(1) - 1)
+                {
+                    PendingLocation = new Point(PendingLocation.X, 0);
+                    PendingLocation = PendingLocation;
+                }
             }
+            else
+            {
+                PendingLocation = PendingLocation;
+                animate = false;
+            }
+
             #endregion
         }
 

@@ -6,6 +6,7 @@ using System.Text;
 using Pacman;
 using System.Net.NetworkInformation;
 using System.ComponentModel.Design;
+using MonoGame.Extended.Collections;
 
 namespace LePacman.Screens.MainGame
 {
@@ -60,27 +61,12 @@ namespace LePacman.Screens.MainGame
         protected EntityStates entityState;
         #endregion
 
-        #region Grid Positions
-        private Point prevGridPos;
-        private Point gridPos;
-
-        public Point PendingLocation
-        {
-            get => gridPos;
-            set
-            {
-                prevGridPos = gridPos;
-                gridPos = value;
-            }
-        }
-        public Point PreviousLocation => prevGridPos;
-
-        public Point CurrentLocation => Scalar >= .5f ? gridPos : prevGridPos;
+        #region Grid Positions  
+        public Point currentTilePos;
         #endregion
 
         #region Movement and Timers
 
-        public TimeSpan maxSpeed;
         public bool canMove = true;
 
         public Directions currDirection;
@@ -92,9 +78,12 @@ namespace LePacman.Screens.MainGame
             [Directions.Left] = new Point(-1, 0),
         };
 
-        public TimeSpan ļSpeed;
+        public TimeSpan speedInterval;
         protected TimeSpan timer;
         #endregion
+
+        protected Point speed;
+        protected Point maxSpeed;
 
         #region Animation
         protected TimeSpan animationLimit;
@@ -108,7 +97,7 @@ namespace LePacman.Screens.MainGame
         #endregion
 
 
-        public float Scalar => (float)(timer.TotalMilliseconds / ļSpeed.TotalMilliseconds);
+        public float Scalar => (float)(timer.TotalMilliseconds / speedInterval.TotalMilliseconds);
         public override Vector2 Origin { get => SourceRectangle.Size.ToVector2() / 2; }
 
         protected Point defaultSize;
@@ -120,14 +109,12 @@ namespace LePacman.Screens.MainGame
             this.Scale = Scale;
             entityState = EntityState;
             Rotation = 0;
-            PendingLocation = Coord;
-            PendingLocation = Coord;
+            currentTilePos = Coord;
         }
 
         public override void Update(GameTime gameTime)
         {
             timer += gameTime.ElapsedGameTime;
-            Position = Vector2.Lerp(MainGame.CoordToPostion(prevGridPos), MainGame.CoordToPostion(gridPos), (float)(timer.TotalMilliseconds  / ļSpeed.TotalMilliseconds));
 
             if (animate)
             {

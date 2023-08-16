@@ -13,7 +13,7 @@ namespace LePacman.Screens.MainGame
         public Blinky(Vector2 Position, Color Tint, Vector2 Scale, Point Coord) : base(Position, Tint, Scale, EntityStates.BlinkyLeftShifty, Coord/*, new Point(-4, 26)*/)
         {
             currGhostState = GhostStates.Scatter;
-            ļSpeed = TimeSpan.FromMilliseconds(100);
+            speedInterval = TimeSpan.FromMilliseconds(100);
         }
 
         public override void Update(Point PacmanPosition)

@@ -184,21 +184,21 @@ namespace LePacman.Screens.MainGame
 
             if (pacmanPosition.currentState == States.Pellet)
             {
-                pacman.ļSpeed = pacman.maxSpeed * 1.81;
+                //pacman.speedInterval = pacman.maxSpeed * 1.81;
                 pacmanPosition.currentState = States.Empty;
                 score += 10;
                 targetScore++;
             }
             if (pacmanPosition.currentState == States.PowerPellet)
             {
-                pacman.ļSpeed = pacman.maxSpeed * 1.67;
+               // pacman.speedInterval = pacman.maxSpeed * 1.67;
                 pacmanPosition.currentState = States.Empty;
                 score += 50;
                 targetScore++;
             }
             else
             {
-                pacman.ļSpeed = pacman.maxSpeed * .8;
+                //pacman.speedInterval = pacman.maxSpeed * .8;
             }
 
 
