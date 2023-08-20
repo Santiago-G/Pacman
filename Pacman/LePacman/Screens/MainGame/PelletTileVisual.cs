@@ -39,6 +39,7 @@ namespace LePacman.Screens.MainGame
             [States.Occupied] = new Point(122, 1),
 
             [States.Debug] = new Point(23, 12),
+            [States.Debug2] = new Point(34, 12),
         };
 
         public PelletTileVisual(Vector2 Position, Color Tint, States CurrentState, Point Coord, Vector2 Scale) : base(MainGame.spriteSheet, Position, Tint)

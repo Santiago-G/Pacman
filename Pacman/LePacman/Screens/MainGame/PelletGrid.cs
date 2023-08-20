@@ -19,17 +19,23 @@ namespace LePacman.Screens.MainGame
     {
         private PelletGrid() { }
         public static PelletGrid Instance { get; } = new PelletGrid();
+        public Vector2 offset;
+        public float tileSize;
 
         public Vector2 CoordToPostion(Point Coord)
         {
             return new Vector2(offset.X + Coord.X * tileSize, offset.Y + Coord.Y * tileSize);
         }
 
+        //public static Vector2 CoordToPostion(Point Coord)
+        //{
+        //    return new Vector2(offset.X + Coord.X * tileSize, offset.Y + Coord.Y * tileSize);
+        //}
         //how should i format it/what do i put in the singleton (pacman, ghosts, ect)
 
 
 
         public Pacman Pacman;
-
+        public Point pacmanPos => Pacman.currPelletTile.coord;
     }
 }

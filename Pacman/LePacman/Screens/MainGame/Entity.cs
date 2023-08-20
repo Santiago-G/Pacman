@@ -6,6 +6,7 @@ using System.Text;
 using Pacman;
 using System.Net.NetworkInformation;
 using System.ComponentModel.Design;
+using MonoGame.Extended.Timers;
 
 namespace LePacman.Screens.MainGame
 {
@@ -106,6 +107,7 @@ namespace LePacman.Screens.MainGame
         protected bool animate = true;
         #endregion
 
+        PelletGrid mapGrid = PelletGrid.Instance;
 
         public float Scalar => (float)(timer.TotalMilliseconds / ļSpeed.TotalMilliseconds);
         public override Vector2 Origin { get => SourceRectangle.Size.ToVector2() / 2; }
@@ -124,6 +126,19 @@ namespace LePacman.Screens.MainGame
         }
 
         protected virtual bool NextPositionValid() => true;
+        protected virtual void AnimationLogic() 
+        {
+            if (animationTimer > animationLimit)
+            {
+                if ((int)entityState >= animationMax || (int)entityState <= animationMin)
+                {
+                    animationDirection *= -1;
+                }
+
+                entityState += animationDirection;
+                animationTimer = TimeSpan.Zero;
+            }
+        }
 
         public void EddenUpdate(GameTime gameTime)
         {
@@ -131,7 +146,7 @@ namespace LePacman.Screens.MainGame
 
             MainGame.pelletGrid[prevGridPos.X, prevGridPos.Y].currentState = States.Empty;
             localPos = Scalar >= .5f ? gridPos : prevGridPos;
-            MainGame.pelletGrid[localPos.X, localPos.Y].currentState = States.Debug;
+            MainGame.pelletGrid[localPos.X, localPos.Y].currentState = States.Debug2;
 
             if (timer >= ļSpeed)
             {
@@ -172,22 +187,14 @@ namespace LePacman.Screens.MainGame
                 timer = TimeSpan.Zero;
             }
 
-            Position = Vector2.Lerp(MainGame.CoordToPostion(prevGridPos), MainGame.CoordToPostion(gridPos), (float)(timer.TotalMilliseconds / ļSpeed.TotalMilliseconds));
+            Position = Vector2.Lerp(mapGrid.CoordToPostion(prevGridPos) + new Vector2(mapGrid.tileSize/2),
+                mapGrid.CoordToPostion(gridPos) + new Vector2(mapGrid.tileSize / 2), (float)(timer.TotalMilliseconds / ļSpeed.TotalMilliseconds));
 
             if (animate)
             {
                 animationTimer += gameTime.ElapsedGameTime;
 
-                if (animationTimer > animationLimit)
-                {
-                    if ((int)entityState >= animationMax || (int)entityState <= animationMin)
-                    {
-                        animationDirection *= -1;
-                    }
-
-                    entityState += animationDirection;
-                    animationTimer = TimeSpan.Zero;
-                }
+                AnimationLogic();
             }
         }
 

@@ -119,6 +119,7 @@ namespace Pacman
         Wall,
         GhostChamber,
         Debug,
+        Debug2,
     }
 
     [Flags]

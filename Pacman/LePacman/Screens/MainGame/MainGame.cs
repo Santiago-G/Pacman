@@ -46,6 +46,8 @@ namespace LePacman.Screens.MainGame
         public MainGame(Point Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
             size = Size;
+            PelletGrid.Instance.offset = offset;
+            
         }
 
         public override void LoadContent(ContentManager Content)
@@ -53,8 +55,6 @@ namespace LePacman.Screens.MainGame
             spriteSheet = Content.Load<Texture2D>("PacmanMainGameSpriteSheet");
             HeaderFonts = Content.Load<SpriteFont>("mainGameHeader");
         }
-
-
 
         private static void portalLogic(SavedMap map)
         {
@@ -79,6 +79,7 @@ namespace LePacman.Screens.MainGame
             int x = 0;
             int y = 0;
             tileSize = size * WallTileVisual.defaultSize;
+            PelletGrid.Instance.tileSize = tileSize;
 
 
             Vector2 pacmanPos = new Vector2(-1);
@@ -157,8 +158,8 @@ namespace LePacman.Screens.MainGame
                 new Pinky(new Vector2(gcPos.X, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X, blinkyCoord.Y + 3)),
                 new Clyde(new Vector2(gcPos.X + tileSize*2, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X + 2, blinkyCoord.Y + 3))
             };
-            pelletGrid[ghosts[0].GridPosition.X, ghosts[0].GridPosition.Y].currentState = States.PowerPellet;
-            pelletGrid[ghosts[0].GridPosition.X, ghosts[0].GridPosition.Y].Tint = Color.Red;
+            //pelletGrid[ghosts[0].GridPosition.X, ghosts[0].GridPosition.Y].currentState = States.PowerPellet;
+            //pelletGrid[ghosts[0].GridPosition.X, ghosts[0].GridPosition.Y].Tint = Color.Red;
 
             pelletGrid[ghosts[1].GridPosition.X, ghosts[1].GridPosition.Y].currentState = States.PowerPellet;
             pelletGrid[ghosts[1].GridPosition.X, ghosts[1].GridPosition.Y].Tint = Color.Cyan;
@@ -178,24 +179,25 @@ namespace LePacman.Screens.MainGame
             MouseState ms = Mouse.GetState();
 
             pacman.Update(gameTime);
+            ghosts[0].Update(gameTime);
 
             if (pacmanPosition.currentState == States.Pellet)
             {
-                pacman.ļSpeed = pacman.maxSpeed * 1.81;
+                pacman.freezeFrameCounter = 1;
                 pacmanPosition.currentState = States.Empty;
                 score += 10;
                 targetScore++;
             }
             if (pacmanPosition.currentState == States.PowerPellet)
             {
-                pacman.ļSpeed = pacman.maxSpeed * 1.67;
+                pacman.freezeFrameCounter = 3;
                 pacmanPosition.currentState = States.Empty;
                 score += 50;
                 targetScore++;
             }
             else
             {
-                pacman.ļSpeed = pacman.maxSpeed * .8;
+                //pacman.ļSpeed = pacman.maxSpeed * .8;
             }
 
 
@@ -220,12 +222,15 @@ namespace LePacman.Screens.MainGame
             ghostChamber.Draw(spriteBatch);
 
             pacman.Draw(spriteBatch);
-            pelletGrid[pacman.localPos.X, pacman.localPos.Y].Draw(spriteBatch);
+            //pelletGrid[pacman.localPos.X, pacman.localPos.Y].Draw(spriteBatch);
 
-            foreach (var ghost in ghosts)
-            {
-                /////     ghost.Draw(spriteBatch);
-            }
+            //foreach (var ghost in ghosts)
+            //{
+            //        ghost.Draw(spriteBatch);
+            //}
+
+            ghosts[0].Draw(spriteBatch);
+            pelletGrid[ghosts[0].localPos.X, ghosts[0].localPos.Y].Draw(spriteBatch);
 
             spriteBatch.DrawString(HeaderFonts, "High Score", new Vector2(size.X / 2 - HeaderFonts.MeasureString("HighScore").X/2, 0), Color.White);
             spriteBatch.DrawString(HeaderFonts, score.ToString(), new Vector2(size.X / 2, 27), Color.White);

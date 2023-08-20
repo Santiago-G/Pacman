@@ -19,14 +19,16 @@ namespace LePacman.Screens.MainGame
         private TimeSpan cushionTime = TimeSpan.FromMilliseconds(500);
         private TimeSpan movementCounter;
 
+        public int freezeFrameCounter = 0;
+
         public Pacman(Vector2 Position, Color Tint, Vector2 Scale, Point Coord) : base(Position, Tint, Scale, EntityStates.ClosedPacman, Coord)
         {
             defaultSize = new Point(13);
 
-            maxSpeed = TimeSpan.FromMilliseconds(30);
-            ļSpeed = maxSpeed * .8;
+            maxSpeed = TimeSpan.FromMilliseconds(80);
+            ļSpeed = maxSpeed * 1.2;
 
-            animationLimit = TimeSpan.FromMilliseconds(75);
+            animationLimit = TimeSpan.FromMilliseconds(30);
             animationMin = 0;
             animationMax = 2;
 
@@ -38,6 +40,7 @@ namespace LePacman.Screens.MainGame
 
         }
 
+        #region functions
         protected override bool NextPositionValid()
         {
             return tileInFront(false).currentState != States.Occupied;
@@ -64,8 +67,7 @@ namespace LePacman.Screens.MainGame
         //Ask if I should keep track of the tiles in the Pacman class or in MainGame, like if I should check for pellets or if a wall is infront of pacman in the class
         //cuz If i do i have to make a lot of stuff public static and idk if thats the right way to go about it
 
-        //https://gameinternals.com/understanding-pac-man-ghost-behavior
-        //https://www.gamedeveloper.com/design/the-pac-man-dossier#close-modal
+
 
         private void checkMovementWindow(GameTime gameTime)
         {
@@ -85,6 +87,12 @@ namespace LePacman.Screens.MainGame
                 pendingDirection = currDirection;
             }
         }
+
+
+        #endregion
+
+        //https://gameinternals.com/understanding-pac-man-ghost-behavior
+        //https://www.gamedeveloper.com/design/the-pac-man-dossier#close-modal
 
         public override void Update(GameTime gameTime)
         {
@@ -120,18 +128,26 @@ namespace LePacman.Screens.MainGame
                 checkMovementWindow(gameTime);
             }
 
-         
+            if (freezeFrameCounter <= 0)
+            {
+                EddenUpdate(gameTime);
+            }
+            else 
+            {
+                freezeFrameCounter--;
+            }
+            
 
             #region Timer Based Movement
 
-           
+
 
             //MainGame.pelletGrid[prevGridPos.X, prevGridPos.Y].currentState = States.Empty;
             //localPos = Scalar >= .5f ? gridPos : prevGridPos;
             //MainGame.pelletGrid[localPos.X, localPos.Y].currentState = States.Debug;
 
-            EddenUpdate(gameTime);
-           // base.Update(gameTime);
+
+            // base.Update(gameTime);
 
             //if (timer - ļSpeed > -gameTime.ElapsedGameTime)
             //{
