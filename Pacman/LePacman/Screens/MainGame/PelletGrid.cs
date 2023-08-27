@@ -19,6 +19,8 @@ namespace LePacman.Screens.MainGame
     {
         private PelletGrid() { }
         public static PelletGrid Instance { get; } = new PelletGrid();
+
+        public PelletTileVisual[,] gridTiles;
         public Vector2 offset;
         public float tileSize;
 

@@ -15,6 +15,7 @@ namespace LePacman.Screens.MainGame
         public Vertex(T Value)
         {
             value = Value;
+            Neighbors = new List<Edge<T>>();
         }
     }
 
@@ -38,31 +39,53 @@ namespace LePacman.Screens.MainGame
         public int VertexCount => Vertices.Count;
         public Graph()
         {
-
+            Vertices = new List<Vertex<T>>();
+            Edges = new List<Edge<T>>();
         }
 
         public bool AddVertex(Vertex<T> vertex)
         {
+            if (vertex == null || vertex.NeighborCount > 0)
+            {
+                return false;
+            }
 
-            return false;
+            Vertices.Add(vertex);
+            return true;
         }
 
         public bool RemoveVertex(Vertex<T> vertex)
         {
-
+            ;
             return false;
         }
 
         public bool AddEdge(Vertex<T> a, Vertex<T> b)
         {
+            if (a == null || b == null) 
+            {
+                return false; 
+            }
 
-            return false;
+            Edge<T> edgey = new Edge<T>(a, b);
+
+            Edges.Add(edgey);
+            a.Neighbors.Add(new Edge<T>(a, b));
+
+            return true;
         }
 
         public bool RemoveEdge(Vertex<T> a, Vertex<T> b)
         {
+            if (a == null || b == null)
+            {
+                return false;
+            }
+
+            ;
 
             return false;
         }
     }
+
 }

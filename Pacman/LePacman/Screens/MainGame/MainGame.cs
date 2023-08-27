@@ -80,6 +80,7 @@ namespace LePacman.Screens.MainGame
             int y = 0;
             tileSize = size * WallTileVisual.defaultSize;
             PelletGrid.Instance.tileSize = tileSize;
+            PelletGrid.Instance.gridTiles = pelletGrid;
 
 
             Vector2 pacmanPos = new Vector2(-1);
