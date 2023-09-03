@@ -12,31 +12,39 @@ namespace LePacman.Screens.MainGame
 {
     public abstract class Ghost : Entity
     {
-        protected Point currTargetTile;
+        protected Point currTargetTile
+        {
+            get 
+            {
+                if (currGhostState == GhostStates.Scatter)
+                {
+                    return scatterTarget;
+                }
+
+                return PelletGrid.Instance.CoordToPostion(PelletGrid.Instance.pacmanPos).ToPoint();
+            } 
+        }
         protected Point scatterTarget;
 
         public static GhostStates currGhostState;
 
         protected Directions pendingDirection;
 
-        Graph<Point> graph = new Graph<Point>();
+        static Graph<Point> graph = new Graph<Point>();
 
         //the change between ghost states is gonna be in MainGame based on a timer and if pacman ate power pellet
 
-        public Ghost(Vector2 Position, Color Tint, Vector2 Scale, EntityStates EntityState, Point Coord, Point ScatterTarget) : base(Position, Tint, Scale, EntityState, Coord)
+        public Ghost(Vector2 Position, Color Tint, Vector2 Scale, EntityStates EntityState, Point Coord) : base(Position, Tint, Scale, EntityState, Coord)
         {
             defaultSize = new Point(14);
             maxSpeed = PelletGrid.Instance.Pacman.maxSpeed * 1.05;
             ļSpeed = PelletGrid.Instance.Pacman.maxSpeed * 1.25;
-            scatterTarget = ScatterTarget;
+            animate = true;
 
             animationLimit = TimeSpan.FromMilliseconds(100);
-
-            loadGrid();
-            ;
         }
 
-        void loadGrid()
+        public static void LoadGrid()
         {
             foreach (var tile in PelletGrid.Instance.gridTiles)
             {
@@ -60,32 +68,44 @@ namespace LePacman.Screens.MainGame
                     {
                         //no left
                         graph.AddEdge(graph.Vertices[i], graph.Vertices[i - tiles.GetLength(1)]);
+                        if (graph.Vertices[i - tiles.GetLength(1)].value != new Point(x - 1, y)) 
+                            ;
+                        //PelletGrid[]
                     }
                     if (x != tiles.GetLength(0) - 1 && tiles[x + 1, y].currentState != States.Occupied)
                     {
                         //no right
+                        Console.WriteLine(tiles[x + 1, y].currentState);
                         graph.AddEdge(graph.Vertices[i], graph.Vertices[i + tiles.GetLength(1)]);
+                        if (graph.Vertices[i + tiles.GetLength(1)].value != new Point(x + 1, y))
+                            ;
                     }
                     if (y != 0 && tiles[x, y - 1].currentState != States.Occupied)
                     {
                         //no up
+                        Console.WriteLine(tiles[x, y - 1].currentState);
                         graph.AddEdge(graph.Vertices[i], graph.Vertices[i - 1]);
+                        if (graph.Vertices[i - 1].value != new Point(x, y - 1))
+                            ;
                     }
                     if (y != tiles.GetLength(1) - 1 && tiles[x, y + 1].currentState != States.Occupied)
                     {
                         //no down
+                        Console.WriteLine(tiles[x, y + 1].currentState);
                         graph.AddEdge(graph.Vertices[i], graph.Vertices[i + 1]);
+                        if (graph.Vertices[i + 1].value != new Point(x, y + 1))
+                            ;
                     }
                 }
             }
 
-            //foreach (var item in graph.Vertices)
-            //{
-            //    if (item.NeighborCount > 0)
-            //    {
-            //        PelletGrid.Instance.gridTiles[item.value.X, item.value.Y].currentState = States.Debug;
-            //    }
-            //}
+            foreach (var edge in graph.Edges)
+            {                
+                if (edge.EndingPoint.value == new Point(9))
+                {
+                    ;
+                }
+            }
         }
 
         //they're thing for movement should be a stack of directions that get popped into pending direction
@@ -94,7 +114,7 @@ namespace LePacman.Screens.MainGame
 
         //use best first search for pathfinding
 
-        protected Directions pointToDirection(Point point)
+        protected Directions PointToDirection(Point point)
         {
             if (point == new Point(0, -1))
             {
@@ -112,70 +132,48 @@ namespace LePacman.Screens.MainGame
             return Directions.Left;
         }
 
-        protected void evaluateRoute()
+        override protected void FunnyChair()
         {
             PelletTileVisual[,] tiles = PelletGrid.Instance.gridTiles;
             int currIndex = localPos.X * tiles.GetLength(1) + localPos.Y;
 
-            Directions bannedDirec = Directions.Up;
-            switch (currDirection)
-            {
-                case Directions.Up:
-                    bannedDirec = Directions.Down;
-                    break;
-                case Directions.Down:
-                    bannedDirec = Directions.Up;
-                    break;
-                case Directions.Left:
-                    bannedDirec = Directions.Right;
-                    break;
-                case Directions.Right:
-                    bannedDirec = Directions.Left;
-                    break;
-            }
-
-            //i = x * tiles.GetLength(1) + y;
             if (graph.Vertices[currIndex].NeighborCount == 2)
             {
                 Point neighborTile = graph.Vertices[currIndex].Neighbors[0].EndingPoint.value;
 
                 if (neighborTile != localPos - directions[currDirection])
                 {
-                    pendingDirection = currDirection;
+                    pendingDirection = PointToDirection(graph.Vertices[currIndex].Neighbors[0].EndingPoint.value - localPos);
                 }
                 else
                 {
-                    pendingDirection = pointToDirection(graph.Vertices[currIndex].Neighbors[1].EndingPoint.value - localPos);
+                    pendingDirection = PointToDirection(graph.Vertices[currIndex].Neighbors[1].EndingPoint.value - localPos);
                 }
-
             }
             else
             {
                 //banned from going up: (12, 11); (15, 11); (12, 23); (15, 23)
 
-                float shortestStraightLineDistance = 22111122;
-                for (int i = 0; i < graph.Vertices[currIndex].NeighborCount; i++)
+                float shortestDistance = 100000;
+
+                foreach (var neighbor in graph.Vertices[currIndex].Neighbors)
                 {
-                    PelletTileVisual currNeighborTile = tiles[graph.Vertices[currIndex].Neighbors[i].EndingPoint.value.X, graph.Vertices[currIndex].Neighbors[i].EndingPoint.value.Y];
+                    PelletTileVisual currNeighborTile = tiles[neighbor.EndingPoint.value.X, neighbor.EndingPoint.value.Y];
 
                     if (currNeighborTile.coord == localPos - directions[currDirection]) { continue; }
-                    //distance formula from the origin of currNegh to target tile
-                    float currSLDistance = Math.dist
 
-                    //from origin
-                    
+                    float currSLDistance = Vector2.Distance(currNeighborTile.Position, currTargetTile.ToVector2());
+                    if (currSLDistance < shortestDistance)
+                    {
+                        shortestDistance = currSLDistance;
+                        pendingDirection = PointToDirection(neighbor.EndingPoint.value - localPos);
+                    }
                 }
             }
 
-
-
-
+            currDirection = pendingDirection;
         }
 
-        protected void Bre()
-        {
-
-        }
 
         public abstract void Update(GameTime gameTime);
     }

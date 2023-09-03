@@ -159,6 +159,8 @@ namespace LePacman.Screens.MainGame
                 new Pinky(new Vector2(gcPos.X, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X, blinkyCoord.Y + 3)),
                 new Clyde(new Vector2(gcPos.X + tileSize*2, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X + 2, blinkyCoord.Y + 3))
             };
+            Ghost.LoadGrid();
+
             //pelletGrid[ghosts[0].GridPosition.X, ghosts[0].GridPosition.Y].currentState = States.PowerPellet;
             //pelletGrid[ghosts[0].GridPosition.X, ghosts[0].GridPosition.Y].Tint = Color.Red;
 
@@ -231,7 +233,7 @@ namespace LePacman.Screens.MainGame
             //}
 
             ghosts[0].Draw(spriteBatch);
-            pelletGrid[ghosts[0].localPos.X, ghosts[0].localPos.Y].Draw(spriteBatch);
+           // pelletGrid[ghosts[0].localPos.X, ghosts[0].localPos.Y].Draw(spriteBatch);
 
             spriteBatch.DrawString(HeaderFonts, "High Score", new Vector2(size.X / 2 - HeaderFonts.MeasureString("HighScore").X/2, 0), Color.White);
             spriteBatch.DrawString(HeaderFonts, score.ToString(), new Vector2(size.X / 2, 27), Color.White);

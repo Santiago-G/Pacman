@@ -7,6 +7,7 @@ using Pacman;
 using System.Net.NetworkInformation;
 using System.ComponentModel.Design;
 using MonoGame.Extended.Timers;
+using MonoGame.Extended.Collections;
 
 namespace LePacman.Screens.MainGame
 {
@@ -38,7 +39,7 @@ namespace LePacman.Screens.MainGame
             [EntityStates.ClydeUpShifty] = new Point(76, 52),
             [EntityStates.ClydeDown] = new Point(91, 52),
             [EntityStates.ClydeDownShifty] = new Point(106, 52),
-            
+
             [EntityStates.InkyRight] = new Point(1, 67),
             [EntityStates.InkyRightShifty] = new Point(16, 67),
             [EntityStates.InkyLeft] = new Point(31, 67),
@@ -101,8 +102,8 @@ namespace LePacman.Screens.MainGame
         protected TimeSpan animationTimer;
 
         protected int animationDirection = -1;
-        protected int animationMin = 0;
-        protected int animationMax = 10;
+        protected virtual int animationMin { get; set; } = 0;
+        protected virtual int animationMax { get; set; } = 10;
 
         protected bool animate = true;
         #endregion
@@ -125,8 +126,13 @@ namespace LePacman.Screens.MainGame
             GridPosition = Coord;
         }
 
+        protected virtual void FunnyChair()
+        {
+            return;
+        }
+
         protected virtual bool NextPositionValid() => true;
-        protected virtual void AnimationLogic() 
+        protected virtual void AnimationLogic()
         {
             if (animationTimer > animationLimit)
             {
@@ -144,12 +150,14 @@ namespace LePacman.Screens.MainGame
         {
             timer += gameTime.ElapsedGameTime;
 
-            MainGame.pelletGrid[prevGridPos.X, prevGridPos.Y].currentState = States.Empty;
+            //MainGame.pelletGrid[prevGridPos.X, prevGridPos.Y].currentState = States.Empty;
             localPos = Scalar >= .5f ? gridPos : prevGridPos;
-            MainGame.pelletGrid[localPos.X, localPos.Y].currentState = States.Debug2;
+            //MainGame.pelletGrid[localPos.X, localPos.Y].currentState = States.Debug2;
 
             if (timer >= ļSpeed)
             {
+                FunnyChair();
+
                 if (NextPositionValid())
                 {
                     GridPosition += directions[currDirection];
@@ -166,7 +174,7 @@ namespace LePacman.Screens.MainGame
                         GridPosition = new Point(0, GridPosition.Y);
                         prevGridPos = GridPosition;
                     }
-                    else if (GridPosition.Y <= 0)
+                    else if (GridPosition.Y < 0)
                     {
                         GridPosition = new Point(GridPosition.X, MainGame.pelletGrid.GetLength(1) - 1);
                         prevGridPos = GridPosition;
@@ -176,7 +184,6 @@ namespace LePacman.Screens.MainGame
                         GridPosition = new Point(GridPosition.X, 0);
                         prevGridPos = GridPosition;
                     }
-                    //
                 }
                 else
                 {
@@ -187,7 +194,7 @@ namespace LePacman.Screens.MainGame
                 timer = TimeSpan.Zero;
             }
 
-            Position = Vector2.Lerp(mapGrid.CoordToPostion(prevGridPos) + new Vector2(mapGrid.tileSize/2),
+            Position = Vector2.Lerp(mapGrid.CoordToPostion(prevGridPos) + new Vector2(mapGrid.tileSize / 2),
                 mapGrid.CoordToPostion(gridPos) + new Vector2(mapGrid.tileSize / 2), (float)(timer.TotalMilliseconds / ļSpeed.TotalMilliseconds));
 
             if (animate)

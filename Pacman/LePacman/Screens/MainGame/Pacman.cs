@@ -43,10 +43,10 @@ namespace LePacman.Screens.MainGame
         #region functions
         protected override bool NextPositionValid()
         {
-            return tileInFront(false).currentState != States.Occupied;
+            return TileInFront(false).currentState != States.Occupied;
         }
 
-        public PelletTileVisual tileInFront(bool pending)
+        public PelletTileVisual TileInFront(bool pending)
         {
             int x = Math.Clamp(GridPosition.X + directions[currDirection].X, 0, 28);
             int y = Math.Clamp(GridPosition.Y + directions[currDirection].Y, 0, 31);
@@ -69,11 +69,11 @@ namespace LePacman.Screens.MainGame
 
 
 
-        private void checkMovementWindow(GameTime gameTime)
+        private void CheckMovementWindow(GameTime gameTime)
         {
             movementCounter += gameTime.ElapsedGameTime;
 
-            if (tileInFront(true).currentState != States.Occupied)
+            if (TileInFront(true).currentState != States.Occupied)
             {
                 currDirection = pendingDirection;
                 Rotation = pendingRotation;
@@ -125,7 +125,7 @@ namespace LePacman.Screens.MainGame
 
             if (movementWindow)
             {
-                checkMovementWindow(gameTime);
+                CheckMovementWindow(gameTime);
             }
 
             if (freezeFrameCounter <= 0)
