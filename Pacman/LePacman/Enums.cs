@@ -189,10 +189,6 @@ namespace Pacman
         Scatter,
         Frightened
     }
-    public enum Directions
-    {
-        Up, Down, Left, Right,
-    }
 
     public enum GridStates
     {

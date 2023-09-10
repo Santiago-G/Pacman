@@ -12,7 +12,7 @@ namespace LePacman.Screens.MainGame
 {
     public class Pacman : Entity
     {
-        private Directions pendingDirection;
+        private EntityStates pendingDirection;
         private float pendingRotation;
         private bool movementWindow = false;
 
@@ -26,13 +26,13 @@ namespace LePacman.Screens.MainGame
             defaultSize = new Point(13);
 
             maxSpeed = TimeSpan.FromMilliseconds(80);
-            ļSpeed = maxSpeed * 1.2;
+            ļSpeed = maxSpeed * .8;//1.2;
 
             animationLimit = TimeSpan.FromMilliseconds(30);
             animationMin = 0;
             animationMax = 2;
 
-            currDirection = Directions.Right;
+            currDirection = EntityStates.Right;
 
             //Max speed
 
@@ -100,25 +100,25 @@ namespace LePacman.Screens.MainGame
 
             if (kb.IsKeyDown(Keys.Up))
             {
-                pendingDirection = Directions.Up;
+                pendingDirection = EntityStates.Up;
                 pendingRotation = (float)(Math.PI * 1.5);
                 movementWindow = true;
             }
             else if (kb.IsKeyDown(Keys.Right))
             {
-                pendingDirection = Directions.Right;
+                pendingDirection = EntityStates.Right;
                 pendingRotation = 0;
                 movementWindow = true;
             }
             else if (kb.IsKeyDown(Keys.Down))
             {
-                pendingDirection = Directions.Down;
+                pendingDirection = EntityStates.Down;
                 pendingRotation = (float)(Math.PI * .5);
                 movementWindow = true;
             }
             else if (kb.IsKeyDown(Keys.Left))
             {
-                pendingDirection = Directions.Left;
+                pendingDirection = EntityStates.Left;
                 pendingRotation = (float)(Math.PI);
                 movementWindow = true;
             }

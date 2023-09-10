@@ -14,7 +14,7 @@ namespace LePacman.Screens.MainGame
     public abstract class Entity : SpriteBase
     {
         #region Textures
-        private protected Dictionary<EntityStates, Point> Textures = new Dictionary<EntityStates, Point>()
+        private static protected Dictionary<EntityStates, Point> Textures = new Dictionary<EntityStates, Point>()
         {
             [EntityStates.ClosedPacman] = new Point(1, 23),
             [EntityStates.Pacman] = new Point(15, 23),
@@ -59,14 +59,13 @@ namespace LePacman.Screens.MainGame
             [EntityStates.PinkyDownShifty] = new Point(106, 82),
         };
 
-        protected EntityStates entityState;
+        protected virtual EntityStates EntityState { get; set; }
         #endregion
 
         #region Grid Positions
         protected Point prevGridPos;
         protected Point gridPos;
         public Point localPos;
-
 
         public Point GridPosition
         {
@@ -84,13 +83,13 @@ namespace LePacman.Screens.MainGame
         public TimeSpan maxSpeed;
         public bool canMove = true;
 
-        public Directions currDirection;
-        public static Dictionary<Directions, Point> directions = new Dictionary<Directions, Point>
+        public EntityStates currDirection;
+        public static Dictionary<EntityStates, Point> directions = new Dictionary<EntityStates, Point>
         {
-            [Directions.Up] = new Point(0, -1),
-            [Directions.Right] = new Point(1, 0),
-            [Directions.Down] = new Point(0, 1),
-            [Directions.Left] = new Point(-1, 0),
+            [EntityStates.Up] = new Point(0, -1),
+            [EntityStates.Right] = new Point(1, 0),
+            [EntityStates.Down] = new Point(0, 1),
+            [EntityStates.Left] = new Point(-1, 0),
         };
 
         public TimeSpan ļSpeed;
@@ -102,8 +101,8 @@ namespace LePacman.Screens.MainGame
         protected TimeSpan animationTimer;
 
         protected int animationDirection = -1;
-        protected virtual int animationMin { get; set; } = 0;
-        protected virtual int animationMax { get; set; } = 10;
+        protected int animationMin = 0;
+        protected int animationMax = 10;
 
         protected bool animate = true;
         #endregion
@@ -114,17 +113,26 @@ namespace LePacman.Screens.MainGame
         public override Vector2 Origin { get => SourceRectangle.Size.ToVector2() / 2; }
 
         protected Point defaultSize;
-        public Rectangle SourceRectangle => new Rectangle(Textures[entityState], defaultSize);
+        public Rectangle SourceRectangle => new Rectangle(Textures[EntityState], defaultSize);
         public Rectangle DestinationRectangle => new Rectangle(Position.ToPoint(), new Point((int)(defaultSize.X * Scale.X), (int)(defaultSize.Y * Scale.Y)));
 
         public Entity(Vector2 Position, Color Tint, Vector2 Scale, EntityStates EntityState, Point Coord) : base(MainGame.spriteSheet, Position, Tint)
         {
             this.Scale = Scale;
-            entityState = EntityState;
+            this.EntityState = EntityState;
             Rotation = 0;
             GridPosition = Coord;
             GridPosition = Coord;
         }
+
+        public Entity(Vector2 Position, Color Tint, Vector2 Scale, Point Coord) : base(MainGame.spriteSheet, Position, Tint)
+        {
+            this.Scale = Scale;
+            Rotation = 0;
+            GridPosition = Coord;
+            GridPosition = Coord;
+        }
+
 
         protected virtual void FunnyChair()
         {
@@ -136,12 +144,12 @@ namespace LePacman.Screens.MainGame
         {
             if (animationTimer > animationLimit)
             {
-                if ((int)entityState >= animationMax || (int)entityState <= animationMin)
+                if ((int)EntityState >= animationMax || (int)EntityState <= animationMin)
                 {
                     animationDirection *= -1;
                 }
 
-                entityState += animationDirection;
+                EntityState += animationDirection;
                 animationTimer = TimeSpan.Zero;
             }
         }
@@ -216,12 +224,12 @@ namespace LePacman.Screens.MainGame
 
                 if (animationTimer > animationLimit)
                 {
-                    if ((int)entityState >= animationMax || (int)entityState <= animationMin)
+                    if ((int)EntityState >= animationMax || (int)EntityState <= animationMin)
                     {
                         animationDirection *= -1;
                     }
 
-                    entityState += animationDirection;
+                    EntityState += animationDirection;
                     animationTimer = TimeSpan.Zero;
                 }
             }

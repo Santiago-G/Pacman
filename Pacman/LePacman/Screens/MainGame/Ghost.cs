@@ -3,7 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Pacman;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,34 +14,42 @@ namespace LePacman.Screens.MainGame
 {
     public abstract class Ghost : Entity
     {
-        protected Point currTargetTile
+        private bool shifty = false;
+        private EntityStates defaultGhost;
+        protected override EntityStates EntityState
         {
-            get 
+            get
             {
-                if (currGhostState == GhostStates.Scatter)
+                if (shifty) 
                 {
-                    return scatterTarget;
+                    return defaultGhost | currDirection ^ EntityStates.Shifty;
                 }
 
-                return PelletGrid.Instance.CoordToPostion(PelletGrid.Instance.pacmanPos).ToPoint();
-            } 
+                return defaultGhost | currDirection;
+            }
         }
+
+        protected virtual Point currTargetTile { get; set; }
+
         protected Point scatterTarget;
 
         public static GhostStates currGhostState;
 
-        protected Directions pendingDirection;
+        protected EntityStates pendingDirection;
+
 
         static Graph<Point> graph = new Graph<Point>();
 
         //the change between ghost states is gonna be in MainGame based on a timer and if pacman ate power pellet
 
-        public Ghost(Vector2 Position, Color Tint, Vector2 Scale, EntityStates EntityState, Point Coord) : base(Position, Tint, Scale, EntityState, Coord)
+        public Ghost(Vector2 Position, Color Tint, Vector2 Scale, EntityStates DefaultGhost, Point Coord) : base(Position, Tint, Scale, Coord)
         {
             defaultSize = new Point(14);
             maxSpeed = PelletGrid.Instance.Pacman.maxSpeed * 1.05;
             ļSpeed = PelletGrid.Instance.Pacman.maxSpeed * 1.25;
             animate = true;
+
+            defaultGhost = DefaultGhost;
 
             animationLimit = TimeSpan.FromMilliseconds(100);
         }
@@ -114,22 +124,22 @@ namespace LePacman.Screens.MainGame
 
         //use best first search for pathfinding
 
-        protected Directions PointToDirection(Point point)
+        protected EntityStates PointToDirection(Point point)
         {
             if (point == new Point(0, -1))
             {
-                return Directions.Up;
+                return EntityStates.Up;
             }
             if (point == new Point(1, 0))
             {
-                return Directions.Right;
+                return EntityStates.Right;
             }
             if (point == new Point(0, 1))
             {
-                return Directions.Down;
+                return EntityStates.Down;
             }
 
-            return Directions.Left;
+            return EntityStates.Left;
         }
 
         override protected void FunnyChair()
@@ -174,6 +184,15 @@ namespace LePacman.Screens.MainGame
             currDirection = pendingDirection;
         }
 
+        protected override void AnimationLogic()
+        {
+            if (animationTimer > animationLimit)
+            {
+                shifty = !shifty;
+
+                animationTimer = TimeSpan.Zero;
+            }
+        }
 
         public abstract void Update(GameTime gameTime);
     }
