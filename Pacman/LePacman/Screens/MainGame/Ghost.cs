@@ -29,7 +29,7 @@ namespace LePacman.Screens.MainGame
             }
         }
 
-        protected virtual Point currTargetTile { get; set; }
+        public virtual Point currTargetTile { get; set; }
 
         protected Point scatterTarget;
 

@@ -10,7 +10,7 @@ namespace LePacman.Screens.MainGame
 {
     public class Pinky : Ghost
     {//, new Point(2, -4)
-        protected override Point currTargetTile
+        public override Point currTargetTile
         {
             get
             {

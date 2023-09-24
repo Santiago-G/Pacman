@@ -42,6 +42,11 @@ namespace LePacman.Screens.MainGame
         static Vector2 offset = new Vector2(110, 75);
         static float tileSize;
 
+        private static Sprite debugBlinky;
+        private static Sprite debugInky;
+        private static Sprite debugPinky;
+        private static Sprite debugClyde;
+
 
         public MainGame(Point Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
@@ -54,6 +59,11 @@ namespace LePacman.Screens.MainGame
         {
             spriteSheet = Content.Load<Texture2D>("PacmanMainGameSpriteSheet");
             HeaderFonts = Content.Load<SpriteFont>("mainGameHeader");
+
+            debugInky = new Sprite(Content.Load<Texture2D>("debugSprite"), new Vector2(-100), Color.Blue);
+            debugPinky = new Sprite(Content.Load<Texture2D>("debugSprite"), new Vector2(-100), Color.Pink);
+            debugBlinky = new Sprite(Content.Load<Texture2D>("debugSprite"), new Vector2(-100), Color.Red);
+            debugClyde = new Sprite(Content.Load<Texture2D>("debugSprite"), new Vector2(-100), Color.Red);
         }
 
         private static void portalLogic(SavedMap map)
@@ -82,6 +92,7 @@ namespace LePacman.Screens.MainGame
             PelletGrid.Instance.tileSize = tileSize;
             PelletGrid.Instance.gridTiles = pelletGrid;
 
+            bool isPacmanFound = false;
 
             Vector2 pacmanPos = new Vector2(-1);
             Point pacmanCoord = new Point(-1);
@@ -101,10 +112,15 @@ namespace LePacman.Screens.MainGame
 
                 wallGrid[x, y] = new WallTileVisual(new Vector2(offset.X + x * tileSize, offset.Y + y * tileSize), Color.White, map.WallTiles[i].WS, map.WallTiles[i].C, new Vector2(size));
 
-                if (map.WallTiles[i].TS == States.Pacman)
+                if (!isPacmanFound && map.WallTiles[i].TS == States.Pacman)
                 {
+                    isPacmanFound = true;
                     pacmanPos = wallGrid[x, y].Position - new Vector2(tileSize / 2);
                     pacmanCoord = wallGrid[x, y].coord - new Point(1);
+                    feafeaf
+                    Point pacmanIndex = new Point(i % (pelletGrid.GetLength(0) + 1), i / (pelletGrid.GetLength(0) + 1));
+
+                    map.PixelTiles[(pacmanIndex.Y * pelletGrid.GetLength(0)) + pacmanIndex.X].TS = States.Pacman;
                 }
                 else if (map.WallTiles[i].TS == States.GhostChamber && gcPos == new Vector2(-1))
                 {
@@ -154,25 +170,14 @@ namespace LePacman.Screens.MainGame
 
             ghosts = new Ghost[4]
             {
-                new Blinky(new Vector2(gcPos.X, gcPos.Y - tileSize*3), Color.White, new Vector2(size * 1.4f), blinkyCoord),
-                new Inky(new Vector2(gcPos.X - tileSize*2, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X - 2, blinkyCoord.Y)),
-                new Pinky(new Vector2(gcPos.X, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X + 2, blinkyCoord.Y)),
-                new Clyde(new Vector2(gcPos.X + tileSize*2, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X + 2, blinkyCoord.Y - 3))
+                PelletGrid.Instance.Blinky = new Blinky(new Vector2(gcPos.X, gcPos.Y - tileSize*3), Color.White, new Vector2(size * 1.4f), blinkyCoord),
+                PelletGrid.Instance.Inky = new Inky(new Vector2(gcPos.X - tileSize*2, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X - 2, blinkyCoord.Y)),
+                PelletGrid.Instance.Pinky = new Pinky(new Vector2(gcPos.X, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X + 2, blinkyCoord.Y)),
+                PelletGrid.Instance.Clyde = new Clyde(new Vector2(gcPos.X + tileSize*2, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X + 2, blinkyCoord.Y - 3))
             };
             Ghost.LoadGrid();
 
-            //pelletGrid[ghosts[0].GridPosition.X, ghosts[0].GridPosition.Y].currentState = States.PowerPellet;
-            //pelletGrid[ghosts[0].GridPosition.X, ghosts[0].GridPosition.Y].Tint = Color.Red;
-
-            //pelletGrid[ghosts[1].GridPosition.X, ghosts[1].GridPosition.Y].currentState = States.PowerPellet;
-            //pelletGrid[ghosts[1].GridPosition.X, ghosts[1].GridPosition.Y].Tint = Color.Cyan;
-
-            //pelletGrid[ghosts[2].GridPosition.X, ghosts[2].GridPosition.Y].currentState = States.PowerPellet;
-            //pelletGrid[ghosts[2].GridPosition.X, ghosts[2].GridPosition.Y].Tint = Color.Pink;
-
-            //pelletGrid[ghosts[3].GridPosition.X, ghosts[3].GridPosition.Y].currentState = States.PowerPellet;
-            //pelletGrid[ghosts[3].GridPosition.X, ghosts[3].GridPosition.Y].Tint = Color.Orange;
-
+           
         }
 
         private PelletTileVisual pacmanPosition => pelletGrid[pacman.GridPosition.X, pacman.GridPosition.Y];
@@ -207,7 +212,10 @@ namespace LePacman.Screens.MainGame
                 //pacman.ļSpeed = pacman.maxSpeed * .8;
             }
 
-
+            debugInky.Position = ghosts[1].currTargetTile.ToVector2();
+            debugPinky.Position = ghosts[2].currTargetTile.ToVector2();
+            debugBlinky.Position = ghosts[0].currTargetTile.ToVector2();
+            debugClyde.Position = ghosts[3].currTargetTile.ToVector2();
             base.Update(gameTime);
         }
 
@@ -229,15 +237,17 @@ namespace LePacman.Screens.MainGame
             ghostChamber.Draw(spriteBatch);
 
             pacman.Draw(spriteBatch);
-            //pelletGrid[pacman.localPos.X, pacman.localPos.Y].Draw(spriteBatch);
-
-            //ghosts[0].Draw(spriteBatch);
+            
 
             foreach (var ghost in ghosts)
             {
                 ghost.Draw(spriteBatch);
             }
-            // pelletGrid[ghosts[0].localPos.X, ghosts[0].localPos.Y].Draw(spriteBatch);
+
+            debugInky.Draw(spriteBatch);
+            debugPinky.Draw(spriteBatch);
+            debugBlinky.Draw(spriteBatch);
+            debugClyde.Draw(spriteBatch);
 
             spriteBatch.DrawString(HeaderFonts, "High Score", new Vector2(size.X / 2 - HeaderFonts.MeasureString("HighScore").X/2, 0), Color.White);
             spriteBatch.DrawString(HeaderFonts, score.ToString(), new Vector2(size.X / 2, 27), Color.White);

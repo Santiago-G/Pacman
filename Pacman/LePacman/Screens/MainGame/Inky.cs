@@ -10,7 +10,7 @@ namespace LePacman.Screens.MainGame
 {
     public class Inky : Ghost
     {
-        protected override Point currTargetTile
+        public override Point currTargetTile
         {
             get
             {
@@ -20,16 +20,25 @@ namespace LePacman.Screens.MainGame
                 }
                 PelletGrid pelletGrid = PelletGrid.Instance;
 
-                Vector2 pacmanTarget = (pelletGrid.pacmanPos + directions[pelletGrid.Pacman.currDirection]).ToVector2(); 
+                Vector2 pacmanTarget = pelletGrid.Blinky.Position;
+                Vector2 linearDistance;
+
 
                 if (pelletGrid.Pacman.currDirection == EntityStates.Up)
                 {
-                    pacmanTarget = new Vector2();
+                    pacmanTarget = pelletGrid.CoordToPostion(pelletGrid.pacmanPos - new Point(2, 2));
                 }
-                
-                // = pelletGrid.pacmanPos + cur
+                else
+                {
+                    pacmanTarget = pelletGrid.CoordToPostion(pelletGrid.pacmanPos + (directions[pelletGrid.Pacman.currDirection] * new Point(2)));
+                }
 
-                return PelletGrid.Instance.CoordToPostion(PelletGrid.Instance.pacmanPos).ToPoint();
+                linearDistance = new Vector2(MathHelper.Distance(pelletGrid.Blinky.Position.X, pacmanTarget.X),
+                    MathHelper.Distance(pelletGrid.Blinky.Position.Y, pacmanTarget.Y));
+
+                Point JoeTheLion = (pelletGrid.Blinky.Position + (linearDistance * 2)).ToPoint();
+
+                return JoeTheLion;
             }
         }
 

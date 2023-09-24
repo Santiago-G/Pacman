@@ -13,7 +13,7 @@ namespace LePacman.Screens.MainGame
     {
         //protected override EntityStates EntityState => base.EntityState ^= EntityStates.Shifty;
 
-        protected override Point currTargetTile
+        public override Point currTargetTile
         {
             get
             {

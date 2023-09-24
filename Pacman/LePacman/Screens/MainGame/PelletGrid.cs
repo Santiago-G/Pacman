@@ -39,5 +39,10 @@ namespace LePacman.Screens.MainGame
 
         public Pacman Pacman;
         public Point pacmanPos => Pacman.currPelletTile.coord;
+
+        public Blinky Blinky;
+        public Inky Inky;
+        public Pinky Pinky;
+        public Clyde Clyde;
     }
 }
