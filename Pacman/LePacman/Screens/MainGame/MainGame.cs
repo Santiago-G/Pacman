@@ -23,36 +23,62 @@ namespace LePacman.Screens.MainGame
 
         public static List<Point> PortalCoord = new List<Point>();
 
-        TimeSpan powerPelletTimer;
-        TimeSpan powerPelletLimit = TimeSpan.FromMilliseconds(500);
-        int timeThing = 0;
-
         public static WallTileVisual[,] wallGrid = new WallTileVisual[29, 32];
         public static PelletTileVisual[,] pelletGrid = new PelletTileVisual[28, 31];
 
-        private int score;
-        private static int pelletTarget = 0;
-        private int targetScore;
+
+        #region Entities
 
         public static Ghost[] ghosts;
 
         public static Pacman pacman;
         private static GhostChamber ghostChamber;
 
+        #endregion
+
+        public static GhostStates currentState;
+
+        static int currPeriodIndex;
+        static TimeSpan[] ScatterPeriods;
+        static TimeSpan[] ChasePeriods;
+
+        private TimeSpan currentPeriod
+        {
+            get 
+            {
+                if (currentState == GhostStates.Chase) 
+                {
+                    return ChasePeriods[currPeriodIndex];
+                }
+
+                return ScatterPeriods[currPeriodIndex];
+            }
+        }
+
+        static TimeSpan ScatterChaseTimer;
+
+        private int score;
+        private static int pelletTarget = 0;
+        private int targetScore;
+
+        private static int LevelCounter = 0;
+
         static Vector2 offset = new Vector2(110, 75);
         static float tileSize;
 
+        #region Debug Sprites
         private static Sprite debugBlinky;
         private static Sprite debugInky;
         private static Sprite debugPinky;
         private static Sprite debugClyde;
+        #endregion
 
+        private PelletTileVisual pacmanPosition => pelletGrid[pacman.GridPosition.X, pacman.GridPosition.Y];
 
         public MainGame(Point Size, Vector2 Position, GraphicsDeviceManager Graphics) : base(Size, Position, Graphics)
         {
             size = Size;
             PelletGrid.Instance.offset = offset;
-            
         }
 
         public override void LoadContent(ContentManager Content)
@@ -63,9 +89,10 @@ namespace LePacman.Screens.MainGame
             debugInky = new Sprite(Content.Load<Texture2D>("debugSprite"), new Vector2(-100), Color.Blue);
             debugPinky = new Sprite(Content.Load<Texture2D>("debugSprite"), new Vector2(-100), Color.Pink);
             debugBlinky = new Sprite(Content.Load<Texture2D>("debugSprite"), new Vector2(-100), Color.Red);
-            debugClyde = new Sprite(Content.Load<Texture2D>("debugSprite"), new Vector2(-100), Color.Red);
+            debugClyde = new Sprite(Content.Load<Texture2D>("debugSprite"), new Vector2(-100), Color.Brown);
         }
 
+        #region Loading the Map
         private static void portalLogic(SavedMap map)
         {
             foreach (var portalPair in map.Portals)
@@ -117,10 +144,17 @@ namespace LePacman.Screens.MainGame
                     isPacmanFound = true;
                     pacmanPos = wallGrid[x, y].Position - new Vector2(tileSize / 2);
                     pacmanCoord = wallGrid[x, y].coord - new Point(1);
-                    feafeaf
-                    Point pacmanIndex = new Point(i % (pelletGrid.GetLength(0) + 1), i / (pelletGrid.GetLength(0) + 1));
 
-                    map.PixelTiles[(pacmanIndex.Y * pelletGrid.GetLength(0)) + pacmanIndex.X].TS = States.Pacman;
+                    Point pacmanIndex = new Point(i % (pelletGrid.GetLength(0) + 1), i / (pelletGrid.GetLength(0) + 1));
+                    ;
+
+                    for (int pacy = -1; pacy < 2; pacy++)
+                    {
+                        for (int pacx = -1; pacx < 2; pacx++)
+                        {
+                            map.PixelTiles[((pacmanIndex.Y + pacy) * pelletGrid.GetLength(0)) + pacmanIndex.X + pacx].TS = States.Pacman;
+                        }
+                    }
                 }
                 else if (map.WallTiles[i].TS == States.GhostChamber && gcPos == new Vector2(-1))
                 {
@@ -146,10 +180,10 @@ namespace LePacman.Screens.MainGame
                 switch (map.PixelTiles[i].TS)
                 {
                     case States.Pellet:
-                        pelletTarget ++;
+                        pelletTarget++;
                         break;
                     case States.PowerPellet:
-                        pelletTarget ++;
+                        pelletTarget++;
                         break;
                     case States.Pacman:
                         if (pacmanPos == new Vector2(-1))
@@ -177,14 +211,84 @@ namespace LePacman.Screens.MainGame
             };
             Ghost.LoadGrid();
 
-           
+            LoadNewLevel();
         }
 
-        private PelletTileVisual pacmanPosition => pelletGrid[pacman.GridPosition.X, pacman.GridPosition.Y];
+        #endregion
+
+        private static void LoadNewLevel()
+        {
+            LevelCounter++;
+
+            switch (LevelCounter)
+            {
+                case 1:
+
+                    ScatterPeriods = new TimeSpan[4] { TimeSpan.FromSeconds(7), TimeSpan.FromSeconds(7), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5) };
+                    ChasePeriods = new TimeSpan[3] { TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(20) };
+
+                    pacman.normalSpeed = pacman.maxSpeed * 1.2;
+                    pacman.frightSpeed = pacman.maxSpeed * 1.1;
+                    Ghost.normalSpeed = pacman.maxSpeed * 1.25;
+                    Ghost.frightSpeed = pacman.maxSpeed * 1.5;
+
+                    break;
+                case 2:
+                    ScatterPeriods = new TimeSpan[4] { TimeSpan.FromSeconds(7), TimeSpan.FromSeconds(7), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(1 / 60) };
+                    ChasePeriods = new TimeSpan[3] { TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(1033) };
+
+                    pacman.normalSpeed = pacman.maxSpeed * 1.1;
+                    pacman.frightSpeed = pacman.maxSpeed * 1.05;
+                    Ghost.normalSpeed = pacman.maxSpeed * 1.15;
+                    Ghost.frightSpeed = pacman.maxSpeed * 1.45;
+                    break;
+                case 5:
+                    ScatterPeriods = new TimeSpan[4] { TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(1 / 60) };
+                    ChasePeriods = new TimeSpan[3] { TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(1037) };
+
+                    pacman.normalSpeed = pacman.maxSpeed;
+                    pacman.frightSpeed = pacman.maxSpeed;
+                    Ghost.normalSpeed = pacman.maxSpeed * 1.05;
+                    Ghost.frightSpeed = pacman.maxSpeed * 1.4;
+                    break;
+                case 21:
+
+                    pacman.normalSpeed = pacman.maxSpeed * 1.1;
+                    pacman.frightSpeed = pacman.maxSpeed * 5;
+                    Ghost.frightSpeed = pacman.maxSpeed * .3;
+                    break;
+            }
+
+            currPeriodIndex = 0;
+            ScatterChaseTimer = TimeSpan.Zero;
+
+            currentState = GhostStates.Scatter;
+        }
 
         public override void Update(GameTime gameTime)
         {
             MouseState ms = Mouse.GetState();
+
+            if (currentState != GhostStates.Frightened) 
+            {
+                ScatterChaseTimer += gameTime.ElapsedGameTime;
+            }
+
+            if (ScatterChaseTimer > currentPeriod)
+            {
+                if (currentState == GhostStates.Chase)
+                {
+                    currentState = GhostStates.Scatter;
+                    currPeriodIndex++;
+                }
+                else
+                {
+                    currentState = GhostStates.Chase;
+                }
+
+                ScatterChaseTimer = TimeSpan.Zero;
+            }
+
 
             pacman.Update(gameTime);
             //ghosts[0].Update(gameTime);
@@ -195,14 +299,15 @@ namespace LePacman.Screens.MainGame
 
             if (pacmanPosition.currentState == States.Pellet)
             {
-                pacman.freezeFrameCounter = 1;
+
                 pacmanPosition.currentState = States.Empty;
                 score += 10;
                 targetScore++;
             }
             if (pacmanPosition.currentState == States.PowerPellet)
             {
-                pacman.freezeFrameCounter = 3;
+                currentState = GhostStates.Frightened;
+
                 pacmanPosition.currentState = States.Empty;
                 score += 50;
                 targetScore++;
@@ -218,6 +323,8 @@ namespace LePacman.Screens.MainGame
             debugClyde.Position = ghosts[3].currTargetTile.ToVector2();
             base.Update(gameTime);
         }
+
+
 
         public override void Draw(SpriteBatch spriteBatch)
         {
@@ -237,7 +344,7 @@ namespace LePacman.Screens.MainGame
             ghostChamber.Draw(spriteBatch);
 
             pacman.Draw(spriteBatch);
-            
+
 
             foreach (var ghost in ghosts)
             {
@@ -249,7 +356,7 @@ namespace LePacman.Screens.MainGame
             debugBlinky.Draw(spriteBatch);
             debugClyde.Draw(spriteBatch);
 
-            spriteBatch.DrawString(HeaderFonts, "High Score", new Vector2(size.X / 2 - HeaderFonts.MeasureString("HighScore").X/2, 0), Color.White);
+            spriteBatch.DrawString(HeaderFonts, "High Score", new Vector2(size.X / 2 - HeaderFonts.MeasureString("HighScore").X / 2, 0), Color.White);
             spriteBatch.DrawString(HeaderFonts, score.ToString(), new Vector2(size.X / 2, 27), Color.White);
 
             base.Draw(spriteBatch);

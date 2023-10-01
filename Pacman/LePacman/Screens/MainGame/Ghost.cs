@@ -30,13 +30,13 @@ namespace LePacman.Screens.MainGame
         }
 
         public virtual Point currTargetTile { get; set; }
-
         protected Point scatterTarget;
 
-        public static GhostStates currGhostState;
-
+        public static GhostStates currGhostState => MainGame.currentState;
         protected EntityStates pendingDirection;
 
+        public static TimeSpan normalSpeed;
+        public static TimeSpan frightSpeed;
 
         static Graph<Point> graph = new Graph<Point>();
 
@@ -164,24 +164,55 @@ namespace LePacman.Screens.MainGame
             {
                 //banned from going up: (12, 11); (15, 11); (12, 23); (15, 23)
 
-                float shortestDistance = 100000;
-
-                foreach (var neighbor in graph.Vertices[currIndex].Neighbors)
+                if (currGhostState == GhostStates.Frightened)
                 {
-                    PelletTileVisual currNeighborTile = tiles[neighbor.EndingPoint.value.X, neighbor.EndingPoint.value.Y];
-
-                    if (currNeighborTile.coord == localPos - directions[currDirection]) { continue; }
-
-                    float currSLDistance = Vector2.Distance(currNeighborTile.Position, currTargetTile.ToVector2());
-                    if (currSLDistance < shortestDistance)
-                    {
-                        shortestDistance = currSLDistance;
-                        pendingDirection = PointToDirection(neighbor.EndingPoint.value - localPos);
-                    }
+                    FrightenedMovement(tiles, currIndex);
                 }
+                else
+                {
+                    NormalMovement(tiles, currIndex);
+                }
+
+
             }
 
             currDirection = pendingDirection;
+        }
+
+        private void FrightenedMovement(PelletTileVisual[,] tiles, int currIndex) 
+        {
+            while (true)
+            {
+                int randIndex = Random.Shared.Next(graph.Vertices[currIndex].NeighborCount);
+                Edge<Point> randomNeighbor = graph.Vertices[currIndex].Neighbors[randIndex];
+
+                PelletTileVisual currNeighborTile = tiles[randomNeighbor.EndingPoint.value.X, randomNeighbor.EndingPoint.value.Y];
+
+                if (currNeighborTile.coord == localPos - directions[currDirection]) { continue; }
+
+                pendingDirection = PointToDirection(randomNeighbor.EndingPoint.value - localPos);
+
+                break;
+            }
+        }
+
+        private void NormalMovement(PelletTileVisual[,] tiles, int currIndex)
+        {
+            float shortestDistance = 100000;
+
+            foreach (var neighbor in graph.Vertices[currIndex].Neighbors)
+            {
+                PelletTileVisual currNeighborTile = tiles[neighbor.EndingPoint.value.X, neighbor.EndingPoint.value.Y];
+
+                if (currNeighborTile.coord == localPos - directions[currDirection]) { continue; }
+
+                float currSLDistance = Vector2.Distance(currNeighborTile.Position, currTargetTile.ToVector2());
+                if (currSLDistance < shortestDistance)
+                {
+                    shortestDistance = currSLDistance;
+                    pendingDirection = PointToDirection(neighbor.EndingPoint.value - localPos);
+                }
+            }
         }
 
         protected override void AnimationLogic()

@@ -21,12 +21,15 @@ namespace LePacman.Screens.MainGame
 
         public int freezeFrameCounter = 0;
 
+        public TimeSpan normalSpeed;
+        public TimeSpan frightSpeed;
+
         public Pacman(Vector2 Position, Color Tint, Vector2 Scale, Point Coord) : base(Position, Tint, Scale, EntityStates.ClosedPacman, Coord)
         {
             defaultSize = new Point(13);
 
-            maxSpeed = TimeSpan.FromMilliseconds(80);
-            ļSpeed = maxSpeed * .8;//1.2;
+            maxSpeed = TimeSpan.FromMilliseconds(85);
+            ļSpeed = maxSpeed * 1.2;
 
             animationLimit = TimeSpan.FromMilliseconds(30);
             animationMin = 0;

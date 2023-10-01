@@ -43,7 +43,6 @@ namespace LePacman.Screens.MainGame
 
         public Clyde(Vector2 Position, Color Tint, Vector2 Scale, Point Coord) : base(Position, Tint, Scale, EntityStates.Clyde, Coord)
         {
-            currGhostState = GhostStates.Chase;
             currDirection = EntityStates.Right;
 
             scatterTarget = PelletGrid.Instance.gridTiles[0, 30].Position.ToPoint() + new Point(-30, 60);

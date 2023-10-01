@@ -28,7 +28,6 @@ namespace LePacman.Screens.MainGame
 
         public Blinky(Vector2 Position, Color Tint, Vector2 Scale, Point Coord) : base(Position, Tint, Scale, EntityStates.Blinky, Coord)
         {
-            currGhostState = GhostStates.Chase;
             currDirection = EntityStates.Left;
 
             scatterTarget = PelletGrid.Instance.gridTiles[26, 0].Position.ToPoint() - new Point(0, 60);//new Point(30, 60);
