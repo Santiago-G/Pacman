@@ -57,6 +57,13 @@ namespace LePacman.Screens.MainGame
             [EntityStates.PinkyUpShifty] = new Point(76, 82),
             [EntityStates.PinkyDown] = new Point(91, 82),
             [EntityStates.PinkyDownShifty] = new Point(106, 82),
+
+            [EntityStates.BlueWah] = new Point(76, 97),
+            [EntityStates.BlueWahShifty] = new Point(91, 97),
+
+            [EntityStates.WhiteWah] = new Point(76, 112),
+            [EntityStates.WhiteWahShifty] = new Point(91, 112),
+
         };
 
         protected virtual EntityStates EntityState { get; set; }

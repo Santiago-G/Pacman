@@ -20,7 +20,17 @@ namespace LePacman.Screens.MainGame
         {
             get
             {
-                if (shifty) 
+                if (MainGame.currentState == GhostStates.Frightened)
+                {
+                    if (shifty)
+                    {
+                        return EntityStates.BlueWah ^ EntityStates.Shifty;
+                    }
+
+                    return EntityStates.BlueWah;
+                }
+
+                if (shifty)
                 {
                     return defaultGhost | currDirection ^ EntityStates.Shifty;
                 }
@@ -52,6 +62,25 @@ namespace LePacman.Screens.MainGame
             defaultGhost = DefaultGhost;
 
             animationLimit = TimeSpan.FromMilliseconds(100);
+        }
+
+        public void ReverseDirection() 
+        {
+            switch (currDirection)
+            {
+                case EntityStates.Left:
+                    currDirection = EntityStates.Right;
+                    break;
+                case EntityStates.Right:
+                    currDirection = EntityStates.Left;
+                    break;
+                case EntityStates.Up:
+                    currDirection = EntityStates.Down;
+                    break;
+                case EntityStates.Down:
+                    currDirection = EntityStates.Up;
+                    break;
+            }
         }
 
         public static void LoadGrid()

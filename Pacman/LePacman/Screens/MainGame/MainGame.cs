@@ -299,14 +299,16 @@ namespace LePacman.Screens.MainGame
 
             if (pacmanPosition.currentState == States.Pellet)
             {
-
+                pacman.freezeFrameCounter++;
                 pacmanPosition.currentState = States.Empty;
                 score += 10;
                 targetScore++;
             }
             if (pacmanPosition.currentState == States.PowerPellet)
             {
-                currentState = GhostStates.Frightened;
+                ChangeModes(GhostStates.Frightened);
+
+                pacman.freezeFrameCounter += 3;
 
                 pacmanPosition.currentState = States.Empty;
                 score += 50;
@@ -324,7 +326,37 @@ namespace LePacman.Screens.MainGame
             base.Update(gameTime);
         }
 
+        private void ChangeModes(GhostStates newState )
+        {
+            switch (newState)
+            {
+                case GhostStates.Chase:
+                    break;
+                case GhostStates.Scatter:
+                    break;
+                case GhostStates.Frightened:
+                    EnterFrightened();
+                    break;
+            }
+        }
 
+        private void EnterFrightened()
+        {
+            if (currentState == GhostStates.Frightened)
+            {
+                //just reset the timer.
+
+                return;
+            }
+
+            currentState = GhostStates.Frightened;
+
+            foreach (var ghost in ghosts)
+            {
+                ghost.ļSpeed = Ghost.frightSpeed;
+                ghost.ReverseDirection();
+            }
+        }
 
         public override void Draw(SpriteBatch spriteBatch)
         {

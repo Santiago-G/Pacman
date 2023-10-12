@@ -181,6 +181,12 @@ namespace Pacman
         ClydeRightShifty = ClydeRight | Shifty,
         ClydeDownShifty = ClydeDown | Shifty,
         ClydeLeftShifty = ClydeLeft | Shifty,
+
+        BlueWah = 256,
+        BlueWahShifty = BlueWah | Shifty,
+
+        WhiteWah = 512,
+        WhiteWahShifty = WhiteWah | Shifty,
     }
 
     public enum GhostStates

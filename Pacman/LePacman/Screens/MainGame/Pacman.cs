@@ -143,53 +143,6 @@ namespace LePacman.Screens.MainGame
 
             #region Timer Based Movement
 
-
-
-            //MainGame.pelletGrid[prevGridPos.X, prevGridPos.Y].currentState = States.Empty;
-            //localPos = Scalar >= .5f ? gridPos : prevGridPos;
-            //MainGame.pelletGrid[localPos.X, localPos.Y].currentState = States.Debug;
-
-
-            // base.Update(gameTime);
-
-            //if (timer - ļSpeed > -gameTime.ElapsedGameTime)
-            //{
-            //    if (tileInFront(false).currentState != States.Occupied)
-            //    {
-            //        GridPosition += directions[currDirection];
-            //        animate = true;
-
-            //        //29, 32
-            //        if (GridPosition.X == 0)
-            //        {
-            //            GridPosition = new Point(MainGame.pelletGrid.GetLength(0) - 1, GridPosition.Y);
-            //            prevGridPos = GridPosition;
-            //        }
-            //        else if (GridPosition.X == MainGame.pelletGrid.GetLength(0) - 1)
-            //        {
-            //            GridPosition = new Point(0, GridPosition.Y);
-            //            prevGridPos = GridPosition;
-            //        }
-            //        else if (GridPosition.Y <= 0)
-            //        {
-            //            GridPosition = new Point(GridPosition.X, MainGame.pelletGrid.GetLength(1) - 1);
-            //            prevGridPos = GridPosition;
-            //        }
-            //        else if (GridPosition.Y >= MainGame.pelletGrid.GetLength(1) - 1)
-            //        {
-            //            GridPosition = new Point(GridPosition.X, 0);
-            //            prevGridPos = GridPosition;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        GridPosition = GridPosition;
-            //        animate = false;
-            //    }
-
-            //    timer = TimeSpan.Zero;
-            //}
-            //base.Update(gameTime);
             #endregion
         }
 
