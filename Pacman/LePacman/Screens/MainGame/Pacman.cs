@@ -95,7 +95,7 @@ namespace LePacman.Screens.MainGame
         #endregion
 
         //https://gameinternals.com/understanding-pac-man-ghost-behavior
-        //https://www.gamedeveloper.com/design/the-pac-man-dossier#close-modal
+        //https://pacman.holenet.info/
 
         public override void Update(GameTime gameTime)
         {

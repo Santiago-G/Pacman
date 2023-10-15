@@ -7,6 +7,7 @@ using Newtonsoft.Json.Bson;
 using Pacman;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -26,6 +27,8 @@ namespace LePacman.Screens.MainGame
         public static WallTileVisual[,] wallGrid = new WallTileVisual[29, 32];
         public static PelletTileVisual[,] pelletGrid = new PelletTileVisual[28, 31];
 
+        private static int elroy1 = 2112;
+        private static int elroy2 = 1999;
 
         #region Entities
 
@@ -44,9 +47,9 @@ namespace LePacman.Screens.MainGame
 
         private TimeSpan currentPeriod
         {
-            get 
+            get
             {
-                if (currentState == GhostStates.Chase) 
+                if (currentState == GhostStates.Chase)
                 {
                     return ChasePeriods[currPeriodIndex];
                 }
@@ -54,8 +57,11 @@ namespace LePacman.Screens.MainGame
                 return ScatterPeriods[currPeriodIndex];
             }
         }
+        static TimeSpan currFrightPeriod;
 
         static TimeSpan ScatterChaseTimer;
+        static TimeSpan FrightTimer;
+        
 
         private int score;
         private static int pelletTarget = 0;
@@ -211,56 +217,86 @@ namespace LePacman.Screens.MainGame
             };
             Ghost.LoadGrid();
 
+            LoadLevels();
             LoadNewLevel();
         }
 
         #endregion
+        record struct LevelInfo(double[] ScatterTimes, int[] ChasePeriods, int FrightPeriod, double PacmanSpeed, double FrightPacManSpeed, double GhostSpeed, double FrightGhostSpeed, int Elroy1Dots, int Elroy2Dots, double Elroy1Speed, double Elroy2Speed, int FrightTime, int NumbOfFlashes);
+
+        static LevelInfo[] Levels = new LevelInfo[21];
+
+        private static void LoadLevels()
+        {
+            double pacmanMaxSpeed = pacman.maxSpeed.TotalMilliseconds;
+
+            Levels[0] = new(ScatterTimes: new double[] { 7, 7, 5, 5 }, ChasePeriods: new int[] { 20, 20, 20 }, FrightPeriod: 6, //Times
+                PacmanSpeed: pacmanMaxSpeed * 1.2, pacmanMaxSpeed * 1.1, pacmanMaxSpeed * 1.25, pacmanMaxSpeed * 1.5,           //Speeds
+                pelletTarget - 20, pelletTarget - 10, pacmanMaxSpeed * 1.2, pacmanMaxSpeed * 1.15, 6, 5);                        //Elroy && Frightend Stuff
+
+
+            Levels[1] = new(ScatterTimes: new double[] { 7, 7, 5, 1/60 }, ChasePeriods: new int[] { 20, 20, 1033 }, FrightPeriod: 6,
+                PacmanSpeed: pacmanMaxSpeed * 1.1, pacmanMaxSpeed * 1.05, pacmanMaxSpeed * 1.15, pacmanMaxSpeed * 1.45,
+                pelletTarget - 30, pelletTarget - 15, pacmanMaxSpeed * 1.1, pacmanMaxSpeed * 1.05, 5, 5);
+
+            Levels[2] = Levels[1];
+            Levels[2].Elroy1Dots -= 10; Levels[2].Elroy2Dots -= 5; Levels[2].FrightTime -= 1;
+
+            Levels[3] = Levels[2];
+            Levels[3].FrightTime -= 1;
+
+            Levels[4] = new(ScatterTimes: new double[] { 5, 5, 5, 1 / 60 }, ChasePeriods: new int[] { 20, 20, 1037 }, FrightPeriod: 6,
+                PacmanSpeed: pacmanMaxSpeed, pacmanMaxSpeed, pacmanMaxSpeed * 1.05, pacmanMaxSpeed * 1.4,
+                pelletTarget - 40, pelletTarget - 20, pacmanMaxSpeed, pacmanMaxSpeed * .95, 2, 5);
+
+            int elroyCount = 0;
+            int currentElroy = Levels[4].Elroy1Dots;
+
+            for (int i = 5; i < Levels.Length - 1; i++)
+            {
+                Levels[i] = Levels[4];
+
+                if (elroyCount % 3 == 0)
+                {
+                    currentElroy -= 10 * (Math.Clamp(i, 5, 11)/5);
+                }
+
+                Levels[i].Elroy1Dots = currentElroy;
+                Levels[i].Elroy2Dots = currentElroy / 2;
+
+                elroyCount++;
+            }
+
+            Levels[17].Elroy1Dots = pelletTarget - 100; Levels[17].Elroy2Dots = pelletTarget - 50;
+
+            Levels[5].FrightTime = Levels[9].FrightTime = 5;
+            Levels[6].FrightTime = Levels[7].FrightTime = Levels[10].FrightTime = 2;
+            Levels[8].FrightTime = Levels[11].FrightTime = Levels[12].FrightTime = Levels[14].FrightTime = Levels[15].FrightTime = Levels[17].FrightTime = 1;
+            Levels[13].FrightTime = 3;
+
+            Levels[8].NumbOfFlashes = Levels[11].NumbOfFlashes = Levels[12].NumbOfFlashes = Levels[14].NumbOfFlashes = Levels[15].NumbOfFlashes = Levels[17].NumbOfFlashes = 3;
+            
+           feafeaf //do the last level (21), i bookmarked the website on chrome
+           // and remove the fright stuff for levels 17 && 19-21
+        }
 
         private static void LoadNewLevel()
         {
             LevelCounter++;
 
-            switch (LevelCounter)
-            {
-                case 1:
+            var currentLevel = Levels[LevelCounter];
 
-                    ScatterPeriods = new TimeSpan[4] { TimeSpan.FromSeconds(7), TimeSpan.FromSeconds(7), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5) };
-                    ChasePeriods = new TimeSpan[3] { TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(20) };
+            ScatterPeriods = new TimeSpan[4];
+            for (int i = 0; i < ScatterPeriods.Length; ScatterPeriods[i] = TimeSpan.FromSeconds(currentLevel.ScatterTimes[i++]))
 
-                    pacman.normalSpeed = pacman.maxSpeed * 1.2;
-                    pacman.frightSpeed = pacman.maxSpeed * 1.1;
-                    Ghost.normalSpeed = pacman.maxSpeed * 1.25;
-                    Ghost.frightSpeed = pacman.maxSpeed * 1.5;
+                ChasePeriods = new TimeSpan[3];
+            for (int i = 0; i < ChasePeriods.Length; ChasePeriods[i] = TimeSpan.FromSeconds(currentLevel.ChasePeriods[i++]))
 
-                    break;
-                case 2:
-                    ScatterPeriods = new TimeSpan[4] { TimeSpan.FromSeconds(7), TimeSpan.FromSeconds(7), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(1 / 60) };
-                    ChasePeriods = new TimeSpan[3] { TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(1033) };
-
-                    pacman.normalSpeed = pacman.maxSpeed * 1.1;
-                    pacman.frightSpeed = pacman.maxSpeed * 1.05;
-                    Ghost.normalSpeed = pacman.maxSpeed * 1.15;
-                    Ghost.frightSpeed = pacman.maxSpeed * 1.45;
-                    break;
-                case 5:
-                    ScatterPeriods = new TimeSpan[4] { TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(1 / 60) };
-                    ChasePeriods = new TimeSpan[3] { TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(1037) };
-
-                    pacman.normalSpeed = pacman.maxSpeed;
-                    pacman.frightSpeed = pacman.maxSpeed;
-                    Ghost.normalSpeed = pacman.maxSpeed * 1.05;
-                    Ghost.frightSpeed = pacman.maxSpeed * 1.4;
-                    break;
-                case 21:
-
-                    pacman.normalSpeed = pacman.maxSpeed * 1.1;
-                    pacman.frightSpeed = pacman.maxSpeed * 5;
-                    Ghost.frightSpeed = pacman.maxSpeed * .3;
-                    break;
-            }
+                currFrightPeriod = TimeSpan.FromSeconds(currentLevel.FrightPeriod);
 
             currPeriodIndex = 0;
             ScatterChaseTimer = TimeSpan.Zero;
+            FrightTimer = TimeSpan.Zero;
 
             currentState = GhostStates.Scatter;
         }
@@ -272,6 +308,16 @@ namespace LePacman.Screens.MainGame
             if (currentState != GhostStates.Frightened) 
             {
                 ScatterChaseTimer += gameTime.ElapsedGameTime;
+            }
+            else
+            {
+                FrightTimer += gameTime.ElapsedGameTime;
+
+                if (FrightTimer >= currFrightPeriod)
+                {
+                    ;
+                    //ChangeModes(ghoststat)
+                }
             }
 
             if (ScatterChaseTimer > currentPeriod)

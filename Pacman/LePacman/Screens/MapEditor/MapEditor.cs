@@ -19,7 +19,7 @@ namespace LePacman.Screens.MapEditor
 {
     public class MapEditor : Screen
     {        
-        public record struct SavedMap
+        public struct SavedMap
         {
             public string Name { get; set; }
 
