@@ -26,6 +26,9 @@ namespace LePacman.Screens.MainGame
             }
         }
 
+        public static TimeSpan elroy1Speed;
+        public static TimeSpan elroy2Speed;
+
         public Blinky(Vector2 Position, Color Tint, Vector2 Scale, Point Coord) : base(Position, Tint, Scale, EntityStates.Blinky, Coord)
         {
             currDirection = EntityStates.Left;

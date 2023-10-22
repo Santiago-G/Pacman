@@ -45,8 +45,17 @@ namespace LePacman.Screens.MainGame
         public static GhostStates currGhostState => MainGame.currentState;
         protected EntityStates pendingDirection;
 
-        public static TimeSpan normalSpeed;
         public static TimeSpan frightSpeed;
+        TimeSpan previousSpeed;
+
+        public TimeSpan PreviousSpeed
+        {
+            get => previousSpeed;
+            set
+            {
+                previousSpeed = value;
+            }
+        }
 
         static Graph<Point> graph = new Graph<Point>();
 
@@ -64,7 +73,7 @@ namespace LePacman.Screens.MainGame
             animationLimit = TimeSpan.FromMilliseconds(100);
         }
 
-        public void ReverseDirection() 
+        public void ReverseDirection()
         {
             switch (currDirection)
             {
@@ -107,7 +116,7 @@ namespace LePacman.Screens.MainGame
                     {
                         //no left
                         graph.AddEdge(graph.Vertices[i], graph.Vertices[i - tiles.GetLength(1)]);
-                        if (graph.Vertices[i - tiles.GetLength(1)].value != new Point(x - 1, y)) 
+                        if (graph.Vertices[i - tiles.GetLength(1)].value != new Point(x - 1, y))
                             ;
                         //PelletGrid[]
                     }
@@ -139,7 +148,7 @@ namespace LePacman.Screens.MainGame
             }
 
             foreach (var edge in graph.Edges)
-            {                
+            {
                 if (edge.EndingPoint.value == new Point(9))
                 {
                     ;
@@ -208,7 +217,7 @@ namespace LePacman.Screens.MainGame
             currDirection = pendingDirection;
         }
 
-        private void FrightenedMovement(PelletTileVisual[,] tiles, int currIndex) 
+        private void FrightenedMovement(PelletTileVisual[,] tiles, int currIndex)
         {
             while (true)
             {

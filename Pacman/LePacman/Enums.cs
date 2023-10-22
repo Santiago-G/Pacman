@@ -191,9 +191,9 @@ namespace Pacman
 
     public enum GhostStates
     {
+        Frightened,
         Chase,
         Scatter,
-        Frightened
     }
 
     public enum GridStates
