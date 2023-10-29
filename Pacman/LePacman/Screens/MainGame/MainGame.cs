@@ -28,7 +28,6 @@ namespace LePacman.Screens.MainGame
         public static PelletTileVisual[,] pelletGrid = new PelletTileVisual[28, 31];
 
         private static int elroy1 = 2112;
-        private static int elroy2 = 1999;
 
         #region Entities
 
@@ -214,15 +213,17 @@ namespace LePacman.Screens.MainGame
 
             portalLogic(map);
 
-            pacman = new Pacman(pacmanPos, Color.White, new Vector2(size * 1.4f), pacmanCoord);
+            float entitySizeModifier = size * 1.32f;
+
+            pacman = new Pacman(pacmanPos, Color.White, new Vector2(entitySizeModifier), pacmanCoord);
             ghostChamber = new GhostChamber(gcPos, Color.White, new Vector2(size));
 
             ghosts = new Ghost[4]
             {
-                PelletGrid.Instance.Blinky = new Blinky(new Vector2(gcPos.X, gcPos.Y - tileSize*3), Color.White, new Vector2(size * 1.4f), blinkyCoord),
-                PelletGrid.Instance.Inky = new Inky(new Vector2(gcPos.X - tileSize*2, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X - 2, blinkyCoord.Y)),
-                PelletGrid.Instance.Pinky = new Pinky(new Vector2(gcPos.X, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X + 2, blinkyCoord.Y)),
-                PelletGrid.Instance.Clyde = new Clyde(new Vector2(gcPos.X + tileSize*2, gcPos.Y ), Color.White, new Vector2(size * 1.4f), new Point(blinkyCoord.X + 2, blinkyCoord.Y - 3))
+                PelletGrid.Instance.Blinky = new Blinky(new Vector2(gcPos.X, gcPos.Y - tileSize*3), Color.White, new Vector2(size * 1.35f), blinkyCoord),
+                PelletGrid.Instance.Inky = new Inky(new Vector2(gcPos.X - tileSize*2, gcPos.Y ), Color.White, new Vector2(size * 1.35f), new Point(blinkyCoord.X - 2, blinkyCoord.Y)),
+                PelletGrid.Instance.Pinky = new Pinky(new Vector2(gcPos.X, gcPos.Y ), Color.White, new Vector2(size * 1.35f), new Point(blinkyCoord.X + 2, blinkyCoord.Y)),
+                PelletGrid.Instance.Clyde = new Clyde(new Vector2(gcPos.X + tileSize*2, gcPos.Y ), Color.White, new Vector2(size * 1.35f), new Point(blinkyCoord.X + 2, blinkyCoord.Y - 3))
             };
             Ghost.LoadGrid();
 
@@ -297,7 +298,7 @@ namespace LePacman.Screens.MainGame
             ScatterPeriods = new TimeSpan[4];
             for (int i = 0; i < ScatterPeriods.Length; ScatterPeriods[i] = TimeSpan.FromSeconds(currentLevel.ScatterTimes[i++]))
 
-                ChasePeriods = new TimeSpan[3];
+                ChasePeriods = new TimeSpan[4];
             for (int i = 0; i < ChasePeriods.Length; ChasePeriods[i] = TimeSpan.FromSeconds(currentLevel.ChasePeriods[i++]))
 
                 currFrightPeriod = TimeSpan.FromSeconds(currentLevel.FrightPeriod);
@@ -379,36 +380,15 @@ namespace LePacman.Screens.MainGame
                 score += 10;
                 pelletsEaten++;
 
-                if (pelletsEaten == elroy2)
+                if (PelletsLeft % (elroy1 / 2) == 0 && PelletsLeft <= elroy1)
                 {
-                    blinky.Tint = Color.Cyan;
-                    if (currentState != GhostStates.Frightened)
-                    {
-                        blinky.ļSpeed = TimeSpan.FromMilliseconds(Levels[LevelCounter].Elroy2Speed);
-                    }
-                    else
-                    {
-                        blinky.PreviousSpeed = TimeSpan.FromMilliseconds(Levels[LevelCounter].Elroy2Speed);
-                    }
-                }
-                else if (PelletsLeft % (elroy1 / 2) == 0 && PelletsLeft <= elroy1)
-                {
-
-                    int elroyDegree = ~(PelletsLeft / elroy1) & 1;
-
-                    blinky.Tint = Color.Lime;
-                    //multiply elroy degree by -.05 to make it faster
-
-
+                    int elroyDegree = (~(PelletsLeft / elroy1) & 1);
                     var notScared = (int)(currentState + 1) / 2;
 
-                    blinky.ļSpeed = TimeSpan.FromMilliseconds(currentState != GhostStates.Frightened ? Levels[LevelCounter].Elroy1Speed : blinky.ļSpeed.TotalMilliseconds);
+                    var elroySpeed = Levels[LevelCounter].Elroy1Speed - (elroyDegree * Levels[LevelCounter].Elroy1Speed * .05);
 
-                    blinky.ļSpeed = TimeSpan.FromMilliseconds((Levels[LevelCounter].Elroy1Speed) * notScared + blinky.ļSpeed.TotalMilliseconds * ~(notScared & 1));
-
-
-                    blinky.PreviousSpeed = TimeSpan.FromMilliseconds(Levels[LevelCounter].Elroy1Speed);
-
+                    blinky.ļSpeed = TimeSpan.FromMilliseconds(currentState != GhostStates.Frightened ? elroySpeed : blinky.ļSpeed.TotalMilliseconds);
+                    blinky.PreviousSpeed = TimeSpan.FromMilliseconds(elroySpeed);
                 }
 
             }
@@ -498,10 +478,10 @@ namespace LePacman.Screens.MainGame
             pacman.Draw(spriteBatch);
 
 
-            foreach (var ghost in ghosts)
-            {
-                ghost.Draw(spriteBatch);
-            }
+            //foreach (var ghost in ghosts)
+            //{
+            //    ghost.Draw(spriteBatch);
+            //}
 
             debugInky.Draw(spriteBatch);
             debugPinky.Draw(spriteBatch);
@@ -512,7 +492,7 @@ namespace LePacman.Screens.MainGame
             //spriteBatch.DrawString(HeaderFonts, score.ToString(), new Vector2(size.X / 2, 27), Color.White);
 
             spriteBatch.DrawString(HeaderFonts, $"Ghost Speed: {ghosts[0].ļSpeed.TotalMilliseconds}", new Vector2(10), Color.White);
-            spriteBatch.DrawString(HeaderFonts, $"Ghost Speed: {ghosts[1].ļSpeed.TotalMilliseconds}", new Vector2(600, 10), Color.White);
+            spriteBatch.DrawString(HeaderFonts, $"Pac Speed: {pacman.ļSpeed.TotalMilliseconds}", new Vector2(600, 10), Color.White);
 
 
             base.Draw(spriteBatch);

@@ -28,10 +28,10 @@ namespace LePacman.Screens.MainGame
         {
             defaultSize = new Point(13);
 
-            maxSpeed = TimeSpan.FromMilliseconds(85);
+            maxSpeed = TimeSpan.FromMilliseconds(90);
             ļSpeed = maxSpeed * 1.2;
 
-            animationLimit = TimeSpan.FromMilliseconds(30);
+            animationLimit = TimeSpan.FromMilliseconds(25);
             animationMin = 0;
             animationMax = 2;
 
@@ -67,13 +67,61 @@ namespace LePacman.Screens.MainGame
 
         public PelletTileVisual currPelletTile => MainGame.pelletGrid[GridPosition.X, GridPosition.Y];
 
-        //Ask if I should keep track of the tiles in the Pacman class or in MainGame, like if I should check for pellets or if a wall is infront of pacman in the class
-        //cuz If i do i have to make a lot of stuff public static and idk if thats the right way to go about it
-
-
 
         private void CheckMovementWindow(GameTime gameTime)
         {
+
+            int x = Math.Clamp(GridPosition.X + directions[currDirection].X, 0, 28);
+            int y = Math.Clamp(GridPosition.Y + directions[currDirection].Y, 0, 31);
+            int startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.Y;
+            int endingTreshold;
+            bool horizontal = true;
+
+            switch (currDirection)
+            {
+                case EntityStates.Left:
+                    startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.X;
+                    endingTreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.X + 5;
+                    break;
+                case EntityStates.Right:
+                    startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.X;
+                    endingTreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.X - 4;
+                    break;
+                case EntityStates.Up:
+                    startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.Y;
+                    endingTreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.Y + 4;
+
+                    horizontal = false;
+                    break;
+                case EntityStates.Down:
+                    startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.Y;
+                    endingTreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.Y - 5;
+
+                    horizontal = false;
+                    break;
+            }
+
+            if (horizontal)
+            {
+                if (Position.X >= startingThreshold && Position.Y <= endingTreshold)
+                {
+                    MODERN LOVE //doing preturns, you'll know what to do...     right?
+                }
+            }
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
             movementCounter += gameTime.ElapsedGameTime;
 
             if (TileInFront(true).currentState != States.Occupied)
@@ -97,6 +145,27 @@ namespace LePacman.Screens.MainGame
         //https://gameinternals.com/understanding-pac-man-ghost-behavior
         //https://pacman.holenet.info/
 
+        private void CheckTurn (EntityStates pendingDirection)
+        {
+            if (currDirection == pendingDirection) { return; }
+
+            if (GridPosition == GridPosition + directions[currDirection] + directions[pendingDirection]) //reverse direction
+            {
+                return;
+            }
+
+            //FOR NOW: Check if the tile forward in the currDirection and one to the pending direction is empty. If it is, turn.
+
+            int x = Math.Clamp(GridPosition.X + directions[currDirection].X + directions[pendingDirection].X, 0, 28);
+            int y = Math.Clamp(GridPosition.Y + directions[currDirection].Y + directions[pendingDirection].Y, 0, 31);
+
+            if (MainGame.pelletGrid[x, y].currentState == States.Empty)
+            {
+                movementWindow = true;
+                string Modern = "Turn";
+            }
+        }
+
         public override void Update(GameTime gameTime)
         {
             KeyboardState kb = Keyboard.GetState();
@@ -105,26 +174,31 @@ namespace LePacman.Screens.MainGame
             {
                 pendingDirection = EntityStates.Up;
                 pendingRotation = (float)(Math.PI * 1.5);
-                movementWindow = true;
+                
+                CheckTurn(pendingDirection);
             }
             else if (kb.IsKeyDown(Keys.Right))
             {
                 pendingDirection = EntityStates.Right;
                 pendingRotation = 0;
-                movementWindow = true;
+
+                CheckTurn(pendingDirection);
             }
             else if (kb.IsKeyDown(Keys.Down))
             {
                 pendingDirection = EntityStates.Down;
                 pendingRotation = (float)(Math.PI * .5);
-                movementWindow = true;
+
+                CheckTurn(pendingDirection);
             }
             else if (kb.IsKeyDown(Keys.Left))
             {
                 pendingDirection = EntityStates.Left;
                 pendingRotation = (float)(Math.PI);
-                movementWindow = true;
+
+                CheckTurn(pendingDirection);
             }
+           
 
             if (movementWindow)
             {
@@ -140,10 +214,6 @@ namespace LePacman.Screens.MainGame
                 freezeFrameCounter--;
             }
             
-
-            #region Timer Based Movement
-
-            #endregion
         }
 
 
