@@ -36,7 +36,7 @@ namespace LePacman.Screens.MainGame
             animationMax = 2;
 
             currDirection = EntityStates.Right;
-
+            startingPostion = Position;
             //Max speed
 
             PelletGrid.Instance.Pacman = this;
@@ -71,56 +71,6 @@ namespace LePacman.Screens.MainGame
         private void CheckMovementWindow(GameTime gameTime)
         {
 
-            int x = Math.Clamp(GridPosition.X + directions[currDirection].X, 0, 28);
-            int y = Math.Clamp(GridPosition.Y + directions[currDirection].Y, 0, 31);
-            int startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.Y;
-            int endingTreshold;
-            bool horizontal = true;
-
-            switch (currDirection)
-            {
-                case EntityStates.Left:
-                    startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.X;
-                    endingTreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.X + 5;
-                    break;
-                case EntityStates.Right:
-                    startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.X;
-                    endingTreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.X - 4;
-                    break;
-                case EntityStates.Up:
-                    startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.Y;
-                    endingTreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.Y + 4;
-
-                    horizontal = false;
-                    break;
-                case EntityStates.Down:
-                    startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.Y;
-                    endingTreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.Y - 5;
-
-                    horizontal = false;
-                    break;
-            }
-
-            if (horizontal)
-            {
-                if (Position.X >= startingThreshold && Position.Y <= endingTreshold)
-                {
-                    MODERN LOVE //doing preturns, you'll know what to do...     right?
-                }
-            }
-            
-
-
-
-
-
-
-
-
-
-
-
-
 
             movementCounter += gameTime.ElapsedGameTime;
 
@@ -147,10 +97,12 @@ namespace LePacman.Screens.MainGame
 
         private void CheckTurn (EntityStates pendingDirection)
         {
-            if (currDirection == pendingDirection) { return; }
+            if (currDirection == pendingDirection)  return; 
+
+            startingPostion = Position;
 
             if (GridPosition == GridPosition + directions[currDirection] + directions[pendingDirection]) //reverse direction
-            {
+            { 
                 return;
             }
 
@@ -159,7 +111,7 @@ namespace LePacman.Screens.MainGame
             int x = Math.Clamp(GridPosition.X + directions[currDirection].X + directions[pendingDirection].X, 0, 28);
             int y = Math.Clamp(GridPosition.Y + directions[currDirection].Y + directions[pendingDirection].Y, 0, 31);
 
-            if (MainGame.pelletGrid[x, y].currentState == States.Empty)
+            if (MainGame.pelletGrid[x, y].currentState != States.Occupied)
             {
                 movementWindow = true;
                 string Modern = "Turn";
@@ -174,6 +126,7 @@ namespace LePacman.Screens.MainGame
             {
                 pendingDirection = EntityStates.Up;
                 pendingRotation = (float)(Math.PI * 1.5);
+                
                 
                 CheckTurn(pendingDirection);
             }

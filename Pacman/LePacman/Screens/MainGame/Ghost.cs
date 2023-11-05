@@ -180,7 +180,7 @@ namespace LePacman.Screens.MainGame
             return EntityStates.Left;
         }
 
-        override protected void FunnyChair()
+        override protected void LaSillaDivertida()
         {
             PelletTileVisual[,] tiles = PelletGrid.Instance.gridTiles;
             int currIndex = localPos.X * tiles.GetLength(1) + localPos.Y;

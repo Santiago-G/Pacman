@@ -90,6 +90,8 @@ namespace LePacman.Screens.MainGame
         public TimeSpan maxSpeed;
         public bool canMove = true;
 
+        protected Vector2 startingPostion;
+
         public EntityStates currDirection;
         public static Dictionary<EntityStates, Point> directions = new Dictionary<EntityStates, Point>
         {
@@ -141,7 +143,7 @@ namespace LePacman.Screens.MainGame
         }
 
 
-        protected virtual void FunnyChair()
+        protected virtual void LaSillaDivertida()
         {
             return;
         }
@@ -171,12 +173,14 @@ namespace LePacman.Screens.MainGame
 
             if (timer >= ļSpeed)
             {
-                FunnyChair();
+                LaSillaDivertida();
 
                 if (NextPositionValid())
                 {
                     GridPosition += directions[currDirection];
                     animate = true;
+
+                    //
 
                     //29, 32
                     if (GridPosition.X == 0)
@@ -199,6 +203,8 @@ namespace LePacman.Screens.MainGame
                         GridPosition = new Point(GridPosition.X, 0);
                         prevGridPos = GridPosition;
                     }
+
+                    startingPostion = mapGrid.CoordToPostion(prevGridPos) + new Vector2(mapGrid.tileSize / 2);
                 }
                 else
                 {
@@ -208,8 +214,8 @@ namespace LePacman.Screens.MainGame
 
                 timer = TimeSpan.Zero;
             }
-
-            Position = Vector2.Lerp(mapGrid.CoordToPostion(prevGridPos) + new Vector2(mapGrid.tileSize / 2),
+            
+            Position = Vector2.Lerp(startingPostion,
                 mapGrid.CoordToPostion(gridPos) + new Vector2(mapGrid.tileSize / 2), (float)(timer.TotalMilliseconds / ļSpeed.TotalMilliseconds));
 
             if (animate)
