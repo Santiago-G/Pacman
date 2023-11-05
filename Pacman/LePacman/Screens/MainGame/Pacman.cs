@@ -24,11 +24,19 @@ namespace LePacman.Screens.MainGame
         public TimeSpan normalSpeed;
         public TimeSpan frightSpeed;
 
+        #region Movement
+
+        int startingThreshold;
+        int endingTreshold;
+        bool horizontal;
+        EntityStates diagonalMovement;
+        #endregion
+
         public Pacman(Vector2 Position, Color Tint, Vector2 Scale, Point Coord) : base(Position, Tint, Scale, EntityStates.ClosedPacman, Coord)
         {
             defaultSize = new Point(13);
 
-            maxSpeed = TimeSpan.FromMilliseconds(90);
+            maxSpeed = TimeSpan.FromMilliseconds(200);
             ļSpeed = maxSpeed * 1.2;
 
             animationLimit = TimeSpan.FromMilliseconds(25);
@@ -38,6 +46,7 @@ namespace LePacman.Screens.MainGame
             currDirection = EntityStates.Right;
 
             //Max speed
+            
 
             PelletGrid.Instance.Pacman = this;
 
@@ -67,76 +76,57 @@ namespace LePacman.Screens.MainGame
 
         public PelletTileVisual currPelletTile => MainGame.pelletGrid[GridPosition.X, GridPosition.Y];
 
-
         private void CheckMovementWindow(GameTime gameTime)
         {
-
-            int x = Math.Clamp(GridPosition.X + directions[currDirection].X, 0, 28);
-            int y = Math.Clamp(GridPosition.Y + directions[currDirection].Y, 0, 31);
-            int startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.Y;
-            int endingTreshold;
-            bool horizontal = true;
-
-            switch (currDirection)
-            {
-                case EntityStates.Left:
-                    startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.X;
-                    endingTreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.X + 5;
-                    break;
-                case EntityStates.Right:
-                    startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.X;
-                    endingTreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.X - 4;
-                    break;
-                case EntityStates.Up:
-                    startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.Y;
-                    endingTreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.Y + 4;
-
-                    horizontal = false;
-                    break;
-                case EntityStates.Down:
-                    startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.Y;
-                    endingTreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.Y - 5;
-
-                    horizontal = false;
-                    break;
-            }
-
             if (horizontal)
             {
-                if (Position.X >= startingThreshold && Position.Y <= endingTreshold)
+                if (Position.X >= startingThreshold && Position.X <= endingTreshold)
                 {
-                    MODERN LOVE //doing preturns, you'll know what to do...     right?
+                    diagonal = true;
+                    diagonalDirection = pendingDirection;
+                    //MODERN LOVE //doing preturns, you'll know what to do...     right?
+                }
+                else
+                {
+                    diagonal = false;
+                    currDirection = pendingDirection;
+                    Rotation = pendingRotation;
+                    movementWindow = false;
                 }
             }
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-            movementCounter += gameTime.ElapsedGameTime;
-
-            if (TileInFront(true).currentState != States.Occupied)
+            else
             {
-                currDirection = pendingDirection;
-                Rotation = pendingRotation;
-                movementWindow = false;
+                if (Position.Y >= startingThreshold && Position.Y <= endingTreshold)
+                {
+                    diagonal = true;
+                    diagonalDirection = pendingDirection;
+                    //MODERN LOVE //doing preturns, you'll know what to do...     right?
+                }
+                else
+                {
+                    diagonal = false;
+                    currDirection = pendingDirection;
+                    Rotation = pendingRotation;
+                    movementWindow = false;
+                }
             }
+           
 
-            if (movementCounter > cushionTime)
-            {
-                movementWindow = false;
-                movementCounter = TimeSpan.Zero;
-                pendingDirection = currDirection;
-            }
+            //movementCounter += gameTime.ElapsedGameTime;
+
+            //if (TileInFront(true).currentState != States.Occupied)
+            //{
+            //    currDirection = pendingDirection;
+            //    Rotation = pendingRotation;
+            //    movementWindow = false;
+            //}
+
+            //if (movementCounter > cushionTime)
+            //{
+            //    movementWindow = false;
+            //    movementCounter = TimeSpan.Zero;
+            //    pendingDirection = currDirection;
+            //}
         }
 
 
@@ -145,7 +135,7 @@ namespace LePacman.Screens.MainGame
         //https://gameinternals.com/understanding-pac-man-ghost-behavior
         //https://pacman.holenet.info/
 
-        private void CheckTurn (EntityStates pendingDirection)
+        private void CheckTurn ()
         {
             if (currDirection == pendingDirection) { return; }
 
@@ -161,8 +151,34 @@ namespace LePacman.Screens.MainGame
 
             if (MainGame.pelletGrid[x, y].currentState == States.Empty)
             {
+                x = Math.Clamp(GridPosition.X + directions[currDirection].X, 0, 28);
+                y = Math.Clamp(GridPosition.Y + directions[currDirection].Y, 0, 31);
+                horizontal = true;
+                endingTreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.X;
+
+                switch (currDirection)
+                {
+                    case EntityStates.Left:
+                        startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.X + 4 * 3;
+                        break;
+                    case EntityStates.Right:
+                        startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.X - 3 * 3;
+                        endingTreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.X;
+                        break;
+                    case EntityStates.Up:
+                        startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.Y;
+                        endingTreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.X + 4 * 3;
+
+                        horizontal = false;
+                        break;
+                    case EntityStates.Down:
+                        startingThreshold = MainGame.pelletGrid[x, y].DestinationRectangle.Center.Y - 4 * 3;
+
+                        horizontal = false;
+                        break;
+                }
+
                 movementWindow = true;
-                string Modern = "Turn";
             }
         }
 
@@ -175,28 +191,28 @@ namespace LePacman.Screens.MainGame
                 pendingDirection = EntityStates.Up;
                 pendingRotation = (float)(Math.PI * 1.5);
                 
-                CheckTurn(pendingDirection);
+                CheckTurn();
             }
             else if (kb.IsKeyDown(Keys.Right))
             {
                 pendingDirection = EntityStates.Right;
                 pendingRotation = 0;
 
-                CheckTurn(pendingDirection);
+                CheckTurn();
             }
             else if (kb.IsKeyDown(Keys.Down))
             {
                 pendingDirection = EntityStates.Down;
                 pendingRotation = (float)(Math.PI * .5);
 
-                CheckTurn(pendingDirection);
+                CheckTurn();
             }
             else if (kb.IsKeyDown(Keys.Left))
             {
                 pendingDirection = EntityStates.Left;
                 pendingRotation = (float)(Math.PI);
 
-                CheckTurn(pendingDirection);
+                CheckTurn();
             }
            
 

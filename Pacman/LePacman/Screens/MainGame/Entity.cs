@@ -90,6 +90,9 @@ namespace LePacman.Screens.MainGame
         public TimeSpan maxSpeed;
         public bool canMove = true;
 
+        protected bool diagonal = false;
+        protected EntityStates diagonalDirection;
+
         public EntityStates currDirection;
         public static Dictionary<EntityStates, Point> directions = new Dictionary<EntityStates, Point>
         {
@@ -161,6 +164,13 @@ namespace LePacman.Screens.MainGame
             }
         }
 
+        protected void GoDiagonal()
+        {
+            if (diagonal == false) { return; }
+
+            GridPosition += directions[diagonalDirection];
+        }
+
         public void EddenUpdate(GameTime gameTime)
         {
             timer += gameTime.ElapsedGameTime;
@@ -176,6 +186,8 @@ namespace LePacman.Screens.MainGame
                 if (NextPositionValid())
                 {
                     GridPosition += directions[currDirection];
+                    GoDiagonal();
+
                     animate = true;
 
                     //29, 32

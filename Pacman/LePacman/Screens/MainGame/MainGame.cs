@@ -483,10 +483,10 @@ namespace LePacman.Screens.MainGame
             //    ghost.Draw(spriteBatch);
             //}
 
-            debugInky.Draw(spriteBatch);
-            debugPinky.Draw(spriteBatch);
-            debugBlinky.Draw(spriteBatch);
-            debugClyde.Draw(spriteBatch);
+            //debugInky.Draw(spriteBatch);
+            //debugPinky.Draw(spriteBatch);
+            //debugBlinky.Draw(spriteBatch);
+            //debugClyde.Draw(spriteBatch);
 
             //spriteBatch.DrawString(HeaderFonts, "High Score", new Vector2(size.X / 2 - HeaderFonts.MeasureString("HighScore").X / 2, 0), Color.White);
             //spriteBatch.DrawString(HeaderFonts, score.ToString(), new Vector2(size.X / 2, 27), Color.White);
