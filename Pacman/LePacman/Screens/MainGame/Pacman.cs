@@ -40,7 +40,6 @@ namespace LePacman.Screens.MainGame
             //Max speed
 
             PelletGrid.Instance.Pacman = this;
-
         }
 
         #region functions
@@ -70,8 +69,6 @@ namespace LePacman.Screens.MainGame
 
         private void CheckMovementWindow(GameTime gameTime)
         {
-
-
             movementCounter += gameTime.ElapsedGameTime;
 
             if (TileInFront(true).currentState != States.Occupied)
@@ -97,28 +94,18 @@ namespace LePacman.Screens.MainGame
 
         private void CheckTurn (EntityStates pendingDirection)
         {
-            if (currDirection == pendingDirection)  return; 
+            if (currDirection == pendingDirection)  return;
+            if (MainGame.pelletGrid[gridPos.X + directions[pendingDirection].X, gridPos.Y + directions[pendingDirection].Y].currentState == States.Occupied) return;
 
-            startingPostion = Position;
+            startingPostion = DestinationRectangle.Center.ToVector2();
 
-            if (directions[currDirection] - directions[pendingDirection] == new Point(0)) //reverse direction
-            { 
-                return;
-            }
+            PelletGrid mapGrid = PelletGrid.Instance;
 
-            //FOR NOW: Check if the tile forward in the currDirection and one to the pending direction is empty. If it is, turn.
+            //diagonalOffset = ;
+            
 
-            PelletTileVisual currentTile = MainGame.pelletGrid[gridPos.X, gridPos.Y];
-            //if (DestinationRectangle.Center == )
-
-            int x = Math.Clamp(GridPosition.X + directions[currDirection].X + directions[pendingDirection].X, 0, 28);
-            int y = Math.Clamp(GridPosition.Y + directions[currDirection].Y + directions[pendingDirection].Y, 0, 31);
-
-            if (MainGame.pelletGrid[x, y].currentState != States.Occupied)
-            {
-                movementWindow = true;
-                string Modern = "Turn";
-            }
+            movementWindow = true;
+            
         }
 
         //if the player presses a key that isnt the current direction
@@ -131,32 +118,27 @@ namespace LePacman.Screens.MainGame
 
             if (kb.IsKeyDown(Keys.Up))
             {
-                pendingDirection = EntityStates.Up;
                 pendingRotation = (float)(Math.PI * 1.5);
-                
-                
-                CheckTurn(pendingDirection);
+
+                CheckTurn(pendingDirection = EntityStates.Up);
             }
             else if (kb.IsKeyDown(Keys.Right))
             {
-                pendingDirection = EntityStates.Right;
                 pendingRotation = 0;
 
-                CheckTurn(pendingDirection);
+                CheckTurn(pendingDirection = EntityStates.Right);
             }
             else if (kb.IsKeyDown(Keys.Down))
             {
-                pendingDirection = EntityStates.Down;
                 pendingRotation = (float)(Math.PI * .5);
 
-                CheckTurn(pendingDirection);
+                CheckTurn(pendingDirection = EntityStates.Down);
             }
             else if (kb.IsKeyDown(Keys.Left))
             {
-                pendingDirection = EntityStates.Left;
                 pendingRotation = (float)(Math.PI);
 
-                CheckTurn(pendingDirection);
+                CheckTurn(pendingDirection = EntityStates.Left);
             }
            
 

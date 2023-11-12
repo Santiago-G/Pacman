@@ -103,6 +103,8 @@ namespace LePacman.Screens.MainGame
 
         public TimeSpan ļSpeed;
         protected TimeSpan timer;
+
+        protected Vector2 diagonalOffset = new Vector2(0);
         #endregion
 
         #region Animation
@@ -205,6 +207,7 @@ namespace LePacman.Screens.MainGame
                     }
 
                     startingPostion = mapGrid.CoordToPostion(prevGridPos) + new Vector2(mapGrid.tileSize / 2);
+                    diagonalOffset = new Vector2(0);
                 }
                 else
                 {
@@ -215,8 +218,8 @@ namespace LePacman.Screens.MainGame
                 timer = TimeSpan.Zero;
             }
             
-            Position = Vector2.Lerp(startingPostion,
-                mapGrid.CoordToPostion(gridPos) + new Vector2(mapGrid.tileSize / 2), (float)(timer.TotalMilliseconds / ļSpeed.TotalMilliseconds));
+            Position = Vector2.Lerp(startingPostion, mapGrid.CoordToPostion(gridPos) + new Vector2(mapGrid.tileSize / 2) + diagonalOffset, 
+                (float)(timer.TotalMilliseconds / ļSpeed.TotalMilliseconds));
 
             if (animate)
             {
