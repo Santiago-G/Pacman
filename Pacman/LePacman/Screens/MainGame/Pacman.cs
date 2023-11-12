@@ -101,12 +101,15 @@ namespace LePacman.Screens.MainGame
 
             startingPostion = Position;
 
-            if (GridPosition == GridPosition + directions[currDirection] + directions[pendingDirection]) //reverse direction
+            if (directions[currDirection] - directions[pendingDirection] == new Point(0)) //reverse direction
             { 
                 return;
             }
 
             //FOR NOW: Check if the tile forward in the currDirection and one to the pending direction is empty. If it is, turn.
+
+            PelletTileVisual currentTile = MainGame.pelletGrid[gridPos.X, gridPos.Y];
+            //if (DestinationRectangle.Center == )
 
             int x = Math.Clamp(GridPosition.X + directions[currDirection].X + directions[pendingDirection].X, 0, 28);
             int y = Math.Clamp(GridPosition.Y + directions[currDirection].Y + directions[pendingDirection].Y, 0, 31);
@@ -117,6 +120,10 @@ namespace LePacman.Screens.MainGame
                 string Modern = "Turn";
             }
         }
+
+        //if the player presses a key that isnt the current direction
+        //check how far behind or forward the center of pacman is from the center of a tile. (do tile.width/8)
+        //
 
         public override void Update(GameTime gameTime)
         {
