@@ -304,7 +304,7 @@ namespace LePacman.Screens.MainGame
                 currFrightPeriod = TimeSpan.FromSeconds(currentLevel.FrightPeriod);
 
             pacman.ļSpeed = TimeSpan.FromMilliseconds(currentLevel.PacmanSpeed);
-            pacman.frightSpeed = TimeSpan.FromMilliseconds(currentLevel.FrightPacManSpeed);
+           // pacman.frightSpeed = TimeSpan.FromMilliseconds(currentLevel.FrightPacManSpeed);
 
             Ghost.frightSpeed = TimeSpan.FromMilliseconds(currentLevel.FrightGhostSpeed);
 
@@ -478,15 +478,18 @@ namespace LePacman.Screens.MainGame
             pacman.Draw(spriteBatch);
 
 
-            //foreach (var ghost in ghosts)
-            //{
-            //    ghost.Draw(spriteBatch);
-            //}
+            /*
+            foreach (var ghost in ghosts)
+            {
+                ghost.Draw(spriteBatch);
+            }
 
             debugInky.Draw(spriteBatch);
             debugPinky.Draw(spriteBatch);
             debugBlinky.Draw(spriteBatch);
             debugClyde.Draw(spriteBatch);
+            */
+
 
             //spriteBatch.DrawString(HeaderFonts, "High Score", new Vector2(size.X / 2 - HeaderFonts.MeasureString("HighScore").X / 2, 0), Color.White);
             //spriteBatch.DrawString(HeaderFonts, score.ToString(), new Vector2(size.X / 2, 27), Color.White);

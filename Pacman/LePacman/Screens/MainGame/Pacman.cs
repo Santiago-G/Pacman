@@ -16,20 +16,15 @@ namespace LePacman.Screens.MainGame
         private float pendingRotation;
         private bool movementWindow = false;
 
-        private TimeSpan cushionTime = TimeSpan.FromMilliseconds(500);
-        private TimeSpan movementCounter;
-
         public int freezeFrameCounter = 0;
 
-        public TimeSpan normalSpeed;
-        public TimeSpan frightSpeed;
+        private float speedMagnitude;
+
+        public Vector2 Speed => directions[currDirection].ToVector2() * speedMagnitude;
 
         public Pacman(Vector2 Position, Color Tint, Vector2 Scale, Point Coord) : base(Position, Tint, Scale, EntityStates.ClosedPacman, Coord)
         {
             defaultSize = new Point(13);
-
-            maxSpeed = TimeSpan.FromMilliseconds(90);
-            ļSpeed = maxSpeed * 1.2;
 
             animationLimit = TimeSpan.FromMilliseconds(25);
             animationMin = 0;
@@ -37,10 +32,10 @@ namespace LePacman.Screens.MainGame
 
             currDirection = EntityStates.Right;
             startingPostion = Position;
-            //Max speed
+
+            speedMagnitude = 1;
 
             PelletGrid.Instance.Pacman = this;
-
         }
 
         #region functions
@@ -68,26 +63,26 @@ namespace LePacman.Screens.MainGame
         public PelletTileVisual currPelletTile => MainGame.pelletGrid[GridPosition.X, GridPosition.Y];
 
 
-        private void CheckMovementWindow(GameTime gameTime)
-        {
+        //private void CheckMovementWindow(GameTime gameTime)
+        //{
 
 
-            movementCounter += gameTime.ElapsedGameTime;
+        //    movementCounter += gameTime.ElapsedGameTime;
 
-            if (TileInFront(true).currentState != States.Occupied)
-            {
-                currDirection = pendingDirection;
-                Rotation = pendingRotation;
-                movementWindow = false;
-            }
+        //    if (TileInFront(true).currentState != States.Occupied)
+        //    {
+        //        currDirection = pendingDirection;
+        //        Rotation = pendingRotation;
+        //        movementWindow = false;
+        //    }
 
-            if (movementCounter > cushionTime)
-            {
-                movementWindow = false;
-                movementCounter = TimeSpan.Zero;
-                pendingDirection = currDirection;
-            }
-        }
+        //    if (movementCounter > cushionTime)
+        //    {
+        //        movementWindow = false;
+        //        movementCounter = TimeSpan.Zero;
+        //        pendingDirection = currDirection;
+        //    }
+        //}
 
 
         #endregion
@@ -105,6 +100,11 @@ namespace LePacman.Screens.MainGame
             { 
                 return;
             }
+
+            currDirection = pendingDirection;
+
+
+
 
             //FOR NOW: Check if the tile forward in the currDirection and one to the pending direction is empty. If it is, turn.
 
@@ -131,43 +131,68 @@ namespace LePacman.Screens.MainGame
 
             if (kb.IsKeyDown(Keys.Up))
             {
-                pendingDirection = EntityStates.Up;
-                pendingRotation = (float)(Math.PI * 1.5);
-                
-                
-                CheckTurn(pendingDirection);
+                CheckTurn(pendingDirection = EntityStates.Up);
             }
             else if (kb.IsKeyDown(Keys.Right))
             {
-                pendingDirection = EntityStates.Right;
-                pendingRotation = 0;
-
-                CheckTurn(pendingDirection);
+                CheckTurn(pendingDirection = EntityStates.Right);
             }
             else if (kb.IsKeyDown(Keys.Down))
             {
-                pendingDirection = EntityStates.Down;
-                pendingRotation = (float)(Math.PI * .5);
-
-                CheckTurn(pendingDirection);
+                CheckTurn(pendingDirection = EntityStates.Down);
             }
             else if (kb.IsKeyDown(Keys.Left))
             {
-                pendingDirection = EntityStates.Left;
-                pendingRotation = (float)(Math.PI);
-
-                CheckTurn(pendingDirection);
+                CheckTurn(pendingDirection = EntityStates.Left);
             }
-           
+
+            Position += Speed;
+
+            if (DestinationRectangle.Center == currPelletTile.DestinationRectangle.Center)
+            {
+                ;
+            }
+
+
+            #region old movement
+            //if (kb.IsKeyDown(Keys.Up))
+            //{
+            //    pendingDirection = EntityStates.Up;
+            //    pendingRotation = (float)(Math.PI * 1.5);
+
+
+            //    CheckTurn(pendingDirection);
+            //}
+            //else if (kb.IsKeyDown(Keys.Right))
+            //{
+            //    pendingDirection = EntityStates.Right;
+            //    pendingRotation = 0;
+
+            //    CheckTurn(pendingDirection);
+            //}
+            //else if (kb.IsKeyDown(Keys.Down))
+            //{
+            //    pendingDirection = EntityStates.Down;
+            //    pendingRotation = (float)(Math.PI * .5);
+
+            //    CheckTurn(pendingDirection);
+            //}
+            //else if (kb.IsKeyDown(Keys.Left))
+            //{
+            //    pendingDirection = EntityStates.Left;
+            //    pendingRotation = (float)(Math.PI);
+
+            //    CheckTurn(pendingDirection);
+            //}
+            #endregion
 
             if (movementWindow)
             {
-                CheckMovementWindow(gameTime);
+                //CheckMovementWindow(gameTime);
             }
 
             if (freezeFrameCounter <= 0)
             {
-                EddenUpdate(gameTime);
             }
             else 
             {
