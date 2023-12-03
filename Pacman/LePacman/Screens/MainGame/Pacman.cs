@@ -99,7 +99,27 @@ namespace LePacman.Screens.MainGame
 
             startingPostion = DestinationRectangle.Center.ToVector2();
 
-            PelletGrid mapGrid = PelletGrid.Instance;
+            //switch (pendingDirection)
+            //{
+            //    case EntityStates.Left:
+            //        endPosition = PelletGrid.Instance.CoordToPostion(gridPos) + new Vector2(0, PelletGrid.Instance.tileSize / 2);
+            //        break;
+            //    case EntityStates.Right:
+            //        endPosition = PelletGrid.Instance.CoordToPostion(gridPos) + new Vector2(PelletGrid.Instance.tileSize, PelletGrid.Instance.tileSize / 2);
+            //        break;
+            //    case EntityStates.Up:
+            //        endPosition = PelletGrid.Instance.CoordToPostion(gridPos) + new Vector2(PelletGrid.Instance.tileSize/2, 0);
+            //        break;
+            //    case EntityStates.Down:
+            //        endPosition = PelletGrid.Instance.CoordToPostion(gridPos) + new Vector2(PelletGrid.Instance.tileSize / 2, PelletGrid.Instance.tileSize / 2);
+            //        break;
+            //}
+
+
+
+            //// mapGrid.CoordToPostion(gridPos) + new Vector2(mapGrid.tileSize / 2)
+
+            //PelletGrid mapGrid = PelletGrid.Instance;
 
             //diagonalOffset = ;
             

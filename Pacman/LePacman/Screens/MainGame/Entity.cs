@@ -91,6 +91,7 @@ namespace LePacman.Screens.MainGame
         public bool canMove = true;
 
         protected Vector2 startingPostion;
+        protected Vector2 endPosition;
 
         public EntityStates currDirection;
         public static Dictionary<EntityStates, Point> directions = new Dictionary<EntityStates, Point>
@@ -193,7 +194,7 @@ namespace LePacman.Screens.MainGame
                     else if (GridPosition.X == MainGame.pelletGrid.GetLength(0) - 1)
                     {
                         GridPosition = new Point(0, GridPosition.Y);
-                        prevGridPos = GridPosition;
+                        prevGridPos = GridPosition; 
                     }
                     else if (GridPosition.Y < 0)
                     {
@@ -207,6 +208,9 @@ namespace LePacman.Screens.MainGame
                     }
 
                     startingPostion = mapGrid.CoordToPostion(prevGridPos) + new Vector2(mapGrid.tileSize / 2);
+                    endPosition = mapGrid.CoordToPostion(gridPos) + new Vector2(mapGrid.tileSize / 2);
+
+
                     diagonalOffset = new Vector2(0);
                 }
                 else
@@ -218,7 +222,7 @@ namespace LePacman.Screens.MainGame
                 timer = TimeSpan.Zero;
             }
             
-            Position = Vector2.Lerp(startingPostion, mapGrid.CoordToPostion(gridPos) + new Vector2(mapGrid.tileSize / 2) + diagonalOffset, 
+            Position = Vector2.Lerp(startingPostion, endPosition, 
                 (float)(timer.TotalMilliseconds / ļSpeed.TotalMilliseconds));
 
             if (animate)
